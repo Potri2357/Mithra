@@ -73,28 +73,28 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Brand Lockup */}
         <Link href="/" className="flex items-center gap-3 group shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 dark:border-slate-800 p-1 flex items-center justify-center shadow-2xs group-hover:border-blue-300 transition-colors">
+          <div className="w-9 h-9 rounded-md bg-white border border-slate-200 dark:border-slate-800 p-1 flex items-center justify-center shadow-2xs group-hover:border-[#005EB8] transition-colors">
             <Image
               src="/bis_logo.png"
               alt="BIS Logo"
-              width={32}
-              height={32}
+              width={28}
+              height={28}
               className="object-contain"
               priority
             />
           </div>
           <div className="leading-tight">
-            <div className="text-slate-900 dark:text-white font-extrabold text-lg tracking-tight group-hover:text-[#024DA1] dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
+            <div className="text-slate-900 dark:text-white font-bold text-base tracking-tight group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
               <span>Mithra</span>
             </div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
               Bureau of Indian Standards
             </div>
           </div>
         </Link>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           {/* Nav Search Toggle / Input */}
           <div className="relative">
             {searchOpen ? (
@@ -105,12 +105,12 @@ export default function Navbar() {
                   onChange={(e) => setNavSearchQuery(e.target.value)}
                   placeholder="Search standard or HUID..."
                   autoFocus
-                  className="w-48 sm:w-64 h-9 px-3 text-xs bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-full outline-none focus:border-[#024DA1]"
+                  className="w-48 sm:w-64 h-9 px-3 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8]"
                 />
                 <button
                   type="button"
                   onClick={() => setSearchOpen(false)}
-                  className="w-8 h-8 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center cursor-pointer"
+                  className="w-8 h-8 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center cursor-pointer"
                   title="Close search"
                 >
                   <X className="w-4 h-4" />
@@ -120,7 +120,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                className="w-9 h-9 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Search"
                 title="Search"
               >
@@ -129,23 +129,23 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Language Selector Pill */}
+          {/* Language Selector */}
           <button
             type="button"
             onClick={cycleLang}
-            className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-1 px-2.5 h-9 rounded-md border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer"
             title="Switch Language"
             aria-label={`Current language: ${currentLang}. Click to cycle.`}
           >
-            <span>{currentLang}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <span className="font-semibold">{currentLang}</span>
+            <ChevronDown className="w-3 h-3 text-slate-400" />
           </button>
 
           {/* Theme Toggle Button */}
           <button
             type="button"
             onClick={toggleTheme}
-            className="w-9 h-9 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
             title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
             aria-label="Toggle Theme"
           >
@@ -156,11 +156,11 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* Modern Action Button (Login / Open Chat) */}
+          {/* Clean Enterprise Login Button */}
           <Link href="/chat">
             <Button
               size="sm"
-              className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-full px-5 shadow-xs"
+              className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-semibold rounded-md px-4 shadow-xs"
             >
               <span>Login</span>
             </Button>

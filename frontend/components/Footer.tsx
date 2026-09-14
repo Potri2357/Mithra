@@ -36,17 +36,17 @@ export default function Footer() {
           {/* Col 1 — Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 dark:border-slate-800 p-1 flex items-center justify-center shadow-2xs group-hover:border-blue-300 transition-colors">
+              <div className="w-9 h-9 rounded-md bg-white border border-slate-200 dark:border-slate-800 p-1 flex items-center justify-center shadow-2xs group-hover:border-[#005EB8] transition-colors">
                 <Image
                   src="/bis_logo.png"
                   alt="Bureau of Indian Standards"
-                  width={32}
-                  height={32}
+                  width={28}
+                  height={28}
                   className="object-contain"
                 />
               </div>
               <div>
-                <div className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-[#024DA1] dark:group-hover:text-blue-400 transition-colors">
+                <div className="font-bold text-base text-slate-900 dark:text-white group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors">
                   Mithra
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
@@ -55,18 +55,18 @@ export default function Footer() {
               </div>
             </Link>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-[#64748B] dark:text-slate-400 leading-relaxed font-normal">
               Official conversational standards intelligence platform for 22,000+ Indian Standards,
               Quality Control Orders (QCOs), certification schemes, and accredited laboratories.
             </p>
 
             <div className="flex flex-wrap gap-2 pt-1">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#024DA1] dark:text-blue-400" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#005EB8] dark:text-blue-400" />
                 <span>BIS Act 2016 Grounded</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-                <BookOpen className="w-3.5 h-3.5 text-[#024DA1] dark:text-blue-400" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                <BookOpen className="w-3.5 h-3.5 text-[#005EB8] dark:text-blue-400" />
                 <span>22,000+ Standards</span>
               </span>
             </div>

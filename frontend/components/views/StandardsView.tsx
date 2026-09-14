@@ -1,30 +1,41 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
+import Link from "next/link";
 import {
   Search,
   Sparkles,
   BookOpen,
   Building2,
-  Calendar,
+  CalendarDays,
   ExternalLink,
   X,
-  ShieldCheck,
-  Award,
+  Filter,
+  ChevronRight,
+  ChevronLeft,
+  AlertTriangle,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 // Official Seeded Indian Standards Catalogue
-export const STANDARDS_CATALOGUE = [
+export interface StandardItem {
+  is_number: string;
+  title: string;
+  committee: string;
+  year: string;
+  scope: string;
+  scheme: "ISI Mark" | "CRS (Scheme II)" | "Hallmarking";
+  mandatory: boolean;
+  sector: string;
+  qco_order: string;
+}
+
+export const STANDARDS_CATALOGUE: StandardItem[] = [
   {
     is_number: "IS 16102 (Part 1 & 2)",
     title: "Self-Ballasted LED Lamps for General Lighting Services — Safety Requirements",
@@ -167,6 +178,516 @@ const SECTORS = [
   "Precious Metals & Jewellery",
 ];
 
+const SCHEMES = [
+  "All Schemes",
+  "ISI Mark",
+  "CRS (Scheme II)",
+  "Hallmarking",
+];
+
+const ITEMS_PER_PAGE = 6;
+
+// ── 1. BREADCRUMB COMPONENT ──
+export function StandardsBreadcrumb() {
+  return (
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#64748B] dark:text-slate-400">
+      <Link href="/" className="hover:text-[#005EB8] dark:hover:text-blue-400 transition-colors">
+        Standards
+      </Link>
+      <ChevronRight className="w-3 h-3 text-slate-400" />
+      <span className="font-semibold text-[#0F172A] dark:text-slate-200">
+        Indian Standards Directory
+      </span>
+    </nav>
+  );
+}
+
+// ── 2. PAGE HEADER COMPONENT ──
+export function StandardsPageHeader() {
+  return (
+    <div className="space-y-2 border-b border-slate-200/80 dark:border-slate-800 pb-5">
+      <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-extrabold text-[#0F172A] dark:text-white tracking-tight leading-tight">
+        Indian Standards (IS) Directory
+      </h1>
+      <p className="text-sm sm:text-[15px] text-[#64748B] dark:text-slate-400 max-w-3xl leading-relaxed font-normal">
+        Search active Bureau of Indian Standards specifications, governing technical committees,
+        and mandatory Quality Control Order (QCO) gazette notifications.
+      </p>
+    </div>
+  );
+}
+
+// ── 3. SEARCH & FILTER TOOLBAR ──
+interface StandardsSearchToolbarProps {
+  searchTerm: string;
+  onSearchChange: (v: string) => void;
+  selectedSector: string;
+  onSectorChange: (v: string) => void;
+  selectedScheme: string;
+  onSchemeChange: (v: string) => void;
+  qcoOnly: boolean;
+  onQcoOnlyToggle: () => void;
+}
+
+export function StandardsSearchToolbar({
+  searchTerm,
+  onSearchChange,
+  selectedSector,
+  onSectorChange,
+  selectedScheme,
+  onSchemeChange,
+  qcoOnly,
+  onQcoOnlyToggle,
+}: StandardsSearchToolbarProps) {
+  return (
+    <div className="p-3.5 sm:p-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+        {/* Search Input */}
+        <div className="md:col-span-5 relative flex items-center">
+          <Search className="w-4 h-4 text-[#64748B] dark:text-slate-400 absolute left-3 pointer-events-none z-10" />
+          <Input
+            type="text"
+            className="h-9.5 pl-9 pr-8 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-xs sm:text-sm placeholder:text-[#64748B]"
+            placeholder="Search by IS number, keyword, or committee..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => onSearchChange("")}
+              className="absolute right-2.5 p-0.5 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              title="Clear search"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Sector Filter */}
+        <div className="md:col-span-3">
+          <select
+            className="w-full h-9.5 px-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-md text-xs sm:text-sm font-medium text-[#0F172A] dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] transition-colors cursor-pointer"
+            value={selectedSector}
+            onChange={(e) => onSectorChange(e.target.value)}
+          >
+            {SECTORS.map((sec) => (
+              <option key={sec} value={sec}>
+                {sec}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Scheme Filter */}
+        <div className="md:col-span-2.5 sm:col-span-2">
+          <select
+            className="w-full h-9.5 px-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-md text-xs sm:text-sm font-medium text-[#0F172A] dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] transition-colors cursor-pointer"
+            value={selectedScheme}
+            onChange={(e) => onSchemeChange(e.target.value)}
+          >
+            {SCHEMES.map((sch) => (
+              <option key={sch} value={sch}>
+                {sch}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* QCO Mandatory Filter Button */}
+        <div className="md:col-span-1.5 sm:col-span-2">
+          <button
+            type="button"
+            onClick={onQcoOnlyToggle}
+            className={cn(
+              "w-full h-9.5 px-3 rounded-md text-xs font-semibold border flex items-center justify-center gap-1.5 transition-colors cursor-pointer",
+              qcoOnly
+                ? "bg-red-50 border-red-300 text-[#DC2626] dark:bg-red-950/50 dark:border-red-800 dark:text-red-300"
+                : "bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-[#64748B] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+            )}
+            title="Filter by mandatory Quality Control Orders"
+          >
+            <Filter className="w-3.5 h-3.5" />
+            <span className="whitespace-nowrap">QCO Only</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── 4. RESULTS SUMMARY & ACTIVE FILTERS ──
+interface ActiveFiltersProps {
+  totalResults: number;
+  totalCatalogueCount: number;
+  searchTerm: string;
+  selectedSector: string;
+  selectedScheme: string;
+  qcoOnly: boolean;
+  onClearSearch: () => void;
+  onClearSector: () => void;
+  onClearScheme: () => void;
+  onClearQco: () => void;
+  onResetAll: () => void;
+}
+
+export function ResultsSummaryAndFilters({
+  totalResults,
+  totalCatalogueCount,
+  searchTerm,
+  selectedSector,
+  selectedScheme,
+  qcoOnly,
+  onClearSearch,
+  onClearSector,
+  onClearScheme,
+  onClearQco,
+  onResetAll,
+}: ActiveFiltersProps) {
+  const hasActiveFilters =
+    Boolean(searchTerm) ||
+    selectedSector !== "All Sectors" ||
+    selectedScheme !== "All Schemes" ||
+    qcoOnly;
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[#64748B] dark:text-slate-400 py-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <span>
+          Showing <strong className="text-[#0F172A] dark:text-white font-bold">{totalResults}</strong> of {totalCatalogueCount} standards
+        </span>
+
+        {hasActiveFilters && (
+          <div className="flex flex-wrap items-center gap-1.5 ml-1">
+            {searchTerm && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-800 dark:text-slate-200">
+                Keyword: &quot;{searchTerm}&quot;
+                <button
+                  type="button"
+                  onClick={onClearSearch}
+                  className="hover:text-[#DC2626] cursor-pointer"
+                  title="Remove keyword filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+
+            {selectedSector !== "All Sectors" && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-800 dark:text-slate-200">
+                Sector: {selectedSector}
+                <button
+                  type="button"
+                  onClick={onClearSector}
+                  className="hover:text-[#DC2626] cursor-pointer"
+                  title="Remove sector filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+
+            {selectedScheme !== "All Schemes" && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-800 dark:text-slate-200">
+                Scheme: {selectedScheme}
+                <button
+                  type="button"
+                  onClick={onClearScheme}
+                  className="hover:text-[#DC2626] cursor-pointer"
+                  title="Remove scheme filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+
+            {qcoOnly && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900/60 text-[11px] font-semibold text-[#DC2626] dark:text-red-300">
+                QCO Mandatory
+                <button
+                  type="button"
+                  onClick={onClearQco}
+                  className="hover:text-red-800 cursor-pointer"
+                  title="Remove QCO filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {hasActiveFilters && (
+        <button
+          type="button"
+          onClick={onResetAll}
+          className="text-xs font-semibold text-[#005EB8] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+        >
+          <RotateCcw className="w-3 h-3" />
+          <span>Clear all filters</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── 5. STANDARD CARD COMPONENT ──
+interface StandardCardProps {
+  item: StandardItem;
+  onAskMithra?: (query: string) => void;
+}
+
+export function StandardCard({ item, onAskMithra }: StandardCardProps) {
+  const handleAsk = () => {
+    const q = `Explain applicability, required testing parameters, and BIS certification pathway for ${item.is_number} (${item.title})`;
+    if (onAskMithra) {
+      onAskMithra(q);
+    } else if (typeof window !== "undefined") {
+      window.open(`/chat?q=${encodeURIComponent(q)}`, "_blank");
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-colors duration-150 group">
+      {/* Upper Information Section */}
+      <div className="space-y-3">
+        {/* Row 1: IS Number & Year */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-base sm:text-[17px] font-bold font-mono text-[#005EB8] dark:text-blue-400 tracking-tight">
+            {item.is_number}
+          </span>
+          <span className="text-xs font-mono text-[#64748B] dark:text-slate-500 font-medium">
+            {item.year}
+          </span>
+        </div>
+
+        {/* Row 2: Badges */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Badge variant="blue" className="text-[11px] font-medium rounded-md px-2 py-0.5">
+            {item.scheme}
+          </Badge>
+          {item.mandatory && (
+            <Badge variant="danger" className="text-[11px] font-semibold rounded-md px-2 py-0.5">
+              QCO Mandatory
+            </Badge>
+          )}
+        </div>
+
+        {/* Row 3: Standard Title (Strongest visual anchor) */}
+        <h3 className="text-base sm:text-[17px] font-bold text-[#0F172A] dark:text-white leading-snug group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors">
+          {item.title}
+        </h3>
+
+        {/* Row 4: Scope / Description */}
+        <p className="text-xs sm:text-sm text-[#475569] dark:text-slate-400 leading-relaxed line-clamp-3 font-normal">
+          {item.scope}
+        </p>
+
+        {/* Row 5: Committee & Reaffirmed Metadata */}
+        <div className="flex flex-wrap items-center gap-4 text-xs text-[#64748B] dark:text-slate-400 pt-1">
+          <div className="flex items-center gap-1.5">
+            <Building2 className="w-3.5 h-3.5 text-slate-400" />
+            <span>{item.committee}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
+            <span>Reaffirmed {item.year}</span>
+          </div>
+        </div>
+
+        {/* Row 6: Grouped QCO Order */}
+        <div className="p-2.5 rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 text-xs">
+          <span className="font-semibold text-[#0F172A] dark:text-white">QCO Order: </span>
+          <span className="text-[#475569] dark:text-slate-400 leading-relaxed">
+            {item.qco_order}
+          </span>
+        </div>
+      </div>
+
+      {/* Row 7: Actions aligned to bottom */}
+      <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+        <Button
+          size="sm"
+          onClick={handleAsk}
+          className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-semibold rounded-md px-3.5 py-1.5 gap-1.5 shadow-xs"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-blue-200" />
+          <span>Ask Mithra Compliance AI</span>
+        </Button>
+
+        <a
+          href="https://www.bis.gov.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-[#005EB8] dark:hover:text-blue-400 px-2.5 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          title="Open official BIS specification reference"
+        >
+          <span>BIS Ref</span>
+          <ExternalLink className="w-3 h-3 text-slate-400" />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ── 6. EMPTY STATE COMPONENT ──
+export function StandardsEmptyState({ onClear }: { onClear: () => void }) {
+  return (
+    <div className="p-10 sm:p-12 text-center rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3.5">
+      <div className="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+        <BookOpen className="w-5 h-5" />
+      </div>
+      <div className="space-y-1">
+        <h3 className="text-base font-bold text-[#0F172A] dark:text-white">
+          No standards found
+        </h3>
+        <p className="text-xs sm:text-sm text-[#64748B] dark:text-slate-400 max-w-sm mx-auto">
+          Try changing your search keywords or broadening your filter criteria.
+        </p>
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onClear}
+        className="rounded-md text-xs font-semibold"
+      >
+        Clear filters
+      </Button>
+    </div>
+  );
+}
+
+// ── 7. LOADING STATE (SKELETON CARDS) ──
+export function StandardsLoadingState() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+      {[1, 2, 3, 4].map((n) => (
+        <div
+          key={n}
+          className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4"
+        >
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-4 w-12" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-5 w-4/5" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-3.5 w-full" />
+            <Skeleton className="h-3.5 w-5/6" />
+          </div>
+          <div className="flex gap-4">
+            <Skeleton className="h-3.5 w-28" />
+            <Skeleton className="h-3.5 w-28" />
+          </div>
+          <Skeleton className="h-8 w-full" />
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between">
+            <Skeleton className="h-8 w-44" />
+            <Skeleton className="h-8 w-20" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── 8. ERROR STATE COMPONENT ──
+export function StandardsErrorState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="p-8 text-center rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50/50 dark:bg-red-950/30 space-y-3">
+      <AlertTriangle className="w-8 h-8 text-[#DC2626] mx-auto" />
+      <div className="space-y-1">
+        <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          Unable to load standards
+        </h3>
+        <p className="text-xs text-[#64748B] dark:text-slate-400">
+          Something went wrong while retrieving the BIS standards catalogue.
+        </p>
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onRetry}
+        className="rounded-md text-xs font-semibold"
+      >
+        Retry
+      </Button>
+    </div>
+  );
+}
+
+// ── 9. PAGINATION COMPONENT ──
+interface StandardsPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export function StandardsPagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: StandardsPaginationProps) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <nav
+      aria-label="Standards catalogue pagination"
+      className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-[#64748B]"
+    >
+      <div>
+        Page <span className="font-semibold text-[#0F172A] dark:text-white">{currentPage}</span> of {totalPages}
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-8 px-2.5 rounded-md text-xs font-medium gap-1"
+        >
+          <ChevronLeft className="w-3.5 h-3.5" />
+          <span>Previous</span>
+        </Button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => onPageChange(p)}
+            className={cn(
+              "w-8 h-8 rounded-md text-xs font-semibold transition-colors cursor-pointer",
+              currentPage === p
+                ? "bg-[#005EB8] text-white shadow-2xs"
+                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+            )}
+            aria-current={currentPage === p ? "page" : undefined}
+          >
+            {p}
+          </button>
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-8 px-2.5 rounded-md text-xs font-medium gap-1"
+        >
+          <span>Next</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+        </Button>
+      </div>
+    </nav>
+  );
+}
+
+// ── MAIN STANDARDS VIEW COMPONENT ──
 interface StandardsViewProps {
   onAskMithra?: (query: string) => void;
 }
@@ -174,8 +695,12 @@ interface StandardsViewProps {
 export function StandardsView({ onAskMithra }: StandardsViewProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSector, setSelectedSector] = useState("All Sectors");
-  const [schemeFilter, setSchemeFilter] = useState("All Schemes");
+  const [selectedScheme, setSelectedScheme] = useState("All Schemes");
+  const [qcoOnly, setQcoOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Filtered standards
   const filteredStandards = useMemo(() => {
     return STANDARDS_CATALOGUE.filter((item) => {
       const matchesSearch =
@@ -189,197 +714,120 @@ export function StandardsView({ onAskMithra }: StandardsViewProps) {
         selectedSector === "All Sectors" || item.sector === selectedSector;
 
       const matchesScheme =
-        schemeFilter === "All Schemes" || item.scheme === schemeFilter;
+        selectedScheme === "All Schemes" || item.scheme === selectedScheme;
 
-      return matchesSearch && matchesSector && matchesScheme;
+      const matchesQco = !qcoOnly || item.mandatory;
+
+      return matchesSearch && matchesSector && matchesScheme && matchesQco;
     });
-  }, [searchTerm, selectedSector, schemeFilter]);
+  }, [searchTerm, selectedSector, selectedScheme, qcoOnly]);
 
-  const handleAsk = (isNumber: string) => {
-    const q = `Tell me full testing requirements, applicable standards clauses, and licensing procedure for ${isNumber}`;
-    if (onAskMithra) {
-      onAskMithra(q);
-    } else if (typeof window !== "undefined") {
-      window.open(`/chat?q=${encodeURIComponent(q)}`, "_blank");
+  // Pagination calculation
+  const totalPages = Math.ceil(filteredStandards.length / ITEMS_PER_PAGE);
+  const paginatedStandards = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredStandards.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredStandards, currentPage]);
+
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setSelectedSector("All Sectors");
+    setSelectedScheme("All Schemes");
+    setQcoOnly(false);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
-      {/* Page Hero Header */}
-      <div className="space-y-3 max-w-3xl">
-        <Badge variant="blue" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>Official BIS Catalogue</span>
-        </Badge>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-          Indian Standards <span className="text-[#024DA1] dark:text-blue-400">(IS) Directory</span>
-        </h1>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-          Search active Bureau of Indian Standards specifications, governing technical committees,
-          and mandatory Quality Control Order (QCO) gazette notifications.
-        </p>
-      </div>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+      {/* 1. Breadcrumb */}
+      <StandardsBreadcrumb />
 
-      {/* Filter Toolbar with Generous Spacing and Proper Padding */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5">
-          {/* Search Input with Non-Overlapping Icon */}
-          <div className="md:col-span-6 relative flex items-center">
-            <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 pointer-events-none z-10" />
-            <Input
-              type="text"
-              className="h-11 pl-10 pr-9 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl text-sm"
-              placeholder="Search by IS number (e.g. IS 16102), keyword, or committee..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button
-                type="button"
-                onClick={() => setSearchTerm("")}
-                className="absolute right-3 p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                title="Clear search"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
+      {/* 2. Compact Page Header */}
+      <StandardsPageHeader />
+
+      {/* 3. Search + Filter Toolbar */}
+      <StandardsSearchToolbar
+        searchTerm={searchTerm}
+        onSearchChange={(v) => {
+          setSearchTerm(v);
+          setCurrentPage(1);
+        }}
+        selectedSector={selectedSector}
+        onSectorChange={(v) => {
+          setSelectedSector(v);
+          setCurrentPage(1);
+        }}
+        selectedScheme={selectedScheme}
+        onSchemeChange={(v) => {
+          setSelectedScheme(v);
+          setCurrentPage(1);
+        }}
+        qcoOnly={qcoOnly}
+        onQcoOnlyToggle={() => {
+          setQcoOnly(!qcoOnly);
+          setCurrentPage(1);
+        }}
+      />
+
+      {/* 4. Results Summary & Active Filters */}
+      <ResultsSummaryAndFilters
+        totalResults={filteredStandards.length}
+        totalCatalogueCount={STANDARDS_CATALOGUE.length}
+        searchTerm={searchTerm}
+        selectedSector={selectedSector}
+        selectedScheme={selectedScheme}
+        qcoOnly={qcoOnly}
+        onClearSearch={() => {
+          setSearchTerm("");
+          setCurrentPage(1);
+        }}
+        onClearSector={() => {
+          setSelectedSector("All Sectors");
+          setCurrentPage(1);
+        }}
+        onClearScheme={() => {
+          setSelectedScheme("All Schemes");
+          setCurrentPage(1);
+        }}
+        onClearQco={() => {
+          setQcoOnly(false);
+          setCurrentPage(1);
+        }}
+        onResetAll={handleResetFilters}
+      />
+
+      {/* 5. Standards Grid or Empty State */}
+      {isLoading ? (
+        <StandardsLoadingState />
+      ) : filteredStandards.length === 0 ? (
+        <StandardsEmptyState onClear={handleResetFilters} />
+      ) : (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+            {paginatedStandards.map((item) => (
+              <StandardCard
+                key={item.is_number}
+                item={item}
+                onAskMithra={onAskMithra}
+              />
+            ))}
           </div>
 
-          {/* Sector Selector */}
-          <div className="md:col-span-3">
-            <select
-              className="w-full h-11 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#024DA1] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 transition-all cursor-pointer"
-              value={selectedSector}
-              onChange={(e) => setSelectedSector(e.target.value)}
-            >
-              {SECTORS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Scheme Selector */}
-          <div className="md:col-span-3">
-            <select
-              className="w-full h-11 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#024DA1] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 transition-all cursor-pointer"
-              value={schemeFilter}
-              onChange={(e) => setSchemeFilter(e.target.value)}
-            >
-              <option value="All Schemes">All Certification Schemes</option>
-              <option value="ISI Mark">ISI Mark (Scheme I)</option>
-              <option value="CRS (Scheme II)">CRS (Scheme II)</option>
-              <option value="Hallmarking">Hallmarking</option>
-            </select>
-          </div>
+          {/* 6. Pagination */}
+          <StandardsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
-
-        {/* Filter Count & Reset */}
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
-          <span>
-            Showing <strong className="text-slate-900 dark:text-white font-bold">{filteredStandards.length}</strong> of {STANDARDS_CATALOGUE.length} standards catalogued
-          </span>
-          {(searchTerm || selectedSector !== "All Sectors" || schemeFilter !== "All Schemes") && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedSector("All Sectors");
-                setSchemeFilter("All Schemes");
-              }}
-              className="text-[#024DA1] dark:text-blue-400 hover:underline font-bold cursor-pointer inline-flex items-center gap-1"
-            >
-              <X className="w-3 h-3" />
-              <span>Reset Filters</span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Standards Grid with Clean shadcn Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredStandards.map((item) => (
-          <Card
-            key={item.is_number}
-            className="flex flex-col justify-between group hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200"
-          >
-            <CardHeader className="space-y-3 pb-3">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-base font-extrabold text-[#024DA1] dark:text-blue-400 font-mono tracking-tight">
-                    {item.is_number}
-                  </span>
-                  <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">
-                    :{item.year}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <Badge variant="blue" className="font-semibold text-[11px]">
-                    {item.scheme}
-                  </Badge>
-                  {item.mandatory && (
-                    <Badge variant="danger" className="font-bold text-[11px]">
-                      QCO Mandatory
-                    </Badge>
-                  )}
-                </div>
-              </div>
-
-              <CardTitle className="text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#024DA1] dark:group-hover:text-blue-400 transition-colors">
-                {item.title}
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              <p className="leading-relaxed">
-                {item.scope}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1">
-                <div className="flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{item.committee}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Reaffirmed {item.year}</span>
-                </div>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
-                <span className="font-bold text-slate-900 dark:text-white shrink-0">QCO Order:</span>
-                <span className="leading-relaxed">{item.qco_order}</span>
-              </div>
-            </CardContent>
-
-            {/* Redesigned Card Footer with Clean shadcn Buttons */}
-            <CardFooter className="pt-4 flex flex-wrap items-center justify-between gap-2.5">
-              <Button
-                type="button"
-                onClick={() => handleAsk(item.is_number)}
-                size="sm"
-                className="bg-[#024DA1] hover:bg-[#023A79] text-white font-semibold text-xs rounded-full px-4 gap-1.5 shadow-xs"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-blue-200" />
-                <span>Ask Mithra Compliance AI</span>
-              </Button>
-
-              <a
-                href="https://www.bis.gov.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-[#024DA1] px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ml-auto"
-                title="Official BIS Standard Reference"
-              >
-                <span>BIS Ref</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      )}
     </div>
   );
 }
