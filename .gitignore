@@ -78,3 +78,6 @@ yarn-error.log*
 .idea/
 *.swp
 *.swo
+
+# Skill & Temporary caches
+.impeccable/

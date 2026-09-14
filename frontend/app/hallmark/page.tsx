@@ -4,19 +4,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import {
-  ChevronRight,
-  Camera,
-  Award,
-  Search,
-  AlertTriangle,
-  CheckCircle2,
-  Loader2,
-  ShieldAlert,
-  Calculator,
-  ExternalLink,
-  ShieldCheck,
-} from "lucide-react";
+import MaterialIcon from "@/components/MaterialIcon";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -66,7 +54,7 @@ export default function HallmarkPage() {
       setResult(data);
     } catch {
       setResult({
-        answer: "⚠️ Verification server unavailable. Please ensure the backend is running.",
+        answer: "Verification server unavailable. Please ensure the backend is running.",
         abstained: true,
       });
     } finally {
@@ -91,7 +79,7 @@ export default function HallmarkPage() {
       setResult(data);
     } catch {
       setResult({
-        answer: "⚠️ Photo OCR could not identify hallmark stamp. Please enter HUID manually.",
+        answer: "Photo OCR could not identify hallmark stamp. Please enter HUID manually.",
         abstained: true,
       });
     } finally {
@@ -100,20 +88,20 @@ export default function HallmarkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-700 flex flex-col font-sans">
+    <div className="app-page font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-8">
         {/* Hero Header */}
-        <div className="bg-gradient-to-r from-blue-50/70 via-white to-slate-50 border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center max-w-4xl mx-auto shadow-2xs space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#024DA1] border border-blue-200 text-xs font-semibold">
-            <ShieldCheck size={13} />
-            <span>Mandatory Hallmark Verification (IS 1417)</span>
+        <div className="space-y-3 text-center sm:text-left max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-200/80 dark:border-amber-900/60 text-xs font-bold text-[#D97706] dark:text-amber-400">
+            <MaterialIcon name="workspace_premium" size={15} />
+            <span>Precious Metals Authentication</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
-            Gold &amp; Silver <span className="text-[#024DA1]">Hallmark Authenticator</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            Gold &amp; Silver <span className="text-[#0052CC] dark:text-blue-400">Hallmark Authenticator</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
             Verify 6-character alphanumeric Hallmark Unique Identification (HUID) codes against Bureau
             registries, or upload a photo of the jewellery hallmark stamp.
           </p>
@@ -135,11 +123,11 @@ export default function HallmarkPage() {
         {/* Two Column Verification Station */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           {/* Left: Input Form */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
+          <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-5">
             <div>
               <label
                 htmlFor="huid-input"
-                className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2"
+                className="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2.5"
               >
                 Enter 6-Character HUID Code
               </label>
@@ -147,7 +135,7 @@ export default function HallmarkPage() {
                 <input
                   id="huid-input"
                   type="text"
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 uppercase font-mono tracking-widest text-sm sm:text-base outline-none focus:border-blue-400 focus:bg-white transition-all"
+                  className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full uppercase font-mono text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-[#0052CC] focus:ring-2 focus:ring-blue-500/10"
                   placeholder="e.g. AA1234"
                   maxLength={8}
                   value={huid}
@@ -158,16 +146,16 @@ export default function HallmarkPage() {
                   aria-label="HUID alphanumeric code"
                 />
                 <button
-                  className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs flex items-center gap-1.5 flex-shrink-0 transition-colors"
+                  className="h-11 px-6 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold flex-shrink-0 flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
                   onClick={() => verifyHUID()}
                   disabled={isLoading || !huid.trim()}
                   aria-label="Verify HUID"
                 >
                   {isLoading ? (
-                    <Loader2 size={16} className="animate-spin" />
+                    <MaterialIcon name="progress_activity" size={18} className="animate-spin" />
                   ) : (
                     <>
-                      <Search size={15} />
+                      <MaterialIcon name="search" size={17} />
                       <span>Verify</span>
                     </>
                   )}
@@ -175,9 +163,9 @@ export default function HallmarkPage() {
               </div>
             </div>
 
-            {/* Quick Test Codes */}
+            {/* Quick Test Codes Chips */}
             <div>
-              <span className="text-xs text-slate-500 block mb-2 font-medium">Quick Test Codes:</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 block mb-2 font-medium">Quick Test Codes:</span>
               <div className="flex flex-wrap gap-2">
                 {SAMPLE_HUIDS.map((s) => (
                   <button
@@ -186,7 +174,7 @@ export default function HallmarkPage() {
                       setHuid(s.huid);
                       verifyHUID(s.huid);
                     }}
-                    className="text-xs font-mono px-3 py-1.5 rounded-lg bg-slate-50 text-slate-700 border border-slate-200 hover:border-blue-400 hover:text-[#024DA1] transition-colors"
+                    className="query-chip font-mono text-xs"
                   >
                     <strong>{s.huid}</strong> • {s.label}
                   </button>
@@ -196,7 +184,7 @@ export default function HallmarkPage() {
 
             {/* Photo Dropzone */}
             <div
-              className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/70 p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-colors"
+              className="rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-850 p-6 text-center cursor-pointer hover:border-[#0052CC] hover:bg-blue-50/20 transition-all"
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
@@ -211,61 +199,53 @@ export default function HallmarkPage() {
               }}
             >
               {photoPreview ? (
-                <div className="flex flex-col items-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={photoPreview}
-                    alt="Uploaded hallmark specimen"
-                    className="max-h-32 rounded-lg object-contain mb-2 border border-slate-200 bg-white"
-                  />
-                  <p className="text-xs text-slate-500 font-medium">Click to upload another photo</p>
+                <div className="space-y-3">
+                  <div className="w-24 h-24 mx-auto rounded-xl overflow-hidden border border-slate-200 shadow-sm relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photoPreview} alt="Hallmark" className="w-full h-full object-cover" />
+                  </div>
+                  <p className="text-xs font-semibold text-[#0052CC] dark:text-blue-400">Click to upload another photo</p>
                 </div>
               ) : (
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#024DA1] flex items-center justify-center mb-2">
-                    <Camera size={20} />
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/70 text-[#0052CC] dark:text-blue-400 flex items-center justify-center mx-auto">
+                    <MaterialIcon name="photo_camera" size={20} />
                   </div>
-                  <p className="text-xs font-bold text-slate-900">Upload Hallmark Stamp Photo</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Automatic OCR extracts stamp characters</p>
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    Snap or Drop Jewellery Stamp Photo
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Automated OCR identifies HUID codes directly from physical laser engravings.
+                  </p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right: Verification Findings or Guidance */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs min-h-[360px] flex flex-col justify-between">
+          {/* Right: Verification Output */}
+          <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm min-h-[360px] flex flex-col justify-between">
             {result ? (
               <div className="space-y-4">
-                <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                  {result.verified === true ? (
-                    <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#0E8A5F] border border-emerald-200 flex items-center justify-center">
-                      <CheckCircle2 size={20} />
-                    </div>
-                  ) : result.verified === false ? (
-                    <div className="w-9 h-9 rounded-xl bg-red-50 text-[#970C12] border border-red-200 flex items-center justify-center">
-                      <ShieldAlert size={20} />
-                    </div>
-                  ) : (
-                    <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center">
-                      <AlertTriangle size={20} />
-                    </div>
-                  )}
+                <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${result.verified ? "bg-emerald-50 text-[#059669]" : "bg-rose-50 text-rose-600"}`}>
+                    <MaterialIcon name={result.verified ? "verified" : "gpp_bad"} size={22} />
+                  </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">Registry Response: {huid}</h3>
-                    <span className="text-[11px] text-slate-500">Central Hallmarking Register</span>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Registry Result: {huid}</h3>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">Central Assaying Register</span>
                   </div>
                 </div>
 
-                <div className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
                   {result.answer}
                 </div>
 
                 {result.follow_up && (
-                  <div className="pt-3 border-t border-slate-100">
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
                     <Link href={`/chat?q=${encodeURIComponent(result.follow_up)}`}>
-                      <button className="text-xs font-bold text-[#024DA1] hover:underline flex items-center gap-1">
+                      <button className="text-xs font-bold text-[#0052CC] dark:text-blue-400 hover:underline flex items-center gap-1">
                         <span>{result.follow_up}</span>
-                        <ChevronRight size={13} />
+                        <MaterialIcon name="chevron_right" size={15} />
                       </button>
                     </Link>
                   </div>
@@ -273,71 +253,71 @@ export default function HallmarkPage() {
               </div>
             ) : (
               <div className="text-center py-12 my-auto">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#024DA1] flex items-center justify-center mx-auto mb-3">
-                  <Award size={24} />
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-[#0052CC] dark:text-blue-400 flex items-center justify-center mx-auto mb-3">
+                  <MaterialIcon name="workspace_premium" size={26} />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 mb-1">Awaiting Inspection Input</h3>
-                <p className="text-xs text-slate-500 max-w-xs mx-auto">
-                  Type a 6-character HUID or select one of the test codes above to run validation against BIS registries.
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">Awaiting Inspection Input</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+                  Type a 6-character HUID or select one of the test codes to verify against national BIS registries.
                 </p>
               </div>
             )}
 
-            <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
-              <span>National Consumer Helpline: <strong>1800-11-4000</strong></span>
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
+              <span>Helpline: <strong className="text-slate-900 dark:text-white font-mono">1800-11-4000</strong></span>
               <a
                 href="https://www.bis.gov.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline flex items-center gap-1 text-[#024DA1] font-bold"
+                className="hover:underline flex items-center gap-1 text-[#0052CC] dark:text-blue-400 font-bold"
               >
-                <span>BIS Portal</span>
-                <ExternalLink size={10} />
+                <span>BIS National Registry</span>
+                <MaterialIcon name="open_in_new" size={12} />
               </a>
             </div>
           </div>
         </div>
 
         {/* Visual Guide: Mandatory 3 Marks */}
-        <section className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
+        <section className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900">
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
               Anatomy of Mandatory 3-Piece Hallmark
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Under BIS Act 2016, genuine hallmarked gold articles must bear all three distinct laser-etched stamps:
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#024DA1] border border-blue-200 flex items-center justify-center mb-2.5 font-black text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 text-[#0052CC] dark:text-blue-300 flex items-center justify-center mb-3 font-black text-xs">
                 1
               </div>
-              <h4 className="text-xs font-bold text-slate-900 mb-1">BIS Triangle Logo</h4>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white mb-1.5">BIS Triangle Logo</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 The official triangular Bureau of Indian Standards hallmark logo certifying compliance with
                 national standard IS 1417.
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center mb-2.5 font-black text-xs">
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center mb-3 font-black text-xs">
                 2
               </div>
-              <h4 className="text-xs font-bold text-slate-900 mb-1">Purity &amp; Fineness Stamp</h4>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                Indicates gold purity grade, e.g. <strong>22K916</strong> (91.6% pure),{" "}
-                <strong>18K750</strong> (75.0%), or <strong>14K585</strong> (58.5%).
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white mb-1.5">Purity &amp; Fineness Stamp</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                Indicates gold purity grade, e.g. <strong className="text-slate-900 dark:text-white font-mono">22K916</strong> (91.6% pure),{" "}
+                <strong className="text-slate-900 dark:text-white font-mono">18K750</strong> (75.0%), or <strong className="text-slate-900 dark:text-white font-mono">14K585</strong> (58.5%).
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
-              <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center mb-2.5 font-black text-xs">
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+              <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 flex items-center justify-center mb-3 font-black text-xs">
                 3
               </div>
-              <h4 className="text-xs font-bold text-slate-900 mb-1">6-Digit HUID Code</h4>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white mb-1.5">6-Digit HUID Code</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 A unique alphanumeric identifier laser-etched at the Assaying &amp; Hallmarking Centre
                 (AHC), traceable in the national database.
               </p>
@@ -346,23 +326,23 @@ export default function HallmarkPage() {
         </section>
 
         {/* Interactive Gold Purity Calculator */}
-        <section className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
+        <section className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
           <div className="flex items-center gap-2">
-            <Calculator size={18} className="text-[#024DA1]" />
-            <h3 className="text-base sm:text-lg font-bold text-slate-900">Official BIS Gold Fineness Reference Table</h3>
+            <MaterialIcon name="calculate" size={20} className="text-[#0052CC] dark:text-blue-400" />
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Official BIS Gold Fineness Reference Table</h3>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5">
             {PURITY_STANDARDS.map((p) => {
               const isSelected = selectedPurity.karat === p.karat;
               return (
                 <button
                   key={p.karat}
                   onClick={() => setSelectedPurity(p)}
-                  className={`p-3 rounded-xl border text-center transition-all ${
+                  className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-[#024DA1] border-[#024DA1] text-white shadow-xs"
-                      : "bg-slate-50 border-slate-200 text-slate-700 hover:border-blue-300"
+                      ? "bg-[#0052CC] border-[#0052CC] text-white shadow-sm"
+                      : "bg-slate-50 dark:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-blue-300"
                   }`}
                 >
                   <div className="text-xs font-black">{p.karat}</div>
@@ -372,22 +352,22 @@ export default function HallmarkPage() {
             })}
           </div>
 
-          <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200/90 dark:border-blue-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs font-bold text-[#024DA1] uppercase tracking-wide">
+              <span className="text-xs font-bold text-[#0052CC] dark:text-blue-300 uppercase tracking-wide">
                 Grade {selectedPurity.karat} (BIS Fineness {selectedPurity.fineness})
               </span>
-              <h4 className="text-sm font-bold text-slate-900 mt-0.5">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
                 {selectedPurity.purity} Gold Content
               </h4>
-              <p className="text-xs text-slate-600 mt-0.5">{selectedPurity.desc}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">{selectedPurity.desc}</p>
             </div>
             <Link
               href={`/chat?q=${encodeURIComponent(`What is the hallmarking requirement for ${selectedPurity.karat} gold?`)}`}
             >
-              <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1 shadow-xs flex-shrink-0 transition-colors">
+              <button className="h-9 px-4 rounded-full bg-[#0052CC] text-white text-xs font-bold flex items-center gap-1 cursor-pointer">
                 <span>Ask About {selectedPurity.karat}</span>
-                <ChevronRight size={13} />
+                <MaterialIcon name="chevron_right" size={15} />
               </button>
             </Link>
           </div>

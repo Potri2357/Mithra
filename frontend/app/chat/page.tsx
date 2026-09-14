@@ -32,40 +32,36 @@ interface Message {
 
 const QUICK_START_CARDS = [
   {
-    title: "Find my standard",
-    desc: "Identify the IS number and certification path",
+    title: "Find Indian Standard (IS)",
+    desc: "Search IS number & QCO by product name",
     query: "Which Indian Standard (IS number) applies to my product?",
     icon: "library_books",
+    color: "text-[#0052CC] dark:text-blue-400",
+    bg: "bg-blue-50 dark:bg-blue-950/60",
   },
   {
-    title: "Understand a scheme",
-    desc: "Compare ISI Mark, CRS, and FMCS certification paths",
+    title: "Certification Schemes",
+    desc: "Compare ISI Mark Scheme I vs CRS Scheme II",
     query: "Explain the difference between ISI Mark Scheme I and CRS Scheme II",
     icon: "verified",
+    color: "text-[#059669] dark:text-emerald-400",
+    bg: "bg-emerald-50 dark:bg-emerald-950/60",
   },
   {
-    title: "Verify a hallmark",
-    desc: "Check a HUID and spot possible mismatch signals",
+    title: "Verify Hallmark & HUID",
+    desc: "Decode 6-character gold hallmark authenticity",
     query: "How do I verify a 6-digit gold hallmark HUID code?",
     icon: "workspace_premium",
+    color: "text-[#D97706] dark:text-amber-400",
+    bg: "bg-amber-50 dark:bg-amber-950/60",
   },
   {
-    title: "Find a lab near me",
-    desc: "Locate NABL & BIS accredited testing facilities",
+    title: "Accredited Testing Labs",
+    desc: "Locate NABL & BIS testing facilities nearby",
     query: "Find accredited laboratories for testing LED lamps or electrical items",
     icon: "biotech",
-  },
-  {
-    title: "File a complaint",
-    desc: "Report fake ISI marks or substandard products",
-    query: "How do I file a consumer complaint against a fake ISI marked product?",
-    icon: "gpp_bad",
-  },
-  {
-    title: "Ask anything",
-    desc: "Any compliance, testing, or regulatory question",
-    query: "What are the latest Quality Control Orders (QCO) issued by BIS?",
-    icon: "auto_awesome",
+    color: "text-[#7C3AED] dark:text-purple-400",
+    bg: "bg-purple-50 dark:bg-purple-950/60",
   },
 ];
 
@@ -518,15 +514,19 @@ function ChatContent() {
             {/* Navigation links */}
             <nav className="sidebar-nav">
               <span className="sidebar-section-label">
-                Explore
+                Assistant
               </span>
               <Link
                 href="/"
-                className="sidebar-link"
+                className="sidebar-link font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
               >
-                <MaterialIcon name="home" size={16} />
-                <span>Home Portal</span>
+                <MaterialIcon name="chat" size={16} />
+                <span>Maanak Saathi AI</span>
               </Link>
+
+              <span className="sidebar-section-label mt-3">
+                Portals &amp; Tools
+              </span>
               <Link
                 href="/standards"
                 className="sidebar-link"
@@ -670,40 +670,51 @@ function ChatContent() {
             <div className="empty-state">
               {/* Greeting */}
               <div className="empty-hero animate-fade-up">
-                <div className="hero-brand-mark">
+                <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-center mx-auto p-2.5">
                   <Image src="/bis_logo.png" alt="BIS Logo" width={44} height={44} className="object-contain" />
                 </div>
-                <div>
-                  <h2 className="empty-title">
-                    Meet Maanak Saathi, your BIS compliance companion.
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-[#0052CC] dark:bg-blue-950/70 dark:border-blue-800 dark:text-blue-300">
+                    <MaterialIcon name="verified" size={14} />
+                    <span>Maanak Saathi AI · Official BIS Compliance Assistant</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    How can I assist your compliance today?
                   </h2>
-                  <p className="empty-copy">
-                    Ask a standards question, scan a hallmark, locate a lab, or compare certification schemes with cited guidance.
+                  <p className="text-sm text-slate-500 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
+                    Ask any question regarding 22,000+ Indian Standards (IS), mandatory QCOs, certification schemes, or gold hallmark verification.
                   </p>
                 </div>
               </div>
 
               {/* Quick-Start Grid */}
               <div className="quick-start-grid">
-                {QUICK_START_CARDS.map((card, i) => {
-                  return (
-                    <button
-                      key={card.title}
-                      onClick={() => sendMessage(card.query)}
-                      className="quick-start-card group animate-fade-up"
-                      style={{ animationDelay: `${i * 0.06}s` }}
-                      type="button"
-                    >
-                      <div className="quick-start-icon">
-                        <MaterialIcon name={card.icon} size={19} />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-[var(--color-text-primary)] mb-1">{card.title}</h3>
-                        <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">{card.desc}</p>
-                      </div>
-                    </button>
-                  );
-                })}
+                {QUICK_START_CARDS.map((card, i) => (
+                  <button
+                    key={card.title}
+                    onClick={() => sendMessage(card.query)}
+                    className="quick-start-card group animate-fade-up"
+                    style={{ animationDelay: `${i * 0.05}s` }}
+                    type="button"
+                  >
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 ${card.bg} ${card.color}`}>
+                      <MaterialIcon name={card.icon} size={20} />
+                    </div>
+                    <div className="min-w-0 flex-1 text-left">
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0052CC] dark:group-hover:text-blue-400 transition-colors">
+                        {card.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                        {card.desc}
+                      </p>
+                    </div>
+                    <MaterialIcon
+                      name="arrow_forward"
+                      size={16}
+                      className="text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all flex-shrink-0"
+                    />
+                  </button>
+                ))}
               </div>
             </div>
           ) : (

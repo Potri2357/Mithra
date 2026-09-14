@@ -4,17 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import {
-  Award,
-  CheckCircle2,
-  Clock,
-  Coins,
-  ShieldCheck,
-  ArrowRight,
-  Building2,
-  FileText,
-  Sparkles,
-} from "lucide-react";
+import MaterialIcon from "@/components/MaterialIcon";
 
 const SCHEMES = [
   {
@@ -145,50 +135,50 @@ export default function SchemesPage() {
   const rec = getRecommendation();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-700 flex flex-col font-sans">
+    <div className="app-page font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
-        {/* Hero Header */}
-        <div className="bg-gradient-to-r from-blue-50/70 via-white to-slate-50 border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center max-w-4xl mx-auto shadow-2xs space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#024DA1] border border-blue-200 text-xs font-semibold">
-            <Award size={13} />
-            <span>Official BIS Licensing &amp; Certification Framework</span>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-8">
+        {/* Page Hero Header */}
+        <div className="space-y-3 text-center sm:text-left max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-900/60 text-xs font-bold text-[#059669] dark:text-emerald-400">
+            <MaterialIcon name="verified" size={15} />
+            <span>Licensing & Conformity Assessment</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
-            BIS Certification <span className="text-[#024DA1]">Schemes Navigator</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            BIS Certification <span className="text-[#0052CC] dark:text-blue-400">Schemes Navigator</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
             Compare compliance routes: ISI Mark (Scheme I), Compulsory Registration (CRS), Foreign Manufacturers (FMCS),
             and Hallmarking. Includes checklists, fee structures, and MSME concessions.
           </p>
         </div>
 
         {/* ── Interactive Scheme Wizard ── */}
-        <section className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
+        <section className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-slate-100 dark:border-slate-800">
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Sparkles size={17} className="text-[#024DA1]" />
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <MaterialIcon name="auto_awesome" size={20} className="text-[#0052CC] dark:text-blue-400" />
                 <span>Interactive Scheme Applicability Advisor</span>
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Answer 3 quick questions to identify the exact BIS licensing pathway for your enterprise.
               </p>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-blue-50 text-[#024DA1] border border-blue-200 self-start sm:self-auto">
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0052CC] dark:text-blue-300 border border-blue-200/80 dark:border-blue-900/60 self-start sm:self-auto">
               Regulatory Guidance
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {/* Question 1: Product Category */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 block">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
                 1. Product category
               </label>
               <select
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC]"
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
               >
@@ -200,12 +190,12 @@ export default function SchemesPage() {
             </div>
 
             {/* Question 2: Factory Location */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 block">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
                 2. Manufacturing facility location
               </label>
               <select
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC]"
                 value={origin}
                 onChange={(e) => setOrigin(e.target.value)}
               >
@@ -215,12 +205,12 @@ export default function SchemesPage() {
             </div>
 
             {/* Question 3: Enterprise Scale */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 block">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
                 3. Enterprise scale (concessions)
               </label>
               <select
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC]"
                 value={msmeStatus}
                 onChange={(e) => setMsmeStatus(e.target.value)}
               >
@@ -232,43 +222,44 @@ export default function SchemesPage() {
           </div>
 
           {/* Recommendation Output Card */}
-          <div className="p-4 sm:p-5 rounded-xl bg-blue-50/70 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
+          <div className="p-5 sm:p-6 rounded-2xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200/90 dark:border-blue-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-[#0E8A5F]" />
-                <span className="text-xs font-bold text-[#024DA1] uppercase tracking-wide">
+                <MaterialIcon name="check_circle" size={18} className="text-[#059669] dark:text-emerald-400" />
+                <span className="text-xs font-bold text-[#0052CC] dark:text-blue-300 uppercase tracking-wide">
                   Recommended Compliance Route
                 </span>
               </div>
-              <h3 className="text-base font-extrabold text-slate-900">{rec.scheme}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed max-w-xl">{rec.description}</p>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">{rec.scheme}</h3>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">{rec.description}</p>
               {msmeStatus !== "large" && (
-                <div className="text-[11px] font-semibold text-[#0E8A5F] pt-1">
+                <div className="text-xs font-semibold text-[#059669] dark:text-emerald-400 pt-0.5">
                   ✓ Eligible for 20% MSME/Start-up fee concession on marking &amp; application fees.
                 </div>
               )}
             </div>
 
             <Link href={rec.path} className="flex-shrink-0">
-              <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-xs transition-colors">
+              <button className="h-10 px-5 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2 cursor-pointer">
                 <span>Start Application Guidance</span>
-                <ArrowRight size={13} />
+                <MaterialIcon name="arrow_forward" size={15} />
               </button>
             </Link>
           </div>
         </section>
 
         {/* ── Scheme Tabs & Deep Details ── */}
-        <section className="space-y-4">
+        <section className="space-y-5">
+          {/* Pill Tabs */}
           <div className="flex flex-wrap gap-2">
             {SCHEMES.map((scheme) => (
               <button
                 key={scheme.id}
                 onClick={() => setActiveScheme(scheme)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   activeScheme.id === scheme.id
-                    ? "bg-[#024DA1] border-[#024DA1] text-white shadow-xs"
-                    : "bg-white border-slate-200 text-slate-700 hover:border-blue-300"
+                    ? "bg-[#0052CC] text-white shadow-sm"
+                    : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50"
                 }`}
               >
                 <span>{scheme.name}</span>
@@ -277,91 +268,91 @@ export default function SchemesPage() {
           </div>
 
           {/* Detailed Scheme Breakdown Card */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4 border-b border-slate-100">
+          <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-5 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${activeScheme.badgeClass}`}>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${activeScheme.badgeClass}`}>
                     {activeScheme.code}
                   </span>
-                  <span className="text-xs font-semibold text-slate-500">Target: {activeScheme.target}</span>
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Target: {activeScheme.target}</span>
                 </div>
-                <h3 className="text-xl font-extrabold text-slate-900">{activeScheme.name}</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{activeScheme.name}</h3>
               </div>
 
               <Link
                 href={`/chat?q=${encodeURIComponent(`How to apply for ${activeScheme.name}`)}`}
                 className="flex-shrink-0"
               >
-                <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition-colors">
-                  <Sparkles size={13} />
+                <button className="h-9 px-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer">
+                  <MaterialIcon name="auto_awesome" size={15} className="text-[#0052CC]" />
                   <span>Consult Assistant</span>
                 </button>
               </Link>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               {activeScheme.overview}
             </p>
 
             {/* Metric Boxes */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
-                  <Clock size={13} className="text-[#024DA1]" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">
+                  <MaterialIcon name="schedule" size={15} className="text-[#0052CC] dark:text-blue-400" />
                   <span>Processing Timeline</span>
                 </div>
-                <div className="text-sm font-bold text-slate-900">{activeScheme.timeline}</div>
+                <div className="text-sm font-bold text-slate-900 dark:text-white">{activeScheme.timeline}</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
-                  <Building2 size={13} className="text-[#024DA1]" />
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">
+                  <MaterialIcon name="factory" size={15} className="text-[#0052CC] dark:text-blue-400" />
                   <span>Factory Audit</span>
                 </div>
-                <div className="text-xs font-bold text-slate-900">{activeScheme.auditRequired}</div>
+                <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{activeScheme.auditRequired}</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
-                  <Coins size={13} className="text-[#024DA1]" />
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">
+                  <MaterialIcon name="payments" size={15} className="text-[#0052CC] dark:text-blue-400" />
                   <span>Fee Structure</span>
                 </div>
-                <div className="text-xs font-bold text-slate-900 truncate" title={activeScheme.fees}>
+                <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate" title={activeScheme.fees}>
                   {activeScheme.fees}
                 </div>
               </div>
             </div>
 
             {/* Document Checklist & Eligible Products */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-              <div className="space-y-2.5">
-                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <FileText size={14} className="text-[#024DA1]" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <MaterialIcon name="description" size={16} className="text-[#0052CC]" />
                   <span>Mandatory Application Checklist</span>
                 </h4>
-                <ul className="space-y-2 text-xs text-slate-600">
+                <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
                   {activeScheme.checklist.map((c, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <CheckCircle2 size={14} className="text-[#0E8A5F] flex-shrink-0 mt-0.5" />
+                    <li key={i} className="flex items-start gap-2.5">
+                      <MaterialIcon name="check_circle" size={16} className="text-[#059669] dark:text-emerald-400 flex-shrink-0 mt-0.5" />
                       <span>{c}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="space-y-2.5">
-                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck size={14} className="text-[#024DA1]" />
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <MaterialIcon name="verified_user" size={16} className="text-[#0052CC]" />
                   <span>Key Products Covered</span>
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
                   {activeScheme.eligibleProducts}
                 </p>
 
-                <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80 text-xs space-y-1">
-                  <span className="font-bold text-[#024DA1] block">Government Concessions Notice:</span>
-                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 text-xs space-y-1">
+                  <span className="font-bold text-[#0052CC] dark:text-blue-300 block">Government Concessions Notice:</span>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
                     Under BIS Gazette S.O. 1290, Micro &amp; Small Enterprises (MSEs) and registered Start-ups receive a
                     20% concession on annual minimum marking fees and 50% concession on application audit fees.
                   </p>
