@@ -8,6 +8,32 @@ import MaterialIcon from "@/components/MaterialIcon";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { StandardsView } from "@/components/views/StandardsView";
+import { SchemesView } from "@/components/views/SchemesView";
+import { HallmarkView } from "@/components/views/HallmarkView";
+import { LabsView } from "@/components/views/LabsView";
+import { ConsumerView } from "@/components/views/ConsumerView";
+
+export type ActiveView = "chat" | "standards" | "schemes" | "hallmark" | "labs" | "consumer";
+
+const VIEW_TITLES: Record<ActiveView, string> = {
+  chat: "Mithra AI",
+  standards: "Standards Directory",
+  schemes: "Certification Schemes",
+  hallmark: "Hallmark & HUID",
+  labs: "Accredited Labs",
+  consumer: "Consumer Redressal",
+};
+
+const VIEW_SUBTITLES: Record<ActiveView, string> = {
+  chat: "BIS standards intelligence · Grounded RAG",
+  standards: "Browse 22,000+ Indian Standards (IS), mandatory QCOs & Committees",
+  schemes: "Interactive Schemes Comparison & Applicability Advisor",
+  hallmark: "Gold & Silver Fineness Verification Station",
+  labs: "National Laboratory Network Radar & Testing Scope",
+  consumer: "Statutory Grievance Redressal & ISI Authenticity Verification",
+};
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 interface Citation {
@@ -130,9 +156,18 @@ interface SpeechRecognitionEventInstance {
   };
 }
 
-function ChatContent() {
+function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+
+  const [activeView, setActiveView] = useState<ActiveView>(() => {
+    if (initialQuery) return "chat";
+    const viewParam = searchParams.get("view") as ActiveView | null;
+    if (viewParam && ["chat", "standards", "schemes", "hallmark", "labs", "consumer"].includes(viewParam)) {
+      return viewParam;
+    }
+    return initialView || "chat";
+  });
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState(initialQuery);
@@ -149,6 +184,33 @@ function ChatContent() {
   const [speechTranscript, setSpeechTranscript] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Sync view when searchParams changes
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) {
+      setActiveView("chat");
+    } else {
+      const v = searchParams.get("view") as ActiveView | null;
+      if (v && ["chat", "standards", "schemes", "hallmark", "labs", "consumer"].includes(v)) {
+        setActiveView(v);
+      }
+    }
+  }, [searchParams]);
+
+  const handleSelectView = useCallback((view: ActiveView) => {
+    setActiveView(view);
+    if (typeof window !== "undefined") {
+      if (window.innerWidth < 1024) setSidebarOpen(false);
+      const url = new URL(window.location.href);
+      if (view === "chat") {
+        url.searchParams.delete("view");
+      } else {
+        url.searchParams.set("view", view);
+      }
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
 
   // Set initial sidebar state based on screen width on mount
   useEffect(() => {
@@ -280,6 +342,16 @@ function ChatContent() {
       }
     },
     [input, currentLang, isLoading, messages]
+  );
+
+  const handleAskMithra = useCallback(
+    (query: string) => {
+      handleSelectView("chat");
+      setTimeout(() => {
+        sendMessage(query);
+      }, 80);
+    },
+    [handleSelectView, sendMessage]
   );
 
   // Auto-send initial query passed via URL
@@ -504,8 +576,13 @@ function ChatContent() {
         <div className="flex flex-col h-full p-3 justify-between">
           <div className="space-y-4">
             <div className="sidebar-brand">
-              <Link href="/" className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="brand-mark">
+              <button
+                type="button"
+                onClick={() => handleSelectView("chat")}
+                className="flex items-center gap-3 min-w-0 flex-1 text-left bg-transparent border-0 cursor-pointer p-0 group"
+                title="Mithra Home"
+              >
+                <div className="brand-mark group-hover:border-blue-300 transition-colors">
                   <Image src="/bis_logo.png" alt="BIS Logo" width={28} height={28} className="object-contain" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -514,7 +591,7 @@ function ChatContent() {
                   </span>
                   <span className="text-[11px] text-[var(--color-text-muted)] font-semibold truncate block">Bureau of Indian Standards</span>
                 </div>
-              </Link>
+              </button>
               <button
                 className="btn-icon w-8 h-8 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 onClick={() => setSidebarOpen(false)}
@@ -527,7 +604,10 @@ function ChatContent() {
 
             {/* + New Chat Button (Section 3.3) */}
             <button
-              onClick={clearChat}
+              onClick={() => {
+                handleSelectView("chat");
+                clearChat();
+              }}
               className="new-chat-button"
             >
               <MaterialIcon name="add" size={17} className="text-[var(--blue-600)]" />
@@ -539,58 +619,96 @@ function ChatContent() {
               <span className="sidebar-section-label">
                 Assistant
               </span>
-              <Link
-                href="/"
-                className="sidebar-link font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+              <button
+                type="button"
+                onClick={() => handleSelectView("chat")}
+                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
+                  activeView === "chat"
+                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                    : ""
+                }`}
               >
                 <MaterialIcon name="chat" size={16} />
                 <span>Mithra AI</span>
-              </Link>
+              </button>
 
               <span className="sidebar-section-label mt-3">
                 Portals &amp; Tools
               </span>
-              <Link
-                href="/standards"
-                className="sidebar-link"
+              <button
+                type="button"
+                onClick={() => handleSelectView("standards")}
+                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
+                  activeView === "standards"
+                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                    : ""
+                }`}
               >
                 <MaterialIcon name="library_books" size={16} />
                 <span>Standards Directory</span>
-              </Link>
-              <Link
-                href="/schemes"
-                className="sidebar-link"
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectView("schemes")}
+                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
+                  activeView === "schemes"
+                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                    : ""
+                }`}
               >
                 <MaterialIcon name="verified" size={16} />
                 <span>Certification Schemes</span>
-              </Link>
-              <Link
-                href="/hallmark"
-                className="sidebar-link"
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectView("hallmark")}
+                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
+                  activeView === "hallmark"
+                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                    : ""
+                }`}
               >
                 <MaterialIcon name="workspace_premium" size={16} />
                 <span>Hallmark &amp; HUID</span>
-              </Link>
-              <Link
-                href="/labs"
-                className="sidebar-link"
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectView("labs")}
+                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
+                  activeView === "labs"
+                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                    : ""
+                }`}
               >
                 <MaterialIcon name="biotech" size={16} />
                 <span>Accredited Labs</span>
-              </Link>
-              <Link
-                href="/consumer"
-                className="sidebar-link"
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectView("consumer")}
+                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
+                  activeView === "consumer"
+                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                    : ""
+                }`}
               >
                 <MaterialIcon name="health_and_safety" size={16} />
                 <span>Consumer Redressal</span>
-              </Link>
+              </button>
             </nav>
 
             <div className="recent-block">
               <span className="sidebar-section-label">Recent</span>
               {RECENT_THREADS.map((thread) => (
-                <button key={thread} type="button" onClick={() => sendMessage(thread)} className="recent-link">
+                <button
+                  key={thread}
+                  type="button"
+                  onClick={() => {
+                    handleSelectView("chat");
+                    sendMessage(thread);
+                  }}
+                  className="recent-link cursor-pointer text-left w-full"
+                >
                   <span>{thread}</span>
                 </button>
               ))}
@@ -637,39 +755,54 @@ function ChatContent() {
 
             {!sidebarOpen ? (
               <div className="flex items-center gap-2.5">
-                <div className="brand-mark">
+                <button
+                  type="button"
+                  onClick={() => handleSelectView("chat")}
+                  className="brand-mark cursor-pointer border-0 p-0 bg-transparent flex items-center"
+                  title="Return to Mithra Chat"
+                >
                   <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
-                </div>
+                </button>
                 <div>
                   <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
-                    <span>Mithra</span>
-                    <span className="status-pill">
-                      <span className="status-dot" />
-                      Verified mode
-                    </span>
+                    <span>{VIEW_TITLES[activeView]}</span>
                   </h1>
                   <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-                    BIS standards intelligence
+                    {VIEW_SUBTITLES[activeView]}
                   </p>
                 </div>
               </div>
             ) : (
               <div className="flex items-center gap-2.5">
-                <span className="status-pill">
-                  <span className="status-dot" />
-                  Verified mode
-                </span>
+                <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight">
+                  {VIEW_TITLES[activeView]}
+                </h1>
                 <span className="text-xs text-[var(--color-text-muted)] hidden sm:inline font-medium">
-                  BIS standards intelligence · Grounded RAG
+                  · {VIEW_SUBTITLES[activeView]}
                 </span>
               </div>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            {!sidebarOpen && (
+            {activeView !== "chat" && (
               <button
-                onClick={clearChat}
+                type="button"
+                onClick={() => handleSelectView("chat")}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white bg-[#0052CC] hover:bg-[#0047B3] transition-colors cursor-pointer shadow-xs"
+                title="Open Mithra AI Chat"
+              >
+                <MaterialIcon name="chat" size={15} />
+                <span>Ask Mithra</span>
+              </button>
+            )}
+
+            {activeView === "chat" && !sidebarOpen && (
+              <button
+                onClick={() => {
+                  handleSelectView("chat");
+                  clearChat();
+                }}
                 className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
                 title="Start New Chat"
               >
@@ -715,8 +848,10 @@ function ChatContent() {
           </div>
         </header>
 
-        {/* Message Thread (Section 3.3 & 4) */}
-        <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        {activeView === "chat" && (
+          <>
+            {/* Message Thread (Section 3.3 & 4) */}
+            <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
           {messages.length === 0 ? (
             /* ── Empty State ── */
             <div className="empty-state">
@@ -1005,6 +1140,38 @@ function ChatContent() {
             </p>
           </div>
         </footer>
+          </>
+        )}
+
+        {activeView === "standards" && (
+          <main className="flex-1 overflow-y-auto">
+            <StandardsView onAskMithra={handleAskMithra} />
+          </main>
+        )}
+
+        {activeView === "schemes" && (
+          <main className="flex-1 overflow-y-auto">
+            <SchemesView onAskMithra={handleAskMithra} />
+          </main>
+        )}
+
+        {activeView === "hallmark" && (
+          <main className="flex-1 overflow-y-auto">
+            <HallmarkView onAskMithra={handleAskMithra} />
+          </main>
+        )}
+
+        {activeView === "labs" && (
+          <main className="flex-1 overflow-y-auto">
+            <LabsView onAskMithra={handleAskMithra} />
+          </main>
+        )}
+
+        {activeView === "consumer" && (
+          <main className="flex-1 overflow-y-auto">
+            <ConsumerView onAskMithra={handleAskMithra} />
+          </main>
+        )}
       </div>
 
       {/* ── Photo Upload & Hallmark Guide Overlay Dialog (Section 3.4) ── */}
@@ -1089,7 +1256,7 @@ function ChatContent() {
   );
 }
 
-export default function ChatPage() {
+export default function ChatPage({ initialView = "chat" }: { initialView?: ActiveView }) {
   return (
     <Suspense
       fallback={
@@ -1098,7 +1265,7 @@ export default function ChatPage() {
         </div>
       }
     >
-      <ChatContent />
+      <ChatContent initialView={initialView} />
     </Suspense>
   );
 }

@@ -6,16 +6,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/standards", label: "Standards" },
-  { href: "/schemes", label: "Certification" },
-  { href: "/hallmark", label: "Hallmark & HUID" },
-  { href: "/labs", label: "Testing Labs" },
-  { href: "/consumer", label: "Consumer Support" },
-  { href: "/chat", label: "Resources" },
-];
-
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -96,21 +86,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Center Nav Pills */}
-        <nav className="hidden xl:flex items-center gap-1" aria-label="Main Navigation">
-          {navLinks.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-pill ${isActive ? "is-active" : ""}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Center Nav Pills removed as requested - option-free navbar */}
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
@@ -188,24 +164,7 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="xl:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 py-3 space-y-1 shadow-lg animate-fadeIn">
-          {navLinks.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-2 px-3 py-2.5 text-sm font-semibold rounded-xl transition-colors ${
-                  isActive
-                    ? "bg-blue-50 dark:bg-blue-950/60 text-[#0052CC] dark:text-blue-400"
-                    : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-          <div className="pt-2 pb-1 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="py-2 flex items-center justify-between">
             <button
               onClick={cycleLang}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200"
