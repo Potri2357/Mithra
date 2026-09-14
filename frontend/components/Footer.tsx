@@ -39,7 +39,7 @@ export default function Footer() {
               </div>
               <div>
                 <div className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-[#0052CC] transition-colors">
-                  Maanak Saathi
+                  Mithra
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                   Bureau of Indian Standards
@@ -142,7 +142,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-500 dark:text-slate-500 text-center sm:text-left">
-            © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Maanak Saathi Intelligent Advisory Platform.
+            © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Mithra Intelligent Advisory Platform.
           </p>
           <div className="flex items-center gap-5 text-xs text-slate-500 dark:text-slate-400">
             <Link href="/consumer" className="hover:text-[#0052CC] transition-colors">
@@ -154,7 +154,7 @@ export default function Footer() {
             </Link>
             <span className="text-slate-300 dark:text-slate-700">•</span>
             <Link href="/chat" className="hover:text-[#0052CC] transition-colors font-semibold text-[#0052CC] dark:text-blue-400">
-              Ask Saathi
+              Ask Mithra
             </Link>
           </div>
         </div>

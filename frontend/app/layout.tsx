@@ -21,13 +21,13 @@ const notoSansTamil = Noto_Sans_Tamil({
 });
 
 export const metadata: Metadata = {
-  title: "Maanak Saathi — Bureau of Indian Standards Intelligence",
+  title: "Mithra — Bureau of Indian Standards Intelligence",
   description:
     "Official AI-driven standards and compliance intelligence platform for the Bureau of Indian Standards (BIS). Direct, citation-grounded guidance on 22,000+ Indian Standards (IS), mandatory QCOs, certification schemes, and hallmarking.",
   keywords:
-    "Maanak Saathi, BIS, Indian Standards, Bureau of Indian Standards, ISI Mark, CRS, FMCS, Hallmarking, HUID, BIS Certification, IS Standards, NABL Labs",
+    "Mithra, BIS, Indian Standards, Bureau of Indian Standards, ISI Mark, CRS, FMCS, Hallmarking, HUID, BIS Certification, IS Standards, NABL Labs",
   openGraph: {
-    title: "Maanak Saathi — Bureau of Indian Standards Intelligence",
+    title: "Mithra — Bureau of Indian Standards Intelligence",
     description:
       "Direct, citation-grounded advisory on 22,000+ Indian Standards (IS), mandatory QCOs, certification schemes, gold HUID verification, and accredited laboratories.",
     type: "website",

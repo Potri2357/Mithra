@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI):
 
 # ─── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="BIS AI Assistant API",
+    title="Mithra — BIS AI Assistant API",
     description="AI-Powered Intelligent Assistant for Indian Standards & BIS Services",
     version="1.0.0",
     lifespan=lifespan,
@@ -96,7 +96,7 @@ class HallmarkVerifyRequest(BaseModel):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "BIS AI Assistant", "version": "1.0.0"}
+    return {"status": "ok", "service": "Mithra — BIS AI Assistant", "version": "1.0.0"}
 
 
 @app.post("/api/chat", response_model=ChatResponse)

@@ -310,7 +310,7 @@ export default function StandardsPage() {
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0052CC] dark:text-blue-400 hover:underline"
                 >
                   <MaterialIcon name="auto_awesome" size={15} />
-                  <span>Ask Saathi About {item.is_number}</span>
+                  <span>Ask Mithra About {item.is_number}</span>
                 </Link>
 
                 <a

@@ -492,7 +492,7 @@ function ChatContent() {
                 </div>
                 <div className="min-w-0">
                   <span className="font-extrabold text-[16px] text-[var(--color-text-primary)] block leading-tight">
-                    Maanak Saathi
+                    Mithra
                   </span>
                   <span className="text-[11px] text-[var(--color-text-muted)] font-semibold">Bureau of Indian Standards</span>
                 </div>
@@ -521,7 +521,7 @@ function ChatContent() {
                 className="sidebar-link font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
               >
                 <MaterialIcon name="chat" size={16} />
-                <span>Maanak Saathi AI</span>
+                <span>Mithra AI</span>
               </Link>
 
               <span className="sidebar-section-label mt-3">
@@ -614,7 +614,7 @@ function ChatContent() {
               </div>
               <div>
                 <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
-                  <span>Maanak Saathi</span>
+                  <span>Mithra</span>
                   <span className="status-pill">
                     <span className="status-dot" />
                     Verified mode
@@ -676,7 +676,7 @@ function ChatContent() {
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-[#0052CC] dark:bg-blue-950/70 dark:border-blue-800 dark:text-blue-300">
                     <MaterialIcon name="verified" size={14} />
-                    <span>Maanak Saathi AI · Official BIS Compliance Assistant</span>
+                    <span>Mithra AI · Official BIS Compliance Assistant</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                     How can I assist your compliance today?
@@ -731,7 +731,7 @@ function ChatContent() {
                         <div className="assistant-mark">
                           <Image src="/bis_logo.png" alt="BIS" width={18} height={18} className="object-contain" />
                         </div>
-                        <span className="font-bold text-xs text-[var(--color-text-primary)]">Maanak Saathi</span>
+                        <span className="font-bold text-xs text-[var(--color-text-primary)]">Mithra</span>
                       </div>
                       <ConfidenceBadge confidence={msg.confidence} abstained={msg.abstained} />
                     </div>
@@ -896,7 +896,7 @@ function ChatContent() {
                 <input
                   type="text"
                   className="composer-input"
-                  placeholder="Ask Saathi about standards, schemes, labs, or HUID verification..."
+                  placeholder="Ask Mithra about standards, schemes, labs, or HUID verification..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => {

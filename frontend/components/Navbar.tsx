@@ -88,7 +88,7 @@ export default function Navbar() {
           </div>
           <div className="leading-tight">
             <div className="text-slate-900 dark:text-white font-extrabold text-lg tracking-tight group-hover:text-[#0052CC] transition-colors flex items-center gap-1.5">
-              <span>Maanak Saathi</span>
+              <span>Mithra</span>
             </div>
             <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">
               Bureau of Indian Standards
@@ -167,7 +167,7 @@ export default function Navbar() {
             <MaterialIcon name={theme === "light" ? "dark_mode" : "light_mode"} size={18} />
           </button>
 
-          {/* Elite Royal Blue Pill Button (Login / Ask Saathi) */}
+          {/* Elite Royal Blue Pill Button (Login / Ask Mithra) */}
           <Link href="/chat">
             <button className="h-9.5 px-6 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold tracking-wide shadow-sm hover:shadow transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
               <span>Login</span>
@@ -218,7 +218,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="h-9 px-5 rounded-full bg-[#0052CC] text-white text-xs font-bold inline-flex items-center"
             >
-              Ask Saathi
+              Ask Mithra
             </Link>
           </div>
         </div>

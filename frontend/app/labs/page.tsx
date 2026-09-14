@@ -266,7 +266,7 @@ export default function LabsPage() {
             <div className="pt-2">
               <Link href={`/chat?q=${encodeURIComponent(`Where can I get ${category} tested in India?`)}`}>
                 <button className="h-10 px-5 rounded-full bg-[#0052CC] text-white text-xs font-bold cursor-pointer">
-                  <span>Ask Saathi For Testing Guidance</span>
+                  <span>Ask Mithra For Testing Guidance</span>
                 </button>
               </Link>
             </div>

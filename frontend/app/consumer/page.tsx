@@ -263,7 +263,7 @@ export default function ConsumerPage() {
               className="font-bold text-[#0052CC] dark:text-blue-400 hover:underline flex items-center gap-1"
             >
               <MaterialIcon name="auto_awesome" size={15} />
-              <span>Ask Saathi to draft my complaint details</span>
+              <span>Ask Mithra to draft my complaint details</span>
             </Link>
 
             <a
