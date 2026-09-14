@@ -3,43 +3,40 @@
 @tailwind utilities;
 
 :root {
-  /* BIS Brand Authority Palette — Sovereign Saffron & National Navy */
-  --saffron: #E65100;
-  --saffron-light: #F97316;
-  --saffron-hover: #C2410C;
-  --saffron-subtle: rgba(230, 81, 0, 0.12);
-  --saffron-border: rgba(249, 115, 22, 0.25);
+  /* Official BIS Logo Palette — BIS Royal Blue & BIS Crimson Red */
+  --bis-blue: #024DA1;
+  --bis-blue-hover: #003E8A;
+  --bis-blue-light: #1D6ED8;
+  --bis-blue-subtle: rgba(2, 77, 161, 0.14);
+  --bis-blue-border: rgba(2, 77, 161, 0.35);
 
-  --navy-deep: #090D16;
-  --navy-dark: #0F172A;
-  --navy-card: #141E33;
-  --navy-light: #1E293B;
+  --bis-red: #EC171F;
+  --bis-red-hover: #C50F16;
+  --bis-red-light: #FF3B43;
+  --bis-red-subtle: rgba(236, 23, 31, 0.12);
+  --bis-red-border: rgba(236, 23, 31, 0.35);
 
-  --ashoka-blue: #1D4ED8;
-  --ashoka-blue-light: #3B82F6;
-  --ashoka-green: #047857;
-
-  /* Layered Surface Tokens */
-  --surface-0: #090D16;
-  --surface-1: #0F172A;
-  --surface-2: #141E33;
-  --surface-3: #1E293B;
-  --surface-4: #334155;
+  /* Deep High-Tech Institutional Navy Surfaces */
+  --surface-0: #060B14;
+  --surface-1: #0B1324;
+  --surface-2: #101E38;
+  --surface-3: #182B4E;
+  --surface-4: #233A66;
 
   --border: rgba(255, 255, 255, 0.08);
   --border-subtle: rgba(255, 255, 255, 0.05);
-  --border-hover: rgba(255, 255, 255, 0.16);
+  --border-hover: rgba(255, 255, 255, 0.18);
 
-  /* High-Contrast Accessible Text Tokens */
+  /* Accessible Text Tokens (WCAG AAA/AA compliant on dark surfaces) */
   --text-primary: #F8FAFC;    /* Slate 50 - 15.8:1 contrast */
   --text-secondary: #CBD5E1;  /* Slate 300 - 9.6:1 contrast */
   --text-muted: #94A3B8;      /* Slate 400 - 5.8:1 contrast */
 
-  /* Status Tokens */
+  /* Semantic Status Tokens */
   --success: #10B981;
   --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
+  --error: #EC171F;
+  --info: #024DA1;
 }
 
 * {
@@ -64,17 +61,17 @@ body {
 
 /* ── Browser Surface Styling ──────────────────────────────────────────────── */
 ::selection {
-  background: var(--saffron);
+  background: var(--bis-blue);
   color: #FFFFFF;
 }
 
 ::-moz-selection {
-  background: var(--saffron);
+  background: var(--bis-blue);
   color: #FFFFFF;
 }
 
 :focus-visible {
-  outline: 2px solid var(--saffron-light);
+  outline: 2px solid var(--bis-blue-light);
   outline-offset: 2px;
 }
 
@@ -91,7 +88,7 @@ body {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--saffron);
+  background: var(--bis-blue);
 }
 
 /* ── Elevated Institutional Surfaces ──────────────────────────────────────── */
@@ -114,7 +111,7 @@ body {
 }
 
 .bis-panel-interactive:hover {
-  border-color: var(--saffron-border);
+  border-color: var(--bis-blue-border);
   background: var(--surface-2);
   transform: translateY(-2px);
   box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.45);
@@ -122,10 +119,10 @@ body {
 
 /* ── Message Containers ──────────────────────────────────────────────────── */
 .msg-user {
-  background: #C2410C;
+  background: var(--bis-blue);
   color: #FFFFFF;
   border-radius: 16px 16px 4px 16px;
-  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
+  box-shadow: 0 4px 14px rgba(2, 77, 161, 0.3);
 }
 
 .msg-ai {
@@ -143,9 +140,9 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 4px;
-  background: var(--saffron-subtle);
-  border: 1px solid var(--saffron-border);
-  color: var(--saffron-light);
+  background: var(--bis-blue-subtle);
+  border: 1px solid var(--bis-blue-border);
+  color: #60A5FA;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -155,8 +152,8 @@ body {
 }
 
 .citation-badge:hover {
-  background: var(--saffron);
-  border-color: var(--saffron);
+  background: var(--bis-blue);
+  border-color: var(--bis-blue);
   color: #FFFFFF;
   transform: scale(1.05);
 }
@@ -169,7 +166,7 @@ body {
 
 .soundwave-bar {
   width: 3px;
-  background: #EF4444;
+  background: var(--bis-red);
   border-radius: 2px;
   animation: soundwave 1s ease-in-out infinite;
 }
@@ -239,7 +236,7 @@ body {
 }
 
 .prose-bis a {
-  color: var(--saffron-light);
+  color: #60A5FA;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -250,7 +247,7 @@ body {
   border-radius: 4px;
   font-size: 0.85em;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  color: #FDBA74;
+  color: #93C5FD;
 }
 
 .prose-bis table {
@@ -279,7 +276,7 @@ body {
 }
 
 .prose-bis blockquote {
-  border-left: 2px solid var(--saffron-light);
+  border-left: 2px solid var(--bis-blue-light);
   padding-left: 1rem;
   color: var(--text-secondary);
   margin: 0.9em 0;
@@ -294,9 +291,9 @@ body {
 }
 
 .badge-invalid {
-  background: rgba(239, 68, 68, 0.14);
+  background: rgba(236, 23, 31, 0.14);
   color: #F87171;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(236, 23, 31, 0.3);
 }
 
 .badge-warning {
@@ -306,9 +303,15 @@ body {
 }
 
 .badge-info {
-  background: rgba(59, 130, 246, 0.14);
+  background: rgba(2, 77, 161, 0.18);
   color: #60A5FA;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(2, 77, 161, 0.35);
+}
+
+.badge-red {
+  background: rgba(236, 23, 31, 0.14);
+  color: #FF6B72;
+  border: 1px solid rgba(236, 23, 31, 0.35);
 }
 
 /* ── Input Controls ───────────────────────────────────────────────────────── */
@@ -329,15 +332,15 @@ body {
 }
 
 .input-bis:focus {
-  border-color: var(--saffron-light);
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  border-color: var(--bis-blue-light);
+  box-shadow: 0 0 0 3px rgba(2, 77, 161, 0.25);
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────────── */
 .btn-primary {
-  background: #C2410C;
+  background: var(--bis-blue);
   color: #FFFFFF;
-  border: 1px solid #EA580C;
+  border: 1px solid #1D6ED8;
   border-radius: 10px;
   padding: 10px 20px;
   font-weight: 600;
@@ -351,10 +354,10 @@ body {
 }
 
 .btn-primary:hover {
-  background: #9A3412;
-  border-color: #F97316;
+  background: var(--bis-blue-hover);
+  border-color: #3B82F6;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(194, 65, 12, 0.35);
+  box-shadow: 0 6px 16px rgba(2, 77, 161, 0.4);
 }
 
 .btn-primary:active {
@@ -366,6 +369,29 @@ body {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.btn-red {
+  background: var(--bis-red);
+  color: #FFFFFF;
+  border: 1px solid #FF3B43;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 0.925rem;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-red:hover {
+  background: var(--bis-red-hover);
+  border-color: #FF6B72;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(236, 23, 31, 0.4);
 }
 
 .btn-ghost {
@@ -383,9 +409,9 @@ body {
 }
 
 .btn-ghost:hover {
-  border-color: var(--saffron-border);
+  border-color: var(--bis-blue-border);
   color: #FFFFFF;
-  background: var(--saffron-subtle);
+  background: var(--bis-blue-subtle);
 }
 
 .btn-icon {
@@ -425,10 +451,10 @@ body {
 }
 
 .btn-record.recording {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: #EF4444;
-  color: #EF4444;
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+  background: rgba(236, 23, 31, 0.18);
+  border-color: var(--bis-red);
+  color: var(--bis-red);
+  box-shadow: 0 0 16px rgba(236, 23, 31, 0.4);
 }
 
 /* ── Nav Links ────────────────────────────────────────────────────────────── */
@@ -448,8 +474,9 @@ body {
 }
 
 .nav-link.active {
-  color: var(--saffron-light);
-  background: var(--saffron-subtle);
+  color: #60A5FA;
+  background: var(--bis-blue-subtle);
+  border: 1px solid var(--bis-blue-border);
 }
 
 /* ── Intent Badges ────────────────────────────────────────────────────────── */

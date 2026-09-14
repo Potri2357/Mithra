@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import {
-  ChevronLeft,
-  FlaskConical,
   Search,
   MapPin,
   Phone,
@@ -16,6 +16,7 @@ import {
   LayoutGrid,
   List,
   Filter,
+  FlaskConical,
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -128,274 +129,283 @@ export default function LabsPage() {
   }, [labs, keyword]);
 
   return (
-    <div className="min-h-screen bg-[#090D16] text-slate-100">
-      {/* ── Top Navigation ──────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between px-6 py-3.5 bg-[#0F172A] border-b border-slate-800 sticky top-0 z-20">
-        <div className="flex items-center gap-3">
-          <Link href="/">
-            <button className="btn-icon w-8 h-8 rounded-lg" aria-label="Back to home">
-              <ChevronLeft size={16} />
-            </button>
-          </Link>
-          <div className="w-8 h-8 rounded-lg bg-cyan-950/60 border border-cyan-800/60 flex items-center justify-center text-cyan-400">
-            <FlaskConical size={18} />
-          </div>
-          <h1 className="text-white font-bold text-sm tracking-tight">
-            Accredited Testing &amp; Calibration Laboratories
-          </h1>
-        </div>
-        <Link href="/chat">
-          <button className="btn-ghost py-1.5 px-3 text-xs">Chat Assistant</button>
-        </Link>
-      </header>
+    <div className="min-h-screen bg-[#060B14] text-slate-100 flex flex-col justify-between">
+      <div>
+        <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 py-12 space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">
-            BIS &amp; NABL Accredited <span className="text-orange-500">Laboratory Radar</span>
-          </h2>
-          <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Locate authorized testing laboratories under the Laboratory Recognition Scheme (LRS) for mandatory QCO compliance and ISI conformity assessments.
-          </p>
-        </div>
-
-        {/* ── Popular Quick Categories ──────────────────────────────────── */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {POPULAR_CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => handleCategorySelect(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all border ${
-                category === cat
-                  ? "bg-[#C2410C] border-orange-500 text-white shadow-sm"
-                  : "bg-[#0F172A] border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Filter Station ────────────────────────────────────────────── */}
-        <div className="bis-panel p-6 bg-[#0F172A] border border-slate-800">
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
-            <div className="sm:col-span-4">
-              <label htmlFor="search-kw" className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-2">
-                Instant Text Search
-              </label>
-              <div className="relative">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  id="search-kw"
-                  type="text"
-                  className="input-bis pl-10 text-sm bg-[#141E33] border-slate-700"
-                  placeholder="Filter by city, lab name, or keyword..."
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                />
-              </div>
+        {/* ── Hero Section ──────────────────────────────────────────────── */}
+        <section className="border-b border-slate-800/80 bg-gradient-to-b from-[#0B1324] to-[#060B14] py-12 px-6">
+          <div className="max-w-6xl mx-auto text-center space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#024DA1]/15 border border-[#024DA1]/40 text-[#5FA5F9] text-xs font-semibold">
+              <FlaskConical size={14} />
+              <span>Laboratory Recognition Scheme (LRS)</span>
             </div>
-
-            <div className="sm:col-span-4">
-              <label htmlFor="state-select" className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-2">
-                State / Region
-              </label>
-              <select
-                id="state-select"
-                className="input-bis text-sm bg-[#141E33] border-slate-700"
-                value={state}
-                onChange={(e) => {
-                  setState(e.target.value);
-                  fetchLabs(category, e.target.value);
-                }}
-              >
-                {STATES.map((s) => (
-                  <option key={s} value={s} className="bg-[#0F172A] text-white">
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="sm:col-span-4 flex items-center justify-between gap-3">
-              <button
-                className="btn-primary flex-1 justify-center h-[46px]"
-                onClick={() => fetchLabs(category, state)}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <>
-                    <Filter size={16} />
-                    <span>Apply Filter</span>
-                  </>
-                )}
-              </button>
-
-              <div className="flex items-center gap-1 bg-[#141E33] p-1 rounded-xl border border-slate-700">
-                <button
-                  className={`btn-icon w-8 h-8 rounded-lg ${viewMode === "grid" ? "bg-slate-700 text-white" : "text-slate-400"}`}
-                  onClick={() => setViewMode("grid")}
-                  aria-label="Card grid view"
-                >
-                  <LayoutGrid size={15} />
-                </button>
-                <button
-                  className={`btn-icon w-8 h-8 rounded-lg ${viewMode === "table" ? "bg-slate-700 text-white" : "text-slate-400"}`}
-                  onClick={() => setViewMode("table")}
-                  aria-label="Table list view"
-                >
-                  <List size={15} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Results Header ───────────────────────────────────────────── */}
-        <div className="flex items-center justify-between text-xs text-slate-400 px-1">
-          <span className="font-semibold text-slate-300">
-            Showing {filteredLabs.length} of {labs.length} accredited facilities
-          </span>
-          <span>Category: <strong>{category}</strong> {state !== "All States" && `• State: ${state}`}</span>
-        </div>
-
-        {/* ── Results Grid / Table ─────────────────────────────────────── */}
-        {filteredLabs.length === 0 ? (
-          <div className="bis-panel p-12 text-center bg-[#0F172A] border border-slate-800">
-            <Building2 size={36} className="mx-auto text-slate-600 mb-3" />
-            <h3 className="text-base font-bold text-white mb-1">
-              No Accredited Testing Facilities Found
-            </h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto mb-4">
-              No registered laboratories matched the chosen filters. Try setting State to &quot;All States&quot; or consulting the Assistant.
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+              BIS &amp; NABL Accredited{" "}
+              <span className="text-[#5FA5F9]">Testing Laboratory Radar</span>
+            </h1>
+            <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+              Locate authorized testing laboratories under the Laboratory Recognition Scheme (LRS) for mandatory
+              QCO compliance, factory sample tests, and ISI mark conformity assessments.
             </p>
-            <Link href={`/chat?q=${encodeURIComponent(`Where can I get ${category} tested in India?`)}`}>
-              <button className="btn-primary text-xs py-2 px-4">
-                Ask AI Assistant For Testing Guidance
-              </button>
-            </Link>
           </div>
-        ) : viewMode === "grid" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {filteredLabs.map((lab) => (
-              <div
-                key={lab.id}
-                className="bis-panel p-6 bg-[#0F172A] border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition-colors"
+        </section>
+
+        <main className="max-w-6xl mx-auto px-6 py-10 space-y-8">
+          {/* ── Popular Quick Categories ──────────────────────────────────── */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {POPULAR_CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => handleCategorySelect(cat)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all border ${
+                  category === cat
+                    ? "bg-[#024DA1] border-[#3B82F6] text-white shadow-sm"
+                    : "bg-[#0B1324] border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
+                }`}
               >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="text-base font-bold text-white leading-snug">
-                      {lab.name}
-                    </h3>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded bg-slate-800/90 border border-slate-700 text-cyan-300 flex-shrink-0">
-                      {lab.accreditation}
-                    </span>
-                  </div>
+                {cat}
+              </button>
+            ))}
+          </div>
 
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
-                    <MapPin size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>{lab.city}, {lab.state}</span>
-                  </div>
-
-                  <p className="text-xs text-slate-300 mb-4 leading-relaxed">
-                    {lab.address}
-                  </p>
-
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {lab.categories.slice(0, 4).map((c, i) => (
-                      <span
-                        key={i}
-                        className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-slate-300"
-                      >
-                        {c}
-                      </span>
-                    ))}
-                    {lab.categories.length > 4 && (
-                      <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
-                        +{lab.categories.length - 4} more
-                      </span>
-                    )}
-                  </div>
+          {/* ── Filter Station ────────────────────────────────────────────── */}
+          <div className="bis-panel p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="search-kw"
+                  className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-2"
+                >
+                  Instant Text Search
+                </label>
+                <div className="relative">
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    id="search-kw"
+                    type="text"
+                    className="input-bis pl-10 text-sm bg-[#0B1324] border-slate-700"
+                    placeholder="Filter by city, lab name, or keyword..."
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                  />
                 </div>
+              </div>
 
-                <div className="pt-3.5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-3">
-                    {lab.phone && (
-                      <a
-                        href={`tel:${lab.phone}`}
-                        className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
-                      >
-                        <Phone size={13} className="text-orange-400" />
-                        <span>{lab.phone}</span>
-                      </a>
-                    )}
-                    {lab.email && (
-                      <a
-                        href={`mailto:${lab.email}`}
-                        className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
-                      >
-                        <Mail size={13} className="text-orange-400" />
-                        <span>Email</span>
-                      </a>
-                    )}
-                  </div>
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="state-select"
+                  className="text-xs font-semibold uppercase tracking-wider text-slate-300 block mb-2"
+                >
+                  State / Region
+                </label>
+                <select
+                  id="state-select"
+                  className="input-bis text-sm bg-[#0B1324] border-slate-700"
+                  value={state}
+                  onChange={(e) => {
+                    setState(e.target.value);
+                    fetchLabs(category, e.target.value);
+                  }}
+                >
+                  {STATES.map((s) => (
+                    <option key={s} value={s} className="bg-[#0B1324] text-white">
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
+              <div className="sm:col-span-4 flex items-center justify-between gap-3">
+                <button
+                  className="btn-primary flex-1 justify-center h-[46px]"
+                  onClick={() => fetchLabs(category, state)}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <>
+                      <Filter size={16} />
+                      <span>Apply Filter</span>
+                    </>
+                  )}
+                </button>
+
+                <div className="flex items-center gap-1 bg-[#0B1324] p-1 rounded-xl border border-slate-700">
                   <button
-                    onClick={() => copyLabId(lab.bis_lab_id)}
-                    className="flex items-center gap-1 font-mono text-[11px] text-slate-400 hover:text-white ml-auto"
-                    title="Copy BIS Lab ID"
+                    className={`btn-icon w-8 h-8 rounded-lg ${
+                      viewMode === "grid" ? "bg-slate-700 text-white" : "text-slate-400"
+                    }`}
+                    onClick={() => setViewMode("grid")}
+                    aria-label="Card grid view"
                   >
-                    <span>{lab.bis_lab_id}</span>
-                    {copiedId === lab.bis_lab_id ? (
-                      <Check size={12} className="text-emerald-400" />
-                    ) : (
-                      <Copy size={12} />
-                    )}
+                    <LayoutGrid size={15} />
+                  </button>
+                  <button
+                    className={`btn-icon w-8 h-8 rounded-lg ${
+                      viewMode === "table" ? "bg-slate-700 text-white" : "text-slate-400"
+                    }`}
+                    onClick={() => setViewMode("table")}
+                    aria-label="Table list view"
+                  >
+                    <List size={15} />
                   </button>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-        ) : (
-          /* Table View */
-          <div className="bis-panel overflow-x-auto bg-[#0F172A] border border-slate-800">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-800 bg-[#141E33] text-slate-300 font-semibold">
-                  <th className="p-3.5">Lab Name</th>
-                  <th className="p-3.5">Location</th>
-                  <th className="p-3.5">Accreditation</th>
-                  <th className="p-3.5">Contact</th>
-                  <th className="p-3.5">BIS Lab ID</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-300">
-                {filteredLabs.map((lab) => (
-                  <tr key={lab.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-3.5 font-semibold text-white max-w-xs">{lab.name}</td>
-                    <td className="p-3.5">{lab.city}, {lab.state}</td>
-                    <td className="p-3.5">
-                      <span className="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 text-[11px]">
+
+          {/* ── Results Header ───────────────────────────────────────────── */}
+          <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+            <span className="font-semibold text-slate-300">
+              Showing {filteredLabs.length} of {labs.length} accredited facilities
+            </span>
+            <span>
+              Category: <strong className="text-white">{category}</strong>{" "}
+              {state !== "All States" && `• State: ${state}`}
+            </span>
+          </div>
+
+          {/* ── Results Grid / Table ─────────────────────────────────────── */}
+          {filteredLabs.length === 0 ? (
+            <div className="bis-panel p-12 text-center">
+              <Building2 size={36} className="mx-auto text-slate-600 mb-3" />
+              <h3 className="text-base font-bold text-white mb-1">
+                No Accredited Testing Facilities Found
+              </h3>
+              <p className="text-xs text-slate-400 max-w-md mx-auto mb-4">
+                No registered laboratories matched the chosen filters. Try setting State to &quot;All
+                States&quot; or consulting the Assistant.
+              </p>
+              <Link href={`/chat?q=${encodeURIComponent(`Where can I get ${category} tested in India?`)}`}>
+                <button className="btn-primary text-xs py-2 px-4">
+                  Ask AI Assistant For Testing Guidance
+                </button>
+              </Link>
+            </div>
+          ) : viewMode === "grid" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredLabs.map((lab) => (
+                <div
+                  key={lab.id}
+                  className="bis-panel p-6 flex flex-col justify-between hover:border-slate-700 transition-colors"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <h3 className="text-base font-bold text-white leading-snug">{lab.name}</h3>
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded bg-[#024DA1]/20 border border-[#024DA1]/40 text-[#5FA5F9] flex-shrink-0">
                         {lab.accreditation}
                       </span>
-                    </td>
-                    <td className="p-3.5 space-x-2">
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
+                      <MapPin size={13} className="text-[#EC171F] flex-shrink-0" />
+                      <span>
+                        {lab.city}, {lab.state}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-300 mb-4 leading-relaxed">{lab.address}</p>
+
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {lab.categories.slice(0, 4).map((c, i) => (
+                        <span
+                          key={i}
+                          className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-slate-300"
+                        >
+                          {c}
+                        </span>
+                      ))}
+                      {lab.categories.length > 4 && (
+                        <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
+                          +{lab.categories.length - 4} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="pt-3.5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-3">
                       {lab.phone && (
-                        <a href={`tel:${lab.phone}`} className="text-orange-400 hover:underline">
-                          {lab.phone}
+                        <a
+                          href={`tel:${lab.phone}`}
+                          className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
+                        >
+                          <Phone size={13} className="text-[#3B82F6]" />
+                          <span>{lab.phone}</span>
                         </a>
                       )}
-                    </td>
-                    <td className="p-3.5 font-mono text-slate-400">{lab.bis_lab_id}</td>
+                      {lab.email && (
+                        <a
+                          href={`mailto:${lab.email}`}
+                          className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
+                        >
+                          <Mail size={13} className="text-[#3B82F6]" />
+                          <span>Email</span>
+                        </a>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => copyLabId(lab.bis_lab_id)}
+                      className="flex items-center gap-1 font-mono text-[11px] text-slate-400 hover:text-white ml-auto"
+                      title="Copy BIS Lab ID"
+                    >
+                      <span>{lab.bis_lab_id}</span>
+                      {copiedId === lab.bis_lab_id ? (
+                        <Check size={12} className="text-emerald-400" />
+                      ) : (
+                        <Copy size={12} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* Table View */
+            <div className="bis-panel overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800 bg-[#0B1324] text-slate-300 font-semibold">
+                    <th className="p-3.5">Lab Name</th>
+                    <th className="p-3.5">Location</th>
+                    <th className="p-3.5">Accreditation</th>
+                    <th className="p-3.5">Contact</th>
+                    <th className="p-3.5">BIS Lab ID</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                  {filteredLabs.map((lab) => (
+                    <tr key={lab.id} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="p-3.5 font-semibold text-white max-w-xs">{lab.name}</td>
+                      <td className="p-3.5">
+                        {lab.city}, {lab.state}
+                      </td>
+                      <td className="p-3.5">
+                        <span className="px-2 py-0.5 rounded bg-[#024DA1]/20 border border-[#024DA1]/40 text-[#5FA5F9] text-[11px]">
+                          {lab.accreditation}
+                        </span>
+                      </td>
+                      <td className="p-3.5 space-x-2">
+                        {lab.phone && (
+                          <a href={`tel:${lab.phone}`} className="text-[#5FA5F9] hover:underline">
+                            {lab.phone}
+                          </a>
+                        )}
+                      </td>
+                      <td className="p-3.5 font-mono text-slate-400">{lab.bis_lab_id}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </main>
+      </div>
+
+      <Footer />
     </div>
   );
 }

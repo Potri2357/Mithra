@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -22,13 +23,15 @@ import {
   Check,
   Award,
   FlaskConical,
-  ShieldCheck,
   Sparkles,
   Download,
   Trash2,
   Home,
   Menu,
   Cpu,
+  FileText,
+  Layers,
+  Scale,
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -97,7 +100,7 @@ function CitationPanel({
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800 bg-[#141E33]">
         <div className="flex items-center gap-2">
-          <BookOpen size={18} className="text-orange-400" />
+          <BookOpen size={18} className="text-[#5FA5F9]" />
           <h2 className="text-white font-bold text-sm">Grounded Sources ({citations.length})</h2>
         </div>
         <button
@@ -116,10 +119,10 @@ function CitationPanel({
             className="p-4 rounded-xl bg-[#141E33] border border-slate-800 hover:border-slate-700 transition-colors"
           >
             <div className="flex items-center gap-2 mb-2">
-              <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold bg-orange-600 text-white flex-shrink-0">
+              <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold bg-[#024DA1] text-white flex-shrink-0">
                 {i + 1}
               </span>
-              <span className="text-xs font-semibold text-orange-400 truncate">
+              <span className="text-xs font-semibold text-[#5FA5F9] truncate">
                 {c.source || "Official BIS Record"}
               </span>
             </div>
@@ -139,7 +142,7 @@ function TypingIndicator() {
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="typing-dot w-2 h-2 rounded-full bg-orange-500"
+          className="typing-dot w-2 h-2 rounded-full bg-[#024DA1]"
         />
       ))}
     </div>
@@ -490,10 +493,10 @@ function ChatContent() {
 
       {/* ── Drag and Drop Overlay ──────────────────────────────────────── */}
       {isDraggingFile && (
-        <div className="absolute inset-0 z-50 bg-orange-950/80 border-2 border-dashed border-orange-500 flex flex-col items-center justify-center pointer-events-none">
-          <Upload size={48} className="text-orange-400 mb-3" />
+        <div className="absolute inset-0 z-50 bg-[#024DA1]/90 border-2 border-dashed border-[#5FA5F9] flex flex-col items-center justify-center pointer-events-none">
+          <Upload size={48} className="text-[#93C5FD] mb-3" />
           <h2 className="text-xl font-bold text-white">Drop Image for Instant BIS Inspection</h2>
-          <p className="text-xs text-orange-300 mt-1">Supports product photos or hallmark stamps</p>
+          <p className="text-xs text-slate-200 mt-1">Supports product photos or hallmark stamps</p>
         </div>
       )}
 
@@ -507,10 +510,13 @@ function ChatContent() {
           <div className="space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded bg-[#C2410C] flex items-center justify-center font-bold text-white text-xs border border-orange-500/30">
-                  B
+                <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-slate-700 flex items-center justify-center flex-shrink-0">
+                  <Image src="/bis_logo.png" alt="BIS Logo" width={28} height={28} className="object-contain" />
                 </div>
-                <span className="font-bold text-sm text-white">BIS Saathi</span>
+                <div>
+                  <span className="font-bold text-sm text-white block leading-tight">BIS Saathi</span>
+                  <span className="text-[10px] text-[#EC171F] font-semibold">मानकः पथप्रदर्शकः</span>
+                </div>
               </div>
               <button
                 className="btn-icon w-7 h-7 lg:hidden"
@@ -530,6 +536,20 @@ function ChatContent() {
                 <span>Home Portal</span>
               </Link>
               <Link
+                href="/standards"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
+              >
+                <FileText size={15} />
+                <span>Standards Directory</span>
+              </Link>
+              <Link
+                href="/schemes"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
+              >
+                <Layers size={15} />
+                <span>Certification Schemes</span>
+              </Link>
+              <Link
                 href="/hallmark"
                 className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
               >
@@ -542,6 +562,13 @@ function ChatContent() {
               >
                 <FlaskConical size={15} />
                 <span>Accredited Labs</span>
+              </Link>
+              <Link
+                href="/consumer"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
+              >
+                <Scale size={15} />
+                <span>Consumer Redressal</span>
               </Link>
             </nav>
 
@@ -560,7 +587,7 @@ function ChatContent() {
                 <button
                   key={item.label}
                   onClick={() => sendMessage(item.query)}
-                  className="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-orange-400 hover:bg-slate-800/60 rounded-md transition-colors truncate"
+                  className="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-[#5FA5F9] hover:bg-slate-800/60 rounded-md transition-colors truncate"
                 >
                   {item.label}
                 </button>
@@ -602,13 +629,18 @@ function ChatContent() {
             >
               <Menu size={16} />
             </button>
-            <div>
-              <h1 className="text-white font-bold text-sm leading-tight flex items-center gap-2">
-                <span>BIS Saathi Intelligence</span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="System Online" />
-              </h1>
-              <div className="text-xs text-slate-400">
-                Grounded on 22,000+ Indian Standards • {language === "hi" ? "हिंदी" : "English"}
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-md bg-white p-0.5 border border-slate-700 flex items-center justify-center flex-shrink-0">
+                <Image src="/bis_logo.png" alt="BIS Logo" width={24} height={24} className="object-contain" />
+              </div>
+              <div>
+                <h1 className="text-white font-bold text-sm leading-tight flex items-center gap-2">
+                  <span>BIS Saathi Intelligence</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="System Online" />
+                </h1>
+                <div className="text-[11px] text-slate-400">
+                  Grounded on 22,000+ Indian Standards • {language === "hi" ? "हिंदी" : "English"}
+                </div>
               </div>
             </div>
           </div>
@@ -619,13 +651,13 @@ function ChatContent() {
               onClick={() => setLanguage((l) => (l === "en" ? "hi" : "en"))}
               aria-label="Toggle language between English and Hindi"
             >
-              <Languages size={14} className="text-orange-400" />
+              <Languages size={14} className="text-[#5FA5F9]" />
               <span className="font-semibold">{language === "en" ? "हिन्दी" : "English"}</span>
             </button>
 
             {isSpeaking && (
               <button
-                className="btn-icon w-8 h-8 text-orange-400"
+                className="btn-icon w-8 h-8 text-[#5FA5F9]"
                 onClick={() => {
                   audioRef.current?.pause();
                   if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -645,8 +677,8 @@ function ChatContent() {
         <main className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
           {messages.length === 0 && (
             <div className="max-w-2xl mx-auto text-center pt-10 pb-6">
-              <div className="w-14 h-14 rounded-2xl bg-orange-950/60 border border-orange-800/60 flex items-center justify-center mx-auto mb-4 text-orange-400">
-                <ShieldCheck size={28} />
+              <div className="w-16 h-16 rounded-2xl bg-white p-2 border border-slate-700 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#024DA1]/20">
+                <Image src="/bis_logo.png" alt="BIS Logo" width={48} height={48} className="object-contain" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">
                 Bureau of Indian Standards Advisory
@@ -661,7 +693,7 @@ function ChatContent() {
                   <button
                     key={i}
                     onClick={() => sendMessage(s)}
-                    className="p-3.5 rounded-xl bg-[#0F172A] border border-slate-800 hover:border-orange-500/60 hover:bg-[#141E33] transition-all text-xs text-slate-300 font-medium"
+                    className="p-3.5 rounded-xl bg-[#0F172A] border border-slate-800 hover:border-[#024DA1] hover:bg-[#0B1324] transition-all text-xs text-slate-300 font-medium"
                     aria-label={`Ask suggestion: ${s}`}
                   >
                     {s}
@@ -744,7 +776,7 @@ function ChatContent() {
                   <div className="flex flex-wrap items-center gap-4 mt-2 px-1 text-xs">
                     {msg.citations && msg.citations.length > 0 && (
                       <button
-                        className="flex items-center gap-1.5 font-semibold text-orange-400 hover:text-orange-300 transition-colors"
+                        className="flex items-center gap-1.5 font-semibold text-[#5FA5F9] hover:text-[#93C5FD] transition-colors"
                         onClick={() => setShowCitations(msg.citations!)}
                         aria-label={`View ${msg.citations.length} grounded sources`}
                       >
@@ -801,11 +833,11 @@ function ChatContent() {
 
                     {msg.follow_up && (
                       <button
-                        className="text-slate-400 hover:text-orange-400 transition-colors text-left flex items-center gap-1"
+                        className="text-slate-400 hover:text-[#5FA5F9] transition-colors text-left flex items-center gap-1"
                         onClick={() => sendMessage(msg.follow_up!)}
                         aria-label={`Follow up query: ${msg.follow_up}`}
                       >
-                        <Sparkles size={12} className="text-orange-400 flex-shrink-0" />
+                        <Sparkles size={12} className="text-[#5FA5F9] flex-shrink-0" />
                         <span>{msg.follow_up}</span>
                       </button>
                     )}
@@ -850,12 +882,12 @@ function ChatContent() {
                     onClick={() => setPhotoMode(mode)}
                     className={`p-4 rounded-xl text-left border transition-all ${
                       photoMode === mode
-                        ? "bg-orange-950/40 border-orange-500/80 text-white"
+                        ? "bg-[#024DA1]/20 border-[#024DA1] text-white"
                         : "bg-[#141E33] border-slate-800 text-slate-300 hover:border-slate-700"
                     }`}
                     aria-pressed={photoMode === mode}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-orange-400 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-[#5FA5F9] mb-2">
                       {mode === "product" ? <Cpu size={16} /> : <Award size={16} />}
                     </div>
                     <div className="text-sm font-bold text-white">
@@ -972,9 +1004,9 @@ export default function ChatPage() {
   return (
     <Suspense
       fallback={
-        <div className="h-screen flex items-center justify-center bg-[#090D16]">
-          <Loader2 size={32} className="animate-spin text-orange-500" />
-        </div>
+        <div className="flex items-center justify-center h-full">
+        <Loader2 size={32} className="animate-spin text-[#024DA1]" />
+      </div>
       }
     >
       <ChatContent />
