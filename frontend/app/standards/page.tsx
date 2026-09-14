@@ -7,10 +7,10 @@ import Footer from "@/components/Footer";
 import {
   Search,
   BookOpen,
-  ChevronRight,
   Building,
   Calendar,
   Sparkles,
+  ExternalLink,
 } from "lucide-react";
 
 // Official Seeded Indian Standards Catalogue
@@ -20,52 +20,63 @@ const STANDARDS_CATALOGUE = [
     title: "Self-Ballasted LED Lamps for General Lighting Services — Safety Requirements",
     committee: "ETD 33 (Lighting)",
     year: "2012",
-    scope: "Specifies safety requirements for LED lamps and modules with supply voltages up to 250V.",
-    scheme: "CRS",
+    scope: "Safety and performance requirements for self-ballasted LED lamps for general lighting services having a rated power up to 60 W.",
+    scheme: "CRS (Scheme II)",
     mandatory: true,
     sector: "Electronics & Electrical",
-    qco_order: "Electronics & IT Goods Mandatory Safety Order",
+    qco_order: "MeitY Compulsory Registration Scheme Order",
   },
   {
     is_number: "IS 694",
-    title: "PVC Insulated Cables for Working Voltages up to and including 1100V",
-    committee: "ETD 05 (Cables & Conductors)",
+    title: "Polyvinyl Chloride Insulated Unsheathed and Sheathed Cables/Cords with Rigid and Flexible Conductor",
+    committee: "ETD 9 (Power Cables)",
     year: "2010",
-    scope: "Covers single core and multicore PVC insulated cables for domestic and industrial wiring installations.",
+    scope: "Covers single and multi-core PVC insulated cables for electric power and lighting with rated voltages up to and including 1100 V.",
     scheme: "ISI Mark",
     mandatory: true,
     sector: "Electronics & Electrical",
-    qco_order: "Wires and Cables Quality Control Order",
+    qco_order: "Wires and Cables Quality Control Order 2023",
   },
   {
     is_number: "IS 269",
-    title: "Ordinary Portland Cement (33, 43 and 53 Grade) — Specification",
-    committee: "CED 02 (Cement & Concrete)",
+    title: "Ordinary Portland Cement — Specification",
+    committee: "CED 2 (Cement & Concrete)",
     year: "2015",
-    scope: "Prescribes physical and chemical requirements, compressive strength, and fineness for OPC cement.",
+    scope: "Manufacturing, chemical and physical requirements for 33, 43 and 53 grade Ordinary Portland Cement.",
     scheme: "ISI Mark",
     mandatory: true,
     sector: "Civil & Construction",
     qco_order: "Cement Quality Control Order (Mandatory)",
   },
   {
-    is_number: "IS 4151",
-    title: "Protective Helmets for Two Wheeler Riders — Specification",
-    committee: "PGD 07 (Personal Safety)",
-    year: "2015",
-    scope: "Specifies shock absorption, retention system, and penetration resistance for two-wheeler protective helmets.",
+    is_number: "IS 2347",
+    title: "Domestic Pressure Cookers — Specification",
+    committee: "MED 32 (Domestic Appliances)",
+    year: "2017",
+    scope: "Requirements for design, construction, capacity, and test methods for domestic pressure cookers.",
     scheme: "ISI Mark",
     mandatory: true,
     sector: "Consumer Safety & PPE",
-    qco_order: "Helmet Quality Control Order (Ministry of Road Transport)",
+    qco_order: "Domestic Pressure Cooker Quality Control Order 2020",
   },
   {
-    is_number: "IS 13252 (Part 1)",
-    title: "Information Technology Equipment — Safety (General Requirements)",
-    committee: "LITD 06 (IT & Telecom)",
-    year: "2010",
-    scope: "Covers mains-powered or battery-powered information technology equipment including laptops, monitors, printers.",
-    scheme: "CRS",
+    is_number: "IS 4151",
+    title: "Protective Helmets for Two Wheeler Riders — Specification",
+    committee: "TED 14 (Helmets)",
+    year: "2020",
+    scope: "Specifies requirements regarding material, construction, finish, weight and performance tests for motorcycle helmets.",
+    scheme: "ISI Mark",
+    mandatory: true,
+    sector: "Consumer Safety & PPE",
+    qco_order: "Helmet for Two-Wheeler Riders (Quality Control) Order",
+  },
+  {
+    is_number: "IS 16221 (Part 2)",
+    title: "Safety of Power Converters for use in Photovoltaic Power Systems",
+    committee: "ETD 28 (Solar Photovoltaic Energy)",
+    year: "2015",
+    scope: "Specific requirements for grid-connected solar inverters and DC/DC converters in solar installations.",
+    scheme: "CRS (Scheme II)",
     mandatory: true,
     sector: "Electronics & Electrical",
     qco_order: "MeitY Compulsory Registration Scheme Order",
@@ -101,29 +112,7 @@ const STANDARDS_CATALOGUE = [
     scheme: "ISI Mark",
     mandatory: true,
     sector: "Civil & Construction",
-    qco_order: "Steel and Steel Products QCO Order",
-  },
-  {
-    is_number: "IS 2347",
-    title: "Domestic Pressure Cookers — Specification",
-    committee: "MED 03 (Kitchenware)",
-    year: "2017",
-    scope: "Safety standards, burst pressure testing, and fusible plug requirements for domestic pressure cookers.",
-    scheme: "ISI Mark",
-    mandatory: true,
-    sector: "Consumer Safety & PPE",
-    qco_order: "Domestic Pressure Cooker QCO Order",
-  },
-  {
-    is_number: "IS 15111",
-    title: "Electric Water Heaters (Geysers) for Household and Similar Purposes",
-    committee: "ETD 32 (Electrical Appliances)",
-    year: "2014",
-    scope: "Safety and energy efficiency standards for storage and instantaneous electric geysers.",
-    scheme: "ISI Mark",
-    mandatory: true,
-    sector: "Electronics & Electrical",
-    qco_order: "Household Electrical Appliances QCO Order",
+    qco_order: "Steel and Steel Products Quality Control Order",
   },
   {
     is_number: "IS 9873 (Part 1)",
@@ -183,35 +172,35 @@ export default function StandardsPage() {
   }, [searchTerm, selectedSector, schemeFilter]);
 
   return (
-    <div className="min-h-screen bg-[#060B14] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-700 flex flex-col font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-10 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Page Hero Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/60 text-blue-400 text-xs font-semibold">
-            <BookOpen size={14} />
-            <span>Official BIS Standards Directory</span>
+        <div className="bg-gradient-to-r from-blue-50/70 via-white to-slate-50 border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center max-w-4xl mx-auto shadow-2xs space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#024DA1] border border-blue-200 text-xs font-semibold">
+            <BookOpen size={13} />
+            <span>Official Bureau of Indian Standards Catalogue</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
-            Indian Standards <span className="text-[#024DA1]">(IS) Catalogue</span>
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+            Indian Standards <span className="text-[#024DA1]">(IS) Directory</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
             Search active Bureau of Indian Standards specifications, governing technical committees,
             and mandatory Quality Control Order (QCO) gazette notifications.
           </p>
         </div>
 
         {/* Filter Toolbar */}
-        <div className="bis-panel p-5 bg-[#0B1324] border border-slate-800 space-y-4">
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
             {/* Search Input */}
             <div className="sm:col-span-6 relative">
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                className="input-bis pl-10 text-sm bg-[#101E38] border-slate-700"
-                placeholder="Search standard by IS number (e.g. IS 16102), product, or committee..."
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                placeholder="Search by IS number (e.g. IS 16102), product, or committee..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -220,12 +209,12 @@ export default function StandardsPage() {
             {/* Sector Selector */}
             <div className="sm:col-span-3">
               <select
-                className="input-bis text-sm bg-[#101E38] border-slate-700"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
                 value={selectedSector}
                 onChange={(e) => setSelectedSector(e.target.value)}
               >
                 {SECTORS.map((s) => (
-                  <option key={s} value={s} className="bg-[#0B1324]">
+                  <option key={s} value={s}>
                     {s}
                   </option>
                 ))}
@@ -235,91 +224,111 @@ export default function StandardsPage() {
             {/* Scheme Selector */}
             <div className="sm:col-span-3">
               <select
-                className="input-bis text-sm bg-[#101E38] border-slate-700"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
                 value={schemeFilter}
                 onChange={(e) => setSchemeFilter(e.target.value)}
               >
-                <option value="All Schemes" className="bg-[#0B1324]">All Certification Schemes</option>
-                <option value="ISI Mark" className="bg-[#0B1324]">ISI Mark (Scheme I)</option>
-                <option value="CRS" className="bg-[#0B1324]">CRS (Electronics & IT)</option>
-                <option value="Hallmarking" className="bg-[#0B1324]">Hallmarking (Precious Metals)</option>
+                <option value="All Schemes">All Certification Schemes</option>
+                <option value="ISI Mark">ISI Mark (Scheme I)</option>
+                <option value="CRS (Scheme II)">CRS (Scheme II)</option>
+                <option value="Hallmarking">Hallmarking</option>
               </select>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 pt-3 border-t border-slate-800/80">
-            <span>Showing <strong>{filteredStandards.length}</strong> catalogued Indian Standards</span>
-            <span className="text-slate-400">Database updated with Gazette QCO notifications</span>
+          <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+            <span>
+              Showing <strong>{filteredStandards.length}</strong> of {STANDARDS_CATALOGUE.length} standards catalogued
+            </span>
+            {(searchTerm || selectedSector !== "All Sectors" || schemeFilter !== "All Schemes") && (
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedSector("All Sectors");
+                  setSchemeFilter("All Schemes");
+                }}
+                className="text-[#024DA1] hover:underline font-semibold"
+              >
+                Reset Filters
+              </button>
+            )}
           </div>
         </div>
 
         {/* Standards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredStandards.map((std) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredStandards.map((item) => (
             <div
-              key={std.is_number}
-              className="bis-panel p-6 bg-[#0B1324] border border-slate-800 flex flex-col justify-between hover:border-blue-700/60 transition-colors group"
+              key={item.is_number}
+              className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs hover:border-blue-300 hover:shadow-xs transition-all flex flex-col justify-between"
             >
               <div className="space-y-3">
-                {/* Header Badge Row */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-black font-mono px-2.5 py-1 rounded bg-[#024DA1] text-white">
-                    {std.is_number}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-800 text-blue-300 border border-slate-700">
-                      {std.scheme}
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="text-base font-black text-[#024DA1] font-mono">
+                      {item.is_number}
                     </span>
-                    {std.mandatory && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-950/80 text-red-400 border border-red-800/60">
-                        Mandatory QCO
+                    <span className="text-xs text-slate-400 ml-1.5 font-mono">
+                      :{item.year}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#024DA1] border border-blue-200">
+                      {item.scheme}
+                    </span>
+                    {item.mandatory && (
+                      <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md bg-red-50 text-[#970C12] border border-red-200">
+                        QCO Mandatory
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Title & Scope */}
-                <h3 className="text-base font-bold text-white group-hover:text-blue-400 transition-colors leading-snug">
-                  {std.title}
+                <h3 className="text-sm font-bold text-slate-900 leading-snug">
+                  {item.title}
                 </h3>
-                <p className="text-xs text-slate-300 leading-relaxed line-clamp-3">
-                  {std.scope}
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {item.scope}
                 </p>
 
-                {/* Meta details */}
-                <div className="space-y-1.5 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1">
-                      <Building size={12} className="text-blue-400" />
-                      <span>Committee:</span>
-                    </span>
-                    <span className="text-slate-200 font-medium">{std.committee}</span>
+                <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500 pt-1">
+                  <div className="flex items-center gap-1">
+                    <Building size={12} className="text-slate-400" />
+                    <span>{item.committee}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} className="text-blue-400" />
-                      <span>Edition / Year:</span>
-                    </span>
-                    <span className="text-slate-200 font-medium">{std.year}</span>
+                  <div className="flex items-center gap-1">
+                    <Calendar size={12} className="text-slate-400" />
+                    <span>Reaffirmed {item.year}</span>
                   </div>
-                  <div className="text-[11px] text-slate-400 pt-1">
-                    <span className="font-semibold text-slate-300">Statutory Order: </span>
-                    <span>{std.qco_order}</span>
-                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-[11px] text-slate-600">
+                  <span className="font-semibold text-slate-700">QCO Notification: </span>
+                  {item.qco_order}
                 </div>
               </div>
 
-              {/* Action: Consult AI Assistant on this Standard */}
-              <div className="pt-4 mt-4 border-t border-slate-800">
+              <div className="pt-3.5 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                 <Link
-                  href={`/chat?q=${encodeURIComponent(`What does ${std.is_number} cover and what are the testing requirements?`)}`}
+                  href={`/chat?q=${encodeURIComponent(
+                    `Tell me full testing requirements and licensing procedure for ${item.is_number}`
+                  )}`}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#024DA1] hover:underline"
                 >
-                  <button className="w-full py-2 px-3 text-xs font-semibold rounded-lg bg-blue-950/50 hover:bg-[#024DA1] text-blue-300 hover:text-white border border-blue-900/60 transition-colors flex items-center justify-center gap-2">
-                    <Sparkles size={13} />
-                    <span>Inquire with AI Saathi</span>
-                    <ChevronRight size={13} />
-                  </button>
+                  <Sparkles size={13} />
+                  <span>Ask AI Saathi About {item.is_number}</span>
                 </Link>
+
+                <a
+                  href="https://www.bis.gov.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-slate-700 p-1"
+                  title="Official BIS Standard Reference"
+                >
+                  <ExternalLink size={13} />
+                </a>
               </div>
             </div>
           ))}

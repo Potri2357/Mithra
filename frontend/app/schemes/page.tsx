@@ -11,7 +11,6 @@ import {
   Coins,
   ShieldCheck,
   ArrowRight,
-  ChevronRight,
   Building2,
   FileText,
   Sparkles,
@@ -21,351 +20,351 @@ const SCHEMES = [
   {
     id: "isi",
     code: "Scheme I",
-    name: "ISI Mark Certification",
-    tagline: "Product Certification Scheme for Domestic Indian Manufacturers",
-    summary:
-      "The prestigious ISI Mark certifies that industrial and consumer products conform to relevant Indian Standards (IS). Mandatory for over 900+ notified products under central Quality Control Orders.",
-    timeline: "4 to 6 Weeks",
-    inspection: "Mandatory factory audit & independent sample testing at recognized labs",
-    validity: "1 to 2 Years (Renewable)",
-    fees: "Application ₹1,000 + Marking fee (0.5%–1.5% of product turnover)",
-    concessions: "50% fee concession for registered MSMEs / 80% for Women Entrepreneurs",
+    name: "ISI Mark Certification (Product Certification)",
+    target: "Domestic Manufacturers (India)",
+    tag: "Standard ISI Mark",
+    badgeClass: "bg-blue-50 text-[#024DA1] border border-blue-200",
+    overview:
+      "The flagship conformity assessment scheme enabling manufacturers to imprint the iconic ISI mark on goods complying with designated Indian Standards. Requires preliminary factory audit and third-party laboratory sample testing.",
+    timeline: "30 to 90 Days",
+    auditRequired: "Yes — Mandatory Factory Physical Audit",
+    fees: "Application Fee ₹1,000 + Inspection Fee ₹7,000/man-day + Annual Marking Fee",
+    eligibleProducts:
+      "Cement (IS 269), Domestic Pressure Cookers (IS 2347), PVC Cables (IS 694), Helmets (IS 4151), Packaged Drinking Water (IS 14543), Steel Rebars (IS 1786).",
     checklist: [
-      "Firm Registration / Incorporation Certificate & GST Certificate",
-      "Factory Layout Map & Proof of manufacturing premises",
-      "List of complete manufacturing machinery and installed test equipment",
-      "In-house test records and Quality Control Personnel qualifications",
-      "Raw material test certificates and source supplier details",
-      "Udyam Registration Certificate (if claiming MSME concession)",
+      "Factory registration and MSME/Udyam certificate",
+      "List of in-house testing equipment with valid calibration certificates",
+      "Manufacturing machinery details and process flow chart",
+      "Consent from State Pollution Control Board (if applicable)",
+      "Nomination of authorized technical quality personnel",
     ],
-    sampleProducts: ["Cement (IS 269)", "Electrical Cables (IS 694)", "Steel Bars (IS 1786)", "Helmets (IS 4151)", "Pressure Cookers (IS 2347)"],
   },
   {
     id: "crs",
-    code: "CRS Order",
+    code: "Scheme II",
     name: "Compulsory Registration Scheme (CRS)",
-    tagline: "Fast-Track Safety Scheme for Electronics and IT Equipment",
-    summary:
-      "Administered by BIS on behalf of MeitY. Covers 65+ notified electronic and IT product categories. Unlike Scheme I, CRS does not mandate factory audits; it relies on accredited third-party test reports.",
-    timeline: "2 to 4 Weeks",
-    inspection: "No factory inspection required; based on independent lab safety test report",
-    validity: "2 Years (Renewable)",
-    fees: "Government registration fee + Lab test charges",
-    concessions: "Self-declaration of conformity with formal R-Number registration mark",
+    target: "IT, Telecom & Electronics Manufacturers (Global & Domestic)",
+    tag: "MeitY / MeitY-BIS",
+    badgeClass: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    overview:
+      "A fast-track self-declaration conformity assessment scheme primarily for electronic and IT products covered under the Electronics & IT Goods (Requirements for Compulsory Registration) Order.",
+    timeline: "15 to 25 Days (Post Lab Testing)",
+    auditRequired: "No — Based solely on test reports from BIS-recognized labs",
+    fees: "Application Fee ₹1,000 + Processing Fee + Annual Registration Fee",
+    eligibleProducts:
+      "Self-ballasted LED Lamps (IS 16102), Laptops, Tablets, Mobile Phones, Solar Inverters (IS 16221), Power Banks, Smart Watches.",
     checklist: [
-      "Safety Test Report from BIS-recognized / NABL accredited lab (<90 days old)",
-      "Brand authorization letter from trademark owner (if applicable)",
-      "Technical specifications, schematic diagrams, and critical component list",
-      "Factory business license with authorized signatory affidavit",
-      "Undertaking for affixing R-Number and standard mark",
+      "Test report from BIS-recognized testing laboratory (not older than 90 days)",
+      "Trademark registration certificate / Authorization letter from brand owner",
+      "Undertaking and Affidavit from Authorized Indian Representative (AIR) for foreign brands",
+      "Factory business license and manufacturing facility proof",
     ],
-    sampleProducts: ["LED Lamps & Drivers (IS 16102)", "Mobile Phones & Laptops (IS 13252)", "Power Banks & Adapters", "Smart TVs & Monitors", "CCTV Cameras"],
   },
   {
     id: "fmcs",
-    code: "FMCS",
-    name: "Foreign Manufacturers Certification",
-    tagline: "Certification for Overseas Plants Exporting Products to India",
-    summary:
-      "Mandatory certification for factories located outside India that produce goods covered under Indian Quality Control Orders. Requires appointing an Authorized Indian Representative (AIR).",
-    timeline: "24 to 30 Weeks (due to international inspection scheduling)",
-    inspection: "BIS inspecting officers travel to foreign factory for physical plant inspection & sample collection",
-    validity: "1 to 2 Years (Renewable)",
-    fees: "Application fee + Inspection travel & accommodation costs borne by applicant",
-    concessions: "Grants foreign factory the right to affix ISI mark directly on export batches",
+    code: "Scheme I (Foreign)",
+    name: "Foreign Manufacturers Certification Scheme (FMCS)",
+    target: "Overseas / International Manufacturing Units Exporting to India",
+    tag: "Exporting to India",
+    badgeClass: "bg-purple-50 text-purple-700 border border-purple-200",
+    overview:
+      "Empowers overseas manufacturing locations located outside India to use the Standard ISI Mark for products covered under mandatory Quality Control Orders (QCO) before export to the Indian customs border.",
+    timeline: "3 to 6 Months",
+    auditRequired: "Yes — Physical factory audit by BIS officers abroad",
+    fees: "Application Fee $1,000 USD + Audit Travel/Per-Diem + Performance Bank Guarantee ($10,000)",
+    eligibleProducts:
+      "All products under mandatory QCOs: Steel, Tyres, Chemicals, Toys, Machinery, Electronics.",
     checklist: [
-      "Appointment of Authorized Indian Representative (AIR) resident in India",
-      "Foreign Factory Registration & National Industrial License",
-      "Manufacturing process flow chart and calibration certificates",
-      "Letter of Undertaking and Performance Bank Guarantee",
-      "Visa facilitation and itinerary approval for BIS technical audit delegation",
+      "Appointment of Authorized Indian Representative (AIR) residing in India",
+      "Complete manufacturing and in-house testing capability documentation",
+      "Bank Guarantee from Indian scheduled bank",
+      "Proof of factory operations and overseas local permits",
     ],
-    sampleProducts: ["Imported Steel & Wire Rods", "Foreign Automotive Components", "Imported Cement & Chemicals", "Consumer Electronics"],
   },
   {
     id: "hallmark",
-    code: "Hallmarking",
-    name: "BIS Gold & Silver Hallmarking",
-    tagline: "Mandatory Precious Metals Assaying & HUID Traceability",
-    summary:
-      "Protects jewellery buyers by authenticating gold purity (14K, 18K, 20K, 22K, 23K, 24K). Jewellers register with BIS and send jewellery to Assaying & Hallmarking Centres (AHC) for laser HUID engraving.",
-    timeline: "24 to 48 Hours at recognized AHC",
-    inspection: "Assaying & Hallmarking Centre (AHC) performs X-Ray Fluorescence (XRF) & Fire Assay testing",
-    validity: "Permanent on marked article",
-    fees: "Jeweller registration fee (tiered by turnover, ₹7,500+) + Hallmarking fee (₹45/article)",
-    concessions: "One-time jeweller registration valid for 5 years across all branches",
+    code: "Scheme IV",
+    name: "Hallmarking Scheme for Gold & Silver",
+    target: "Jewellers & Assaying and Hallmarking Centres (AHC)",
+    tag: "Mandatory IS 1417",
+    badgeClass: "bg-amber-50 text-amber-700 border border-amber-200",
+    overview:
+      "Mandatory authentication scheme for precious metals requiring every hallmarked gold jewellery piece to carry the triangular BIS logo, purity fineness grade, and 6-digit alphanumeric HUID code.",
+    timeline: "Instant via Portal (Jeweller Registration)",
+    auditRequired: "Audit of Assaying Centres (AHC) only",
+    fees: "Zero registration fee for jewellers (one-time portal registration)",
+    eligibleProducts: "Gold Jewellery (14K, 18K, 20K, 22K, 23K, 24K) and Silver Artefacts.",
     checklist: [
-      "Jeweller Firm Registration & Sales Tax / GST documents",
-      "Proof of jewellery retail showroom or manufacturing workshop",
-      "Authorized signatory PAN and Aadhaar identity verification",
-      "Agreement with BIS-recognized Assaying and Hallmarking Centre (AHC)",
+      "GST registration certificate",
+      "Proof of jewellery sales establishment / outlet",
+      "Self-declaration of conformity with IS 1417",
     ],
-    sampleProducts: ["22K Gold Jewellery (916)", "18K Diamond Studded Jewellery (750)", "24K Gold Coins (999)", "Silver Artefacts (IS 2112)"],
   },
 ];
 
 export default function SchemesPage() {
   const [activeScheme, setActiveScheme] = useState(SCHEMES[0]);
+  const [productType, setProductType] = useState("industrial");
+  const [origin, setOrigin] = useState("domestic");
+  const [msmeStatus, setMsmeStatus] = useState("msme");
 
-  // Interactive Scheme Finder State
-  const [productType, setProductType] = useState("electronics");
-  const [location, setLocation] = useState("india");
-  const [isMsme, setIsMsme] = useState(false);
+  // Interactive Recommendation Logic
+  const getRecommendation = () => {
+    if (origin === "foreign") {
+      return {
+        scheme: "Foreign Manufacturers Certification Scheme (FMCS)",
+        description:
+          "Because manufacturing is overseas, you must secure an FMCS license before shipping goods to Indian customs. An Authorized Indian Representative (AIR) is mandatory.",
+        path: "/chat?q=" + encodeURIComponent("How do I apply for BIS FMCS foreign manufacturer license?"),
+      };
+    }
+    if (productType === "electronics") {
+      return {
+        scheme: "Compulsory Registration Scheme (CRS — Scheme II)",
+        description:
+          "Electronic and IT goods are registered under Scheme II. No factory audit is needed; testing is conducted in BIS-recognized labs.",
+        path: "/chat?q=" + encodeURIComponent("What is the CRS registration process for electronic items?"),
+      };
+    }
+    if (productType === "jewellery") {
+      return {
+        scheme: "Hallmarking Scheme (IS 1417)",
+        description:
+          "Precious gold and silver ornaments must be registered with BIS and laser-etched with 6-digit HUID at an accredited Assaying & Hallmarking Centre.",
+        path: "/hallmark",
+      };
+    }
+    return {
+      scheme: "ISI Mark Certification (Scheme I)",
+      description:
+        "Standard industrial, civil, and consumer items require an ISI Mark licence, which involves factory inspection and sample verification.",
+      path: "/chat?q=" + encodeURIComponent("Step by step process to get ISI mark certification in India"),
+    };
+  };
 
-  // Computed recommendation from wizard
-  const recommendedScheme = location === "foreign"
-    ? SCHEMES[2] // FMCS
-    : productType === "jewellery"
-    ? SCHEMES[3] // Hallmarking
-    : productType === "electronics"
-    ? SCHEMES[1] // CRS
-    : SCHEMES[0]; // ISI Mark
+  const rec = getRecommendation();
 
   return (
-    <div className="min-h-screen bg-[#060B14] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-700 flex flex-col font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-10 space-y-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
         {/* Hero Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/60 text-blue-400 text-xs font-semibold">
-            <Award size={14} />
-            <span>Statutory Certification Pathways</span>
+        <div className="bg-gradient-to-r from-blue-50/70 via-white to-slate-50 border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center max-w-4xl mx-auto shadow-2xs space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#024DA1] border border-blue-200 text-xs font-semibold">
+            <Award size={13} />
+            <span>Official BIS Licensing &amp; Certification Framework</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
             BIS Certification <span className="text-[#024DA1]">Schemes Navigator</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-            Understand the statutory certification schemes administered under the BIS Act 2016.
-            Check eligibility, fee concessions, inspection rules, and document checklists.
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            Compare compliance routes: ISI Mark (Scheme I), Compulsory Registration (CRS), Foreign Manufacturers (FMCS),
+            and Hallmarking. Includes checklists, fee structures, and MSME concessions.
           </p>
         </div>
 
-        {/* ── Interactive "Which Scheme Applies To Me?" Wizard ─────────── */}
-        <section className="bis-panel p-6 sm:p-8 bg-[#0B1324] border border-slate-800 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+        {/* ── Interactive Scheme Wizard ── */}
+        <section className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
             <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Sparkles size={18} className="text-[#EC171F]" />
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Sparkles size={17} className="text-[#024DA1]" />
                 <span>Interactive Scheme Applicability Advisor</span>
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Answer 3 quick questions to identify the exact BIS licensing pathway for your business.
+              <p className="text-xs text-slate-500 mt-0.5">
+                Answer 3 quick questions to identify the exact BIS licensing pathway for your enterprise.
               </p>
             </div>
-            <span className="text-xs font-mono px-2.5 py-1 rounded bg-blue-950/80 border border-blue-800/60 text-blue-300 self-start sm:self-auto">
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-blue-50 text-[#024DA1] border border-blue-200 self-start sm:self-auto">
               Regulatory Guidance
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Question 1: Product Category */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                1. What is your product category?
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 block">
+                1. Product category
               </label>
               <select
-                className="input-bis text-sm bg-[#101E38] border-slate-700"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
               >
-                <option value="industrial">General / Industrial / Civil (e.g. Cables, Cement, Steel)</option>
-                <option value="electronics">Electronics &amp; IT Goods (e.g. LED, Mobile, Laptops)</option>
+                <option value="industrial">General / Industrial / Civil (Cables, Cement, Steel)</option>
+                <option value="electronics">Electronics &amp; IT Goods (LED, Mobile, Inverters)</option>
                 <option value="jewellery">Precious Metals &amp; Jewellery (Gold / Silver)</option>
-                <option value="consumer">Consumer Safety Products (Helmets, Toys, Cookers)</option>
+                <option value="consumer">Consumer Safety (Helmets, Toys, Cookers)</option>
               </select>
             </div>
 
             {/* Question 2: Factory Location */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                2. Where is manufacturing facility?
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 block">
+                2. Manufacturing facility location
               </label>
               <select
-                className="input-bis text-sm bg-[#101E38] border-slate-700"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                value={origin}
+                onChange={(e) => setOrigin(e.target.value)}
               >
-                <option value="india">Domestic (Within India)</option>
-                <option value="foreign">Overseas / International (Outside India)</option>
+                <option value="domestic">Domestic Unit Located in India</option>
+                <option value="foreign">Overseas / International Unit Outside India</option>
               </select>
             </div>
 
             {/* Question 3: Enterprise Scale */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                3. Enterprise Concession Status
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 block">
+                3. Enterprise scale (concessions)
               </label>
-              <div className="flex items-center h-[46px] px-3 bg-[#101E38] rounded-xl border border-slate-700 gap-2">
-                <input
-                  type="checkbox"
-                  id="msme-check"
-                  checked={isMsme}
-                  onChange={(e) => setIsMsme(e.target.checked)}
-                  className="w-4 h-4 rounded text-blue-600 focus:ring-0"
-                />
-                <label htmlFor="msme-check" className="text-xs text-slate-300 cursor-pointer">
-                  Registered MSME / Women Entrepreneur
-                </label>
-              </div>
+              <select
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                value={msmeStatus}
+                onChange={(e) => setMsmeStatus(e.target.value)}
+              >
+                <option value="msme">Micro / Small Enterprise (Udyam MSME Registered)</option>
+                <option value="startup">Recognized DPIIT Start-up</option>
+                <option value="large">Medium or Large Scale Industry</option>
+              </select>
             </div>
           </div>
 
-          {/* Wizard Result Card */}
-          <div className="p-5 rounded-xl bg-[#101E38] border border-blue-800/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Recommendation Output Card */}
+          <div className="p-4 sm:p-5 rounded-xl bg-blue-50/70 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[#024DA1] text-white">
-                  Recommended: {recommendedScheme.name}
+                <CheckCircle2 size={16} className="text-[#0E8A5F]" />
+                <span className="text-xs font-bold text-[#024DA1] uppercase tracking-wide">
+                  Recommended Compliance Route
                 </span>
-                <span className="text-xs text-slate-400">({recommendedScheme.code})</span>
               </div>
-              <p className="text-sm font-semibold text-white">
-                {recommendedScheme.tagline}
-              </p>
-              <p className="text-xs text-slate-400">
-                Estimated Timeline: <strong className="text-slate-200">{recommendedScheme.timeline}</strong>
-                {isMsme && (
-                  <span className="text-emerald-400 ml-2">
-                    • 50% to 80% Fee Concession Applicable!
-                  </span>
-                )}
-              </p>
+              <h3 className="text-base font-extrabold text-slate-900">{rec.scheme}</h3>
+              <p className="text-xs text-slate-600 leading-relaxed max-w-xl">{rec.description}</p>
+              {msmeStatus !== "large" && (
+                <div className="text-[11px] font-semibold text-[#0E8A5F] pt-1">
+                  ✓ Eligible for 20% MSME/Start-up fee concession on marking &amp; application fees.
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setActiveScheme(recommendedScheme)}
-                className="btn-primary text-xs py-2 px-4 rounded-lg flex-shrink-0"
-              >
-                View Scheme Details
+            <Link href={rec.path} className="flex-shrink-0">
+              <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-xs transition-colors">
+                <span>Start Application Guidance</span>
+                <ArrowRight size={13} />
               </button>
-              <Link
-                href={`/chat?q=${encodeURIComponent(`How do I apply for ${recommendedScheme.name} certification for my business?`)}`}
-              >
-                <button className="btn-ghost text-xs py-2 px-3 rounded-lg flex-shrink-0">
-                  Ask AI Saathi
-                  <ChevronRight size={13} />
-                </button>
-              </Link>
-            </div>
+            </Link>
           </div>
         </section>
 
-        {/* ── Scheme Tab Switcher ────────────────────────────────────────── */}
-        <section className="space-y-6">
-          <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-3" role="tablist">
-            {SCHEMES.map((scheme) => {
-              const isSelected = activeScheme.id === scheme.id;
-              return (
-                <button
-                  key={scheme.id}
-                  role="tab"
-                  aria-selected={isSelected}
-                  onClick={() => setActiveScheme(scheme)}
-                  className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all border ${
-                    isSelected
-                      ? "bg-[#024DA1] border-blue-500 text-white shadow-md"
-                      : "bg-[#0B1324] border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
-                  }`}
-                >
-                  {scheme.name}
-                </button>
-              );
-            })}
+        {/* ── Scheme Tabs & Deep Details ── */}
+        <section className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {SCHEMES.map((scheme) => (
+              <button
+                key={scheme.id}
+                onClick={() => setActiveScheme(scheme)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                  activeScheme.id === scheme.id
+                    ? "bg-[#024DA1] border-[#024DA1] text-white shadow-xs"
+                    : "bg-white border-slate-200 text-slate-700 hover:border-blue-300"
+                }`}
+              >
+                <span>{scheme.name}</span>
+              </button>
+            ))}
           </div>
 
-          {/* Detailed Active Scheme Profile */}
-          <div className="bis-panel p-6 sm:p-8 bg-[#0B1324] border border-slate-800 space-y-8">
-            <div className="space-y-2 border-b border-slate-800 pb-6">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-950/80 text-red-400 border border-red-800/60">
-                  {activeScheme.code}
-                </span>
-                <span className="text-xs text-slate-400">Bureau of Indian Standards Statutory Framework</span>
+          {/* Detailed Scheme Breakdown Card */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4 border-b border-slate-100">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${activeScheme.badgeClass}`}>
+                    {activeScheme.code}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500">Target: {activeScheme.target}</span>
+                </div>
+                <h3 className="text-xl font-extrabold text-slate-900">{activeScheme.name}</h3>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white">
-                {activeScheme.name}
-              </h2>
-              <p className="text-sm text-slate-300 leading-relaxed max-w-4xl">
-                {activeScheme.summary}
-              </p>
+
+              <Link
+                href={`/chat?q=${encodeURIComponent(`How to apply for ${activeScheme.name}`)}`}
+                className="flex-shrink-0"
+              >
+                <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition-colors">
+                  <Sparkles size={13} />
+                  <span>Consult Assistant</span>
+                </button>
+              </Link>
             </div>
 
-            {/* Core Metrics Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-4 rounded-xl bg-[#101E38] border border-slate-800">
-                <div className="flex items-center gap-2 text-blue-400 mb-1">
-                  <Clock size={16} />
-                  <span className="text-xs font-semibold uppercase">Processing Timeline</span>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              {activeScheme.overview}
+            </p>
+
+            {/* Metric Boxes */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
+                  <Clock size={13} className="text-[#024DA1]" />
+                  <span>Processing Timeline</span>
                 </div>
-                <div className="text-base font-bold text-white">{activeScheme.timeline}</div>
+                <div className="text-sm font-bold text-slate-900">{activeScheme.timeline}</div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#101E38] border border-slate-800">
-                <div className="flex items-center gap-2 text-emerald-400 mb-1">
-                  <Coins size={16} />
-                  <span className="text-xs font-semibold uppercase">Fee Concession</span>
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
+                  <Building2 size={13} className="text-[#024DA1]" />
+                  <span>Factory Audit</span>
                 </div>
-                <div className="text-xs font-medium text-slate-200">{activeScheme.concessions}</div>
+                <div className="text-xs font-bold text-slate-900">{activeScheme.auditRequired}</div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#101E38] border border-slate-800 sm:col-span-2">
-                <div className="flex items-center gap-2 text-amber-400 mb-1">
-                  <ShieldCheck size={16} />
-                  <span className="text-xs font-semibold uppercase">Audit &amp; Testing Protocol</span>
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium mb-1">
+                  <Coins size={13} className="text-[#024DA1]" />
+                  <span>Fee Structure</span>
                 </div>
-                <div className="text-xs font-medium text-slate-200">{activeScheme.inspection}</div>
+                <div className="text-xs font-bold text-slate-900 truncate" title={activeScheme.fees}>
+                  {activeScheme.fees}
+                </div>
               </div>
             </div>
 
-            {/* Document Checklist & Sample Products */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-              {/* Checklist */}
-              <div className="md:col-span-7 space-y-3">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <FileText size={18} className="text-[#024DA1]" />
-                  <span>Mandatory Document Checklist for Application</span>
-                </h3>
-                <ul className="space-y-2">
-                  {activeScheme.checklist.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-xs text-slate-300">
-                      <CheckCircle2 size={15} className="text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span>{item}</span>
+            {/* Document Checklist & Eligible Products */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+              <div className="space-y-2.5">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <FileText size={14} className="text-[#024DA1]" />
+                  <span>Mandatory Application Checklist</span>
+                </h4>
+                <ul className="space-y-2 text-xs text-slate-600">
+                  {activeScheme.checklist.map((c, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <CheckCircle2 size={14} className="text-[#0E8A5F] flex-shrink-0 mt-0.5" />
+                      <span>{c}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Sample Products */}
-              <div className="md:col-span-5 space-y-3">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Building2 size={18} className="text-red-400" />
-                  <span>Common Notified Product Categories</span>
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {activeScheme.sampleProducts.map((p, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1.5 rounded-lg bg-[#101E38] border border-slate-700 text-xs text-slate-200 font-medium"
-                    >
-                      {p}
-                    </span>
-                  ))}
-                </div>
+              <div className="space-y-2.5">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-[#024DA1]" />
+                  <span>Key Products Covered</span>
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                  {activeScheme.eligibleProducts}
+                </p>
 
-                <div className="pt-4 mt-4 border-t border-slate-800">
-                  <p className="text-xs text-slate-400 mb-3">
-                    Need help drafting application documentation or calculating exact marking fees?
+                <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80 text-xs space-y-1">
+                  <span className="font-bold text-[#024DA1] block">Government Concessions Notice:</span>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    Under BIS Gazette S.O. 1290, Micro &amp; Small Enterprises (MSEs) and registered Start-ups receive a
+                    20% concession on annual minimum marking fees and 50% concession on application audit fees.
                   </p>
-                  <Link
-                    href={`/chat?q=${encodeURIComponent(`What is the step-by-step application procedure for ${activeScheme.name}?`)}`}
-                  >
-                    <button className="btn-primary text-xs py-2 px-4 w-full justify-center">
-                      <span>Inquire Step-by-Step Procedure with AI</span>
-                      <ArrowRight size={13} />
-                    </button>
-                  </Link>
                 </div>
               </div>
             </div>

@@ -7,14 +7,9 @@ import { usePathname } from "next/navigation";
 import {
   Menu,
   X,
-  MessageSquare,
-  BookOpen,
-  Award,
-  FlaskConical,
-  ShieldAlert,
-  Sun,
+  Search,
   Moon,
-  Sparkles,
+  Sun,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -50,56 +45,53 @@ export default function Navbar() {
     setCurrentLang(next);
   };
 
-  const navItems = [
-    { href: "/", label: "Portal", icon: Sparkles },
-    { href: "/standards", label: "Standards Catalogue", icon: BookOpen },
-    { href: "/schemes", label: "Certification Schemes", icon: Award },
-    { href: "/hallmark", label: "Hallmark Authenticator", icon: Award },
-    { href: "/labs", label: "Testing Labs", icon: FlaskConical },
-    { href: "/consumer", label: "Consumer Grievances", icon: ShieldAlert },
-    { href: "/chat", label: "Guided Chat", icon: MessageSquare },
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/standards", label: "Standards" },
+    { href: "/schemes", label: "Certification" },
+    { href: "/hallmark", label: "Hallmark & HUID" },
+    { href: "/labs", label: "Testing Labs" },
+    { href: "/consumer", label: "Consumer Support" },
+    { href: "/chat", label: "Resources" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)]">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2.5">
-        {/* Brand Lockup */}
+        {/* Left: Brand Identity */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="bg-white px-2 py-1 rounded-lg border border-[var(--color-border)] shadow-xs flex items-center justify-center flex-shrink-0">
+          <div className="flex items-center justify-center flex-shrink-0">
             <Image
               src="/bis_logo.png"
               alt="Bureau of Indian Standards"
-              width={54}
-              height={30}
-              className="object-contain h-7 w-auto"
+              width={38}
+              height={38}
+              className="object-contain h-8 w-auto"
               priority
             />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[var(--color-text-primary)] font-extrabold text-base tracking-tight leading-none group-hover:text-[var(--blue-600)] transition-colors">
-                Maanak Saathi
-              </span>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--red-50)] text-[var(--red-700)] border border-[var(--red-200)] hidden sm:inline-block">
-                मानक साथी
-              </span>
+            <div className="text-slate-900 font-extrabold text-sm sm:text-base tracking-tight leading-none group-hover:text-[#024DA1] transition-colors">
+              Maanak Saathi
             </div>
-            <div className="text-[11px] text-[var(--color-text-muted)] font-medium leading-none mt-1">
-              Bureau of Indian Standards Intelligence
+            <div className="text-[10px] sm:text-[11px] text-slate-500 font-medium leading-none mt-1">
+              Bureau of Indian Standards
             </div>
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden xl:flex items-center gap-1" aria-label="Main Navigation">
-          {navItems.map((item) => {
+        {/* Center: Navigation Pills */}
+        <nav className="hidden lg:flex items-center gap-1" aria-label="Main Navigation">
+          {navLinks.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`nav-link text-xs font-semibold px-3 py-2 rounded-lg transition-all ${
-                  isActive ? "active font-bold" : ""
+                className={`text-xs font-semibold px-3.5 py-1.5 transition-all ${
+                  isActive
+                    ? "bg-blue-50/90 text-[#024DA1] border border-blue-200/90 rounded-full shadow-xs"
+                    : "text-slate-600 hover:text-[#024DA1] rounded-full hover:bg-slate-50"
                 }`}
               >
                 {item.label}
@@ -108,67 +100,74 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Utility Controls & Action Button */}
-        <div className="flex items-center gap-2">
-          {/* Flag-Free Language Switcher (Section 4) */}
+        {/* Right Utility Bar: Language, Search, Dark mode, Login */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Language Switcher */}
           <button
             onClick={cycleLang}
-            className="btn-ghost px-2.5 py-1.5 text-xs font-semibold tracking-wide"
-            title="Switch Language (Flag-Free)"
-            aria-label={`Current language: ${currentLang}. Click to change.`}
+            className="flex items-center gap-1 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+            title="Switch Language"
           >
             <span>{currentLang}</span>
-            <span className="text-[10px] text-[var(--color-text-muted)]">▾</span>
+            <span className="text-[10px] text-slate-400">▾</span>
           </button>
 
-          {/* Theme Toggle (Section 7) */}
-          <button
-            onClick={toggleTheme}
-            className="btn-icon w-9 h-9"
-            title={theme === "light" ? "Switch to Institutional Dark Mode" : "Switch to Light Mode"}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
-
-          {/* Chat CTA Button */}
+          {/* Search trigger */}
           <Link href="/chat">
-            <button className="btn-primary py-2 px-3.5 text-xs rounded-lg" aria-label="Open Guided Chat Assistant">
-              <MessageSquare size={15} />
-              <span className="hidden sm:inline">Ask Saathi</span>
+            <button
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              aria-label="Search"
+              title="Search standards"
+            >
+              <Search size={15} />
             </button>
           </Link>
 
-          {/* Mobile Menu Toggle */}
+          {/* Theme Toggle */}
           <button
-            className="btn-icon w-9 h-9 xl:hidden text-[var(--color-text-primary)]"
+            onClick={toggleTheme}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            aria-label="Toggle Theme"
+          >
+            {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
+          </button>
+
+          {/* Login / Auth Button */}
+          <Link href="/chat">
+            <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-1.5 rounded-lg shadow-xs transition-colors hidden sm:inline-flex items-center justify-center">
+              Login
+            </button>
+          </Link>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="w-8 h-8 lg:hidden flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-lg"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-[var(--color-surface)] border-b border-[var(--color-border)] px-4 py-3 space-y-1">
-          {navItems.map((item) => {
+        <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-1">
+          {navLinks.map((item) => {
             const isActive = pathname === item.href;
-            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                className={`block px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
                   isActive
-                    ? "bg-[var(--blue-100)] text-[var(--blue-700)] font-bold"
-                    : "text-[var(--color-text-body)] hover:bg-[var(--blue-50)]"
+                    ? "bg-blue-50 text-[#024DA1] font-bold"
+                    : "text-slate-700 hover:bg-slate-50"
                 }`}
               >
-                <Icon size={16} className="text-[var(--blue-600)]" />
-                <span>{item.label}</span>
+                {item.label}
               </Link>
             );
           })}

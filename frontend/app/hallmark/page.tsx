@@ -100,27 +100,24 @@ export default function HallmarkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060B14] text-slate-100 flex flex-col justify-between">
-      <div>
-        <Navbar />
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-700 flex flex-col font-sans">
+      <Navbar />
 
-        {/* ── Hero Section ──────────────────────────────────────────────── */}
-        <section className="border-b border-slate-800/80 bg-gradient-to-b from-[#0B1324] to-[#060B14] py-12 px-6">
-          <div className="max-w-6xl mx-auto text-center space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#024DA1]/15 border border-[#024DA1]/40 text-[#5FA5F9] text-xs font-semibold">
-              <ShieldCheck size={14} />
-              <span>Mandatory Hallmark Verification (IS 1417)</span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              National Gold &amp; Silver{" "}
-              <span className="text-[#5FA5F9]">Hallmark Authenticator</span>
-            </h1>
-            <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-              Verify 6-character alphanumeric Hallmark Unique Identification (HUID) codes against Bureau
-              registries, or upload a photo of the jewellery hallmark stamp.
-            </p>
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+        {/* Hero Header */}
+        <div className="bg-gradient-to-r from-blue-50/70 via-white to-slate-50 border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center max-w-4xl mx-auto shadow-2xs space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#024DA1] border border-blue-200 text-xs font-semibold">
+            <ShieldCheck size={13} />
+            <span>Mandatory Hallmark Verification (IS 1417)</span>
           </div>
-        </section>
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+            Gold &amp; Silver <span className="text-[#024DA1]">Hallmark Authenticator</span>
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            Verify 6-character alphanumeric Hallmark Unique Identification (HUID) codes against Bureau
+            registries, or upload a photo of the jewellery hallmark stamp.
+          </p>
+        </div>
 
         {/* Hidden File Input */}
         <input
@@ -135,265 +132,267 @@ export default function HallmarkPage() {
           }}
         />
 
-        <main className="max-w-6xl mx-auto px-6 py-10 space-y-12">
-          {/* ── Two Column Verification Station ───────────────────────────── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            {/* Left: Input Form */}
-            <div className="bis-panel p-6 sm:p-8 space-y-6">
-              <div>
-                <label
-                  htmlFor="huid-input"
-                  className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
-                >
-                  Enter 6-Character HUID Code
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    id="huid-input"
-                    type="text"
-                    className="input-bis uppercase font-mono tracking-widest text-base"
-                    placeholder="e.g. AA1234"
-                    maxLength={8}
-                    value={huid}
-                    onChange={(e) => setHuid(e.target.value.toUpperCase())}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") verifyHUID();
-                    }}
-                    aria-label="HUID alphanumeric code"
-                  />
-                  <button
-                    className="btn-primary flex-shrink-0 px-5"
-                    onClick={() => verifyHUID()}
-                    disabled={isLoading || !huid.trim()}
-                    aria-label="Verify HUID"
-                  >
-                    {isLoading ? (
-                      <Loader2 size={18} className="animate-spin" />
-                    ) : (
-                      <>
-                        <Search size={16} />
-                        <span>Verify</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Demo Codes */}
-              <div>
-                <span className="text-xs text-slate-400 block mb-2 font-medium">Quick Test Codes:</span>
-                <div className="flex flex-wrap gap-2">
-                  {SAMPLE_HUIDS.map((s) => (
-                    <button
-                      key={s.huid}
-                      onClick={() => {
-                        setHuid(s.huid);
-                        verifyHUID(s.huid);
-                      }}
-                      className="text-xs font-mono px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:border-[#024DA1] hover:text-white transition-colors"
-                    >
-                      {s.huid} • {s.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Photo Dropzone */}
-              <div
-                className="rounded-xl border-2 border-dashed border-slate-700/80 bg-[#0B1324] p-6 text-center cursor-pointer hover:border-[#024DA1] transition-colors"
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const f = e.dataTransfer.files[0];
-                  if (f) handlePhoto(f);
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
-                }}
+        {/* Two Column Verification Station */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          {/* Left: Input Form */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
+            <div>
+              <label
+                htmlFor="huid-input"
+                className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2"
               >
-                {photoPreview ? (
-                  <div className="flex flex-col items-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={photoPreview}
-                      alt="Uploaded hallmark specimen"
-                      className="max-h-32 rounded-lg object-contain mb-2 border border-slate-700"
-                    />
-                    <p className="text-xs text-slate-400">Click to upload another photo</p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <Camera size={24} className="text-[#3B82F6] mb-2" />
-                    <p className="text-sm font-semibold text-white">Upload Hallmark Photo</p>
-                    <p className="text-xs text-slate-400 mt-1">Automatic OCR extracts stamp characters</p>
-                  </div>
-                )}
+                Enter 6-Character HUID Code
+              </label>
+              <div className="flex gap-2">
+                <input
+                  id="huid-input"
+                  type="text"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 uppercase font-mono tracking-widest text-sm sm:text-base outline-none focus:border-blue-400 focus:bg-white transition-all"
+                  placeholder="e.g. AA1234"
+                  maxLength={8}
+                  value={huid}
+                  onChange={(e) => setHuid(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") verifyHUID();
+                  }}
+                  aria-label="HUID alphanumeric code"
+                />
+                <button
+                  className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs flex items-center gap-1.5 flex-shrink-0 transition-colors"
+                  onClick={() => verifyHUID()}
+                  disabled={isLoading || !huid.trim()}
+                  aria-label="Verify HUID"
+                >
+                  {isLoading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <>
+                      <Search size={15} />
+                      <span>Verify</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
 
-            {/* Right: Verification Findings or Guidance */}
-            <div className="bis-panel p-6 sm:p-8 min-h-[360px] flex flex-col justify-between">
-              {result ? (
-                <div className="space-y-4 fade-in" aria-live="polite">
-                  <div className="flex items-center gap-3 pb-3 border-b border-slate-800">
-                    {result.verified === true ? (
-                      <div className="w-8 h-8 rounded-lg bg-emerald-950/60 border border-emerald-800/60 flex items-center justify-center text-emerald-400">
-                        <CheckCircle2 size={18} />
-                      </div>
-                    ) : result.verified === false ? (
-                      <div className="w-8 h-8 rounded-lg bg-red-950/60 border border-red-800/60 flex items-center justify-center text-[#EC171F]">
-                        <ShieldAlert size={18} />
-                      </div>
-                    ) : (
-                      <div className="w-8 h-8 rounded-lg bg-amber-950/60 border border-amber-800/60 flex items-center justify-center text-amber-400">
-                        <AlertTriangle size={18} />
-                      </div>
-                    )}
-                    <div>
-                      <h3 className="text-base font-bold text-white">Registry Response: {huid}</h3>
-                      <span className="text-xs text-slate-400">Central Hallmarking Register</span>
-                    </div>
-                  </div>
+            {/* Quick Test Codes */}
+            <div>
+              <span className="text-xs text-slate-500 block mb-2 font-medium">Quick Test Codes:</span>
+              <div className="flex flex-wrap gap-2">
+                {SAMPLE_HUIDS.map((s) => (
+                  <button
+                    key={s.huid}
+                    onClick={() => {
+                      setHuid(s.huid);
+                      verifyHUID(s.huid);
+                    }}
+                    className="text-xs font-mono px-3 py-1.5 rounded-lg bg-slate-50 text-slate-700 border border-slate-200 hover:border-blue-400 hover:text-[#024DA1] transition-colors"
+                  >
+                    <strong>{s.huid}</strong> • {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-                  <div className="prose-bis text-slate-300 text-xs sm:text-sm">
-                    <p className="whitespace-pre-line leading-relaxed">{result.answer}</p>
-                  </div>
-
-                  {result.follow_up && (
-                    <div className="pt-3 border-t border-slate-800">
-                      <Link href={`/chat?q=${encodeURIComponent(result.follow_up)}`}>
-                        <button className="text-xs font-semibold text-[#5FA5F9] hover:text-white transition-colors flex items-center gap-1">
-                          <span>{result.follow_up}</span>
-                          <ChevronRight size={13} />
-                        </button>
-                      </Link>
-                    </div>
-                  )}
+            {/* Photo Dropzone */}
+            <div
+              className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/70 p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const f = e.dataTransfer.files[0];
+                if (f) handlePhoto(f);
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
+              }}
+            >
+              {photoPreview ? (
+                <div className="flex flex-col items-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photoPreview}
+                    alt="Uploaded hallmark specimen"
+                    className="max-h-32 rounded-lg object-contain mb-2 border border-slate-200 bg-white"
+                  />
+                  <p className="text-xs text-slate-500 font-medium">Click to upload another photo</p>
                 </div>
               ) : (
-                <div className="text-center py-12 my-auto">
-                  <Award size={40} className="text-[#024DA1] mx-auto mb-3" />
-                  <h3 className="text-base font-bold text-white mb-1">Awaiting Inspection Input</h3>
-                  <p className="text-xs text-slate-400 max-w-xs mx-auto">
-                    Type a 6-character HUID or select one of the demo codes above to run validation.
-                  </p>
+                <div className="flex flex-col items-center">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#024DA1] flex items-center justify-center mb-2">
+                    <Camera size={20} />
+                  </div>
+                  <p className="text-xs font-bold text-slate-900">Upload Hallmark Stamp Photo</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Automatic OCR extracts stamp characters</p>
                 </div>
               )}
-
-              <div className="pt-4 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
-                <span>National Consumer Helpline: 1800-11-4000</span>
-                <a
-                  href="https://www.bis.gov.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white flex items-center gap-1 text-[#5FA5F9]"
-                >
-                  <span>BIS Portal</span>
-                  <ExternalLink size={10} />
-                </a>
-              </div>
             </div>
           </div>
 
-          {/* ── Visual Guide: Mandatory 3 Marks of Genuine Hallmarking ───── */}
-          <section className="bis-panel p-8 space-y-6">
-            <div>
-              <h3 className="text-xl font-bold text-white">
-                Anatomy of Mandatory 3-Piece Hallmark
-              </h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Under BIS Act 2016, genuine hallmarked gold articles must bear all three distinct laser-etched stamps:
+          {/* Right: Verification Findings or Guidance */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs min-h-[360px] flex flex-col justify-between">
+            {result ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                  {result.verified === true ? (
+                    <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#0E8A5F] border border-emerald-200 flex items-center justify-center">
+                      <CheckCircle2 size={20} />
+                    </div>
+                  ) : result.verified === false ? (
+                    <div className="w-9 h-9 rounded-xl bg-red-50 text-[#970C12] border border-red-200 flex items-center justify-center">
+                      <ShieldAlert size={20} />
+                    </div>
+                  ) : (
+                    <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center">
+                      <AlertTriangle size={20} />
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Registry Response: {huid}</h3>
+                    <span className="text-[11px] text-slate-500">Central Hallmarking Register</span>
+                  </div>
+                </div>
+
+                <div className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                  {result.answer}
+                </div>
+
+                {result.follow_up && (
+                  <div className="pt-3 border-t border-slate-100">
+                    <Link href={`/chat?q=${encodeURIComponent(result.follow_up)}`}>
+                      <button className="text-xs font-bold text-[#024DA1] hover:underline flex items-center gap-1">
+                        <span>{result.follow_up}</span>
+                        <ChevronRight size={13} />
+                      </button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12 my-auto">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#024DA1] flex items-center justify-center mx-auto mb-3">
+                  <Award size={24} />
+                </div>
+                <h3 className="text-sm font-bold text-slate-900 mb-1">Awaiting Inspection Input</h3>
+                <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                  Type a 6-character HUID or select one of the test codes above to run validation against BIS registries.
+                </p>
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+              <span>National Consumer Helpline: <strong>1800-11-4000</strong></span>
+              <a
+                href="https://www.bis.gov.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline flex items-center gap-1 text-[#024DA1] font-bold"
+              >
+                <span>BIS Portal</span>
+                <ExternalLink size={10} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Visual Guide: Mandatory 3 Marks */}
+        <section className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">
+              Anatomy of Mandatory 3-Piece Hallmark
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Under BIS Act 2016, genuine hallmarked gold articles must bear all three distinct laser-etched stamps:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#024DA1] border border-blue-200 flex items-center justify-center mb-2.5 font-black text-xs">
+                1
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 mb-1">BIS Triangle Logo</h4>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                The official triangular Bureau of Indian Standards hallmark logo certifying compliance with
+                national standard IS 1417.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="p-5 rounded-xl bg-[#0B1324] border border-slate-800">
-                <div className="w-10 h-10 rounded-lg bg-[#024DA1]/20 border border-[#024DA1]/50 flex items-center justify-center text-[#5FA5F9] mb-3 font-bold text-sm">
-                  1
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">BIS Triangle Logo</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  The official triangular Bureau of Indian Standards hallmark logo certifying compliance with
-                  national standard IS 1417.
-                </p>
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center mb-2.5 font-black text-xs">
+                2
               </div>
-
-              <div className="p-5 rounded-xl bg-[#0B1324] border border-slate-800">
-                <div className="w-10 h-10 rounded-lg bg-[#EC171F]/20 border border-[#EC171F]/50 flex items-center justify-center text-[#FCA5A5] mb-3 font-bold text-sm">
-                  2
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">Purity &amp; Fineness Stamp</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Indicates gold purity grade, e.g. <strong>22K916</strong> (91.6% pure),{" "}
-                  <strong>18K750</strong> (75.0%), or <strong>14K585</strong> (58.5%).
-                </p>
-              </div>
-
-              <div className="p-5 rounded-xl bg-[#0B1324] border border-slate-800">
-                <div className="w-10 h-10 rounded-lg bg-blue-950/60 border border-blue-800/60 flex items-center justify-center text-blue-400 mb-3 font-bold text-sm">
-                  3
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">6-Digit HUID Code</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  A unique alphanumeric identifier laser-etched at the Assaying &amp; Hallmarking Centre
-                  (AHC), traceable in the national database.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* ── Interactive Gold Purity Calculator ───────────────────────── */}
-          <section className="bis-panel p-8 space-y-6">
-            <div className="flex items-center gap-2.5">
-              <Calculator size={20} className="text-[#5FA5F9]" />
-              <h3 className="text-xl font-bold text-white">Official BIS Gold Fineness Reference Table</h3>
+              <h4 className="text-xs font-bold text-slate-900 mb-1">Purity &amp; Fineness Stamp</h4>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                Indicates gold purity grade, e.g. <strong>22K916</strong> (91.6% pure),{" "}
+                <strong>18K750</strong> (75.0%), or <strong>14K585</strong> (58.5%).
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
-              {PURITY_STANDARDS.map((p) => {
-                const isSelected = selectedPurity.karat === p.karat;
-                return (
-                  <button
-                    key={p.karat}
-                    onClick={() => setSelectedPurity(p)}
-                    className={`p-3 rounded-xl border text-center transition-all ${
-                      isSelected
-                        ? "bg-[#024DA1] border-[#3B82F6] text-white shadow-md"
-                        : "bg-[#0B1324] border-slate-800 text-slate-300 hover:border-slate-700"
-                    }`}
-                  >
-                    <div className="text-sm font-black">{p.karat}</div>
-                    <div className="text-xs font-mono font-semibold opacity-90">{p.fineness}</div>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="p-4 rounded-xl bg-[#0B1324] border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-semibold text-[#5FA5F9] uppercase tracking-wide">
-                  Grade {selectedPurity.karat} (BIS Fineness {selectedPurity.fineness})
-                </span>
-                <h4 className="text-base font-bold text-white mt-0.5">
-                  {selectedPurity.purity} Gold Content
-                </h4>
-                <p className="text-xs text-slate-400 mt-1">{selectedPurity.desc}</p>
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+              <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center mb-2.5 font-black text-xs">
+                3
               </div>
-              <Link
-                href={`/chat?q=${encodeURIComponent(`What is the hallmarking requirement for ${selectedPurity.karat} gold?`)}`}
-              >
-                <button className="btn-primary text-xs py-2 px-3 self-start sm:self-auto flex-shrink-0">
-                  Ask About {selectedPurity.karat}
-                  <ChevronRight size={13} />
+              <h4 className="text-xs font-bold text-slate-900 mb-1">6-Digit HUID Code</h4>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                A unique alphanumeric identifier laser-etched at the Assaying &amp; Hallmarking Centre
+                (AHC), traceable in the national database.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Interactive Gold Purity Calculator */}
+        <section className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 shadow-2xs space-y-5">
+          <div className="flex items-center gap-2">
+            <Calculator size={18} className="text-[#024DA1]" />
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">Official BIS Gold Fineness Reference Table</h3>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+            {PURITY_STANDARDS.map((p) => {
+              const isSelected = selectedPurity.karat === p.karat;
+              return (
+                <button
+                  key={p.karat}
+                  onClick={() => setSelectedPurity(p)}
+                  className={`p-3 rounded-xl border text-center transition-all ${
+                    isSelected
+                      ? "bg-[#024DA1] border-[#024DA1] text-white shadow-xs"
+                      : "bg-slate-50 border-slate-200 text-slate-700 hover:border-blue-300"
+                  }`}
+                >
+                  <div className="text-xs font-black">{p.karat}</div>
+                  <div className="text-[11px] font-mono font-semibold opacity-90">{p.fineness}</div>
                 </button>
-              </Link>
+              );
+            })}
+          </div>
+
+          <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold text-[#024DA1] uppercase tracking-wide">
+                Grade {selectedPurity.karat} (BIS Fineness {selectedPurity.fineness})
+              </span>
+              <h4 className="text-sm font-bold text-slate-900 mt-0.5">
+                {selectedPurity.purity} Gold Content
+              </h4>
+              <p className="text-xs text-slate-600 mt-0.5">{selectedPurity.desc}</p>
             </div>
-          </section>
-        </main>
-      </div>
+            <Link
+              href={`/chat?q=${encodeURIComponent(`What is the hallmarking requirement for ${selectedPurity.karat} gold?`)}`}
+            >
+              <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1 shadow-xs flex-shrink-0 transition-colors">
+                <span>Ask About {selectedPurity.karat}</span>
+                <ChevronRight size={13} />
+              </button>
+            </Link>
+          </div>
+        </section>
+      </main>
 
       <Footer />
     </div>
