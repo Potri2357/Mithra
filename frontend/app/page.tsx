@@ -177,7 +177,7 @@ export default function Home() {
                   type="submit"
                   className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-semibold px-5 py-2.5 rounded-full flex items-center gap-1.5 flex-shrink-0 transition-colors"
                 >
-                  <span>Ask Saathi</span>
+                  <span>Ask Mithra</span>
                   <ArrowRight size={13} />
                 </button>
               </form>
@@ -329,7 +329,7 @@ export default function Home() {
               Tailored Guidance by User Role
             </h2>
             <p className="text-xs text-slate-500">
-              Maanak Saathi adapts terminology and recommendations depending on your specific compliance objective.
+              Mithra adapts terminology and recommendations depending on your specific compliance objective.
             </p>
           </div>
 

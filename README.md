@@ -1,4 +1,4 @@
-# BIS Saathi — AI-Powered Assistant for Indian Standards & BIS Services
+# Mithra — AI-Powered Assistant for Indian Standards & BIS Services
 
 **SIH Problem Statement 26107 | Bureau of Indian Standards (BIS) | Category: GenAI/RAG**
 
@@ -97,7 +97,7 @@ Vannu/
 │   │   ├── chat/page.tsx      # Main chat (text + voice + photo)
 │   │   ├── hallmark/page.tsx  # Hallmark HUID verification
 │   │   └── labs/page.tsx      # Lab finder
-│   └── globals.css            # BIS Saathi design system
+│   └── globals.css            # Mithra design system
 ├── backend/           # FastAPI + Python
 │   ├── main.py                # All API endpoints
 │   ├── router/intent_router.py # Groq-powered intent classification

@@ -272,7 +272,7 @@ export default function ConsumerPage() {
               className="font-bold text-[#024DA1] hover:underline flex items-center gap-1"
             >
               <Sparkles size={13} />
-              <span>Ask AI Saathi to draft my complaint details</span>
+              <span>Ask Mithra to draft my complaint details</span>
             </Link>
 
             <a

@@ -17,7 +17,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("maanak-theme") as "light" | "dark" | null;
+      const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
       return saved || "light";
     }
     return "light";
@@ -33,7 +33,7 @@ export default function Navbar() {
   const toggleTheme = () => {
     const next = theme === "light" ? "dark" : "light";
     setTheme(next);
-    localStorage.setItem("maanak-theme", next);
+    localStorage.setItem("mithra-theme", next);
     document.documentElement.setAttribute("data-theme", next);
     if (next === "dark") document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
@@ -72,7 +72,7 @@ export default function Navbar() {
           </div>
           <div>
             <div className="text-slate-900 font-extrabold text-sm sm:text-base tracking-tight leading-none group-hover:text-[#024DA1] transition-colors">
-              Maanak Saathi
+              Mithra
             </div>
             <div className="text-[10px] sm:text-[11px] text-slate-500 font-medium leading-none mt-1">
               Bureau of Indian Standards

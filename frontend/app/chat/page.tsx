@@ -170,7 +170,7 @@ function ChatContent() {
   const [currentLang, setCurrentLang] = useState<"EN" | "हिं" | "த">("EN");
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("maanak-theme") as "light" | "dark" | null;
+      const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
       return saved || "light";
     }
     return "light";
@@ -201,7 +201,7 @@ function ChatContent() {
   const toggleTheme = () => {
     const next = theme === "light" ? "dark" : "light";
     setTheme(next);
-    localStorage.setItem("maanak-theme", next);
+    localStorage.setItem("mithra-theme", next);
     document.documentElement.setAttribute("data-theme", next);
     if (next === "dark") document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
@@ -288,7 +288,7 @@ function ChatContent() {
               ? {
                   ...m,
                   content:
-                    "⚠️ Unable to reach the Maanak Saathi backend service. Please check that the server is active on `" +
+                    "⚠️ Unable to reach the Mithra backend service. Please check that the server is active on `" +
                     API_URL +
                     "`.",
                   isLoading: false,
@@ -448,7 +448,7 @@ function ChatContent() {
     const txt = messages
       .map(
         (m) =>
-          `[${m.role === "user" ? "USER" : "MAANAK SAATHI"}]\n${m.content}\n${
+          `[${m.role === "user" ? "USER" : "MITHRA"}]\n${m.content}\n${
             m.citations?.length ? `Sources: ${m.citations.map((c) => c.source).join(", ")}\n` : ""
           }\n`
       )
@@ -457,7 +457,7 @@ function ChatContent() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Maanak-Saathi-Consultation-${Date.now()}.txt`;
+    a.download = `Mithra-Consultation-${Date.now()}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -517,9 +517,9 @@ function ChatContent() {
                 </div>
                 <div>
                   <span className="font-extrabold text-sm text-[var(--color-text-primary)] block leading-tight">
-                    Maanak Saathi
+                    Mithra
                   </span>
-                  <span className="text-[10px] text-[var(--red-700)] font-semibold">मानक साथी</span>
+                  <span className="text-[10px] text-[var(--red-700)] font-semibold">Bureau of Indian Standards</span>
                 </div>
               </Link>
               <button className="btn-icon w-8 h-8 lg:hidden" onClick={() => setSidebarOpen(false)}>
@@ -626,7 +626,7 @@ function ChatContent() {
               </div>
               <div>
                 <h1 className="text-[var(--color-text-primary)] font-extrabold text-sm leading-tight flex items-center gap-2">
-                  <span>Maanak Saathi (मानक साथी)</span>
+                  <span>Mithra</span>
                   <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" title="System Online" />
                 </h1>
                 <div className="text-[11px] text-[var(--color-text-muted)]">
@@ -731,7 +731,7 @@ function ChatContent() {
                         <div className="w-6 h-6 rounded bg-white p-0.5 border border-[var(--color-border)] flex items-center justify-center">
                           <Image src="/bis_logo.png" alt="BIS" width={18} height={18} className="object-contain" />
                         </div>
-                        <span className="font-bold text-xs text-[var(--color-text-primary)]">Maanak Saathi</span>
+                        <span className="font-bold text-xs text-[var(--color-text-primary)]">Mithra</span>
                       </div>
                       <ConfidenceBadge confidence={msg.confidence} abstained={msg.abstained} />
                     </div>

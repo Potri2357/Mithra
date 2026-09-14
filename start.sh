@@ -1,9 +1,9 @@
 #!/bin/bash
-# BIS Saathi — One-command startup script
+# Mithra — One-command startup script
 
 set -e
 
-echo "🚀 Starting BIS Saathi..."
+echo "🚀 Starting Mithra..."
 echo ""
 
 # Colors
@@ -79,7 +79,7 @@ echo ""
 echo -e "${BLUE}🌐 Starting Next.js frontend on http://localhost:3000...${NC}"
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════${NC}"
-echo -e "${GREEN}  BIS Saathi is running!${NC}"
+echo -e "${GREEN}  Mithra is running!${NC}"
 echo -e "${GREEN}  Frontend: http://localhost:3000${NC}"
 echo -e "${GREEN}  Backend:  http://localhost:8000${NC}"
 echo -e "${GREEN}  API Docs: http://localhost:8000/docs${NC}"

@@ -317,7 +317,7 @@ export default function StandardsPage() {
                   className="inline-flex items-center gap-1 text-xs font-bold text-[#024DA1] hover:underline"
                 >
                   <Sparkles size={13} />
-                  <span>Ask AI Saathi About {item.is_number}</span>
+                  <span>Ask Mithra About {item.is_number}</span>
                 </Link>
 
                 <a

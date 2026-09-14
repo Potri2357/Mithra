@@ -28,7 +28,7 @@ export default function Footer() {
               </div>
               <div>
                 <span className="font-extrabold text-sm text-[var(--color-text-primary)] block">
-                  Maanak Saathi (मानक साथी)
+                  Mithra
                 </span>
                 <span className="text-[11px] text-[var(--red-700)] font-semibold">
                   मानकः पथप्रदर्शकः • Bureau of Indian Standards
@@ -164,7 +164,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[var(--color-text-muted)]">
           <div>
-            © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Maanak Saathi Intelligent Advisory System.
+            © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Mithra Intelligent Advisory System.
           </div>
           <div className="flex items-center gap-4">
             <Link href="/consumer" className="hover:underline">
