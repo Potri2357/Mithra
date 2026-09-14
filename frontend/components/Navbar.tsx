@@ -4,17 +4,21 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-  Menu,
-  X,
-  Search,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Menu, X, Moon, Sun, MessageSquare } from "lucide-react";
+
+const navLinks = [
+  { href: "/",         label: "Home" },
+  { href: "/standards", label: "Standards" },
+  { href: "/schemes",  label: "Certification" },
+  { href: "/hallmark", label: "Hallmark" },
+  { href: "/labs",     label: "Testing Labs" },
+  { href: "/consumer", label: "Consumer" },
+];
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window !== "undefined") {
       const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
@@ -29,6 +33,12 @@ export default function Navbar() {
     if (theme === "dark") document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
   }, [theme]);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleTheme = () => {
     const next = theme === "light" ? "dark" : "light";
@@ -45,54 +55,49 @@ export default function Navbar() {
     setCurrentLang(next);
   };
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/standards", label: "Standards" },
-    { href: "/schemes", label: "Certification" },
-    { href: "/hallmark", label: "Hallmark & HUID" },
-    { href: "/labs", label: "Testing Labs" },
-    { href: "/consumer", label: "Consumer Support" },
-    { href: "/chat", label: "Resources" },
-  ];
-
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2.5">
-        {/* Left: Brand Identity */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex items-center justify-center flex-shrink-0">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-200 ${
+        scrolled
+          ? "bg-white/97 backdrop-blur-lg shadow-sm border-b border-slate-200/80"
+          : "bg-white/95 backdrop-blur-md border-b border-slate-200/70"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto flex items-center gap-6 px-4 sm:px-6 h-14">
+        {/* Brand */}
+        <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-2xs overflow-hidden flex-shrink-0 group-hover:border-blue-300 transition-colors">
             <Image
               src="/bis_logo.png"
-              alt="Bureau of Indian Standards"
-              width={38}
-              height={38}
-              className="object-contain h-8 w-auto"
+              alt="BIS"
+              width={28}
+              height={28}
+              className="object-contain"
               priority
             />
           </div>
-          <div>
-            <div className="text-slate-900 font-extrabold text-sm sm:text-base tracking-tight leading-none group-hover:text-[#024DA1] transition-colors">
+          <div className="leading-none">
+            <div className="text-slate-900 font-extrabold text-[15px] tracking-tight group-hover:text-[#024DA1] transition-colors">
               Mithra
             </div>
-            <div className="text-[10px] sm:text-[11px] text-slate-500 font-medium leading-none mt-1">
+            <div className="text-[10px] text-slate-400 font-medium mt-px">
               Bureau of Indian Standards
             </div>
           </div>
         </Link>
 
-        {/* Center: Navigation Pills */}
-        <nav className="hidden lg:flex items-center gap-1" aria-label="Main Navigation">
+        {/* Divider */}
+        <div className="hidden lg:block w-px h-5 bg-slate-200" />
+
+        {/* Nav Links */}
+        <nav className="hidden lg:flex items-center gap-0.5 flex-1" aria-label="Main Navigation">
           {navLinks.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-xs font-semibold px-3.5 py-1.5 transition-all ${
-                  isActive
-                    ? "bg-blue-50/90 text-[#024DA1] border border-blue-200/90 rounded-full shadow-xs"
-                    : "text-slate-600 hover:text-[#024DA1] rounded-full hover:bg-slate-50"
-                }`}
+                className={`nav-link ${isActive ? "active" : ""}`}
               >
                 {item.label}
               </Link>
@@ -100,60 +105,50 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Right Utility Bar: Language, Search, Dark mode, Login */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Language Switcher */}
+        {/* Right Actions */}
+        <div className="flex items-center gap-1.5 ml-auto">
+          {/* Language */}
           <button
             onClick={cycleLang}
-            className="flex items-center gap-1 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+            className="btn-ghost px-2.5 py-1.5 text-xs font-semibold min-h-0 h-8"
             title="Switch Language"
           >
             <span>{currentLang}</span>
-            <span className="text-[10px] text-slate-400">▾</span>
+            <span className="text-[10px] text-slate-400 ml-0.5">▾</span>
           </button>
 
-          {/* Search trigger */}
-          <Link href="/chat">
-            <button
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-              aria-label="Search"
-              title="Search standards"
-            >
-              <Search size={15} />
-            </button>
-          </Link>
-
-          {/* Theme Toggle */}
+          {/* Theme */}
           <button
             onClick={toggleTheme}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            className="btn-icon w-8 h-8"
+            title={theme === "light" ? "Dark Mode" : "Light Mode"}
             aria-label="Toggle Theme"
           >
             {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
           </button>
 
-          {/* Login / Auth Button */}
-          <Link href="/chat">
-            <button className="bg-[#024DA1] hover:bg-[#0360C9] text-white text-xs font-bold px-4 py-1.5 rounded-lg shadow-xs transition-colors hidden sm:inline-flex items-center justify-center">
-              Login
+          {/* CTA */}
+          <Link href="/chat" className="hidden sm:block">
+            <button className="btn-primary min-h-0 h-8 px-4 text-sm rounded-lg gap-1.5">
+              <MessageSquare size={13} />
+              <span>Ask Mithra</span>
             </button>
           </Link>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu */}
           <button
-            className="w-8 h-8 lg:hidden flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-lg"
+            className="btn-icon w-8 h-8 lg:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-1">
+        <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-0.5 animate-fade-in">
           {navLinks.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -161,9 +156,9 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
+                className={`flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-                    ? "bg-blue-50 text-[#024DA1] font-bold"
+                    ? "bg-blue-50 text-[#024DA1] font-semibold"
                     : "text-slate-700 hover:bg-slate-50"
                 }`}
               >
@@ -171,6 +166,16 @@ export default function Navbar() {
               </Link>
             );
           })}
+          <div className="pt-2 pb-1">
+            <Link
+              href="/chat"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn-primary w-full rounded-lg text-sm"
+            >
+              <MessageSquare size={14} />
+              Ask Mithra
+            </Link>
+          </div>
         </div>
       )}
     </header>

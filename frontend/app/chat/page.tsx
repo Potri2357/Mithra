@@ -66,39 +66,51 @@ interface Message {
 const QUICK_START_CARDS = [
   {
     title: "Find my standard",
-    desc: "Identify which Indian Standard applies to your product",
+    desc: "Identify which IS number applies to your product",
     query: "Which Indian Standard (IS number) applies to my product?",
     icon: BookOpen,
+    iconBg: "bg-blue-50",
+    iconColor: "text-[#024DA1]",
   },
   {
     title: "Understand a scheme",
     desc: "Compare ISI Mark, CRS, and FMCS certification paths",
     query: "Explain the difference between ISI Mark Scheme I and CRS Scheme II",
     icon: Award,
+    iconBg: "bg-amber-50",
+    iconColor: "text-amber-600",
   },
   {
     title: "Verify a hallmark",
-    desc: "Check 6-character HUID code against central registry",
+    desc: "Check 6-character HUID code against BIS registry",
     query: "How do I verify a 6-digit gold hallmark HUID code?",
     icon: ShieldCheck,
+    iconBg: "bg-emerald-50",
+    iconColor: "text-emerald-600",
   },
   {
     title: "Find a lab near me",
     desc: "Locate NABL & BIS accredited testing facilities",
     query: "Find accredited laboratories for testing LED lamps or electrical items",
     icon: FlaskConical,
+    iconBg: "bg-purple-50",
+    iconColor: "text-purple-600",
   },
   {
     title: "File a complaint",
     desc: "Report fake ISI marks or substandard products",
     query: "How do I file a consumer complaint against a fake ISI marked product?",
     icon: ShieldAlert,
+    iconBg: "bg-red-50",
+    iconColor: "text-red-600",
   },
   {
     title: "Ask anything",
-    desc: "Ask any technical compliance or testing question",
+    desc: "Any compliance, testing, or regulatory question",
     query: "What are the latest Quality Control Orders (QCO) issued by BIS?",
     icon: Sparkles,
+    iconBg: "bg-cyan-50",
+    iconColor: "text-cyan-600",
   },
 ];
 
@@ -510,16 +522,16 @@ function ChatContent() {
       >
         <div className="flex flex-col h-full p-4 justify-between">
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border)]">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)]">
               <Link href="/" className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-white p-1 border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 shadow-xs">
+                <div className="w-9 h-9 rounded-xl bg-white p-1 border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 shadow-xs">
                   <Image src="/bis_logo.png" alt="BIS Logo" width={28} height={28} className="object-contain" />
                 </div>
                 <div>
-                  <span className="font-extrabold text-sm text-[var(--color-text-primary)] block leading-tight">
+                  <span className="font-extrabold text-[15px] text-[var(--color-text-primary)] block leading-tight">
                     Mithra
                   </span>
-                  <span className="text-[10px] text-[var(--red-700)] font-semibold">Bureau of Indian Standards</span>
+                  <span className="text-[10px] text-[var(--red-700)] font-semibold tracking-wide">Bureau of Indian Standards</span>
                 </div>
               </Link>
               <button className="btn-icon w-8 h-8 lg:hidden" onClick={() => setSidebarOpen(false)}>
@@ -610,8 +622,8 @@ function ChatContent() {
 
       {/* ── Main Chat Area ── */}
       <div className="flex-1 flex flex-col h-full min-w-0">
-        {/* Header (Section 3.3) */}
-        <header className="flex items-center justify-between px-5 py-3 bg-[var(--color-surface)] border-b border-[var(--color-border)] flex-shrink-0">
+        {/* Header */}
+        <header className="flex items-center justify-between px-4 sm:px-6 py-3 bg-[var(--color-surface)] border-b border-[var(--color-border)] flex-shrink-0 shadow-2xs">
           <div className="flex items-center gap-3">
             <button
               className="btn-icon w-9 h-9 lg:hidden"
@@ -620,45 +632,46 @@ function ChatContent() {
             >
               <Menu size={18} />
             </button>
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-white p-1 border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white p-1 border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 shadow-xs">
                 <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
               </div>
               <div>
-                <h1 className="text-[var(--color-text-primary)] font-extrabold text-sm leading-tight flex items-center gap-2">
+                <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
                   <span>Mithra</span>
-                  <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" title="System Online" />
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Online
+                  </span>
                 </h1>
-                <div className="text-[11px] text-[var(--color-text-muted)]">
-                  Bureau of Indian Standards Intelligence • 22,000+ Standards Grounded
-                </div>
+                <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                  BIS Intelligence • 22,000+ Standards
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Flag-Free Language Switcher */}
+          <div className="flex items-center gap-1.5">
             <button
               onClick={cycleLang}
-              className="btn-ghost text-xs font-semibold px-2.5 py-1.5"
+              className="btn-ghost text-xs font-semibold px-2.5 py-1 min-h-0 h-8"
               aria-label="Switch Language"
             >
               <span>{currentLang}</span>
-              <span className="text-[10px] text-[var(--color-text-muted)]">▾</span>
+              <span className="text-[10px] text-[var(--color-text-muted)] ml-0.5">▾</span>
             </button>
 
-            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="btn-icon w-9 h-9"
+              className="btn-icon w-8 h-8"
               title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
             >
-              {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+              {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
             </button>
 
             {isSpeaking && (
               <button
-                className="btn-icon w-9 h-9 text-[var(--blue-600)]"
+                className="btn-icon w-8 h-8 text-[var(--blue-600)]"
                 onClick={() => {
                   audioRef.current?.pause();
                   if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -668,7 +681,7 @@ function ChatContent() {
                 }}
                 aria-label="Stop audio speech playback"
               >
-                <VolumeX size={16} />
+                <VolumeX size={15} />
               </button>
             )}
           </div>
@@ -677,36 +690,39 @@ function ChatContent() {
         {/* Message Thread (Section 3.3 & 4) */}
         <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6">
           {messages.length === 0 ? (
-            /* ── Empty State: Namaste + Tier-1 Quick-start cards (Section 3.3) ── */
-            <div className="max-w-2xl mx-auto pt-6 pb-4 space-y-6 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white p-2.5 border border-[var(--color-border)] flex items-center justify-center mx-auto shadow-sm">
-                <Image src="/bis_logo.png" alt="BIS Logo" width={48} height={48} className="object-contain" />
+            /* ── Empty State ── */
+            <div className="max-w-2xl mx-auto px-2 pt-8 pb-6 space-y-8">
+              {/* Greeting */}
+              <div className="text-center space-y-3 animate-fade-up">
+                <div className="w-16 h-16 rounded-2xl bg-[var(--color-surface)] p-2 border border-[var(--color-border)] flex items-center justify-center mx-auto shadow-sm">
+                  <Image src="/bis_logo.png" alt="BIS Logo" width={44} height={44} className="object-contain" />
+                </div>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-text-primary)] tracking-tight">
+                    Namaste! How can I help you today?
+                  </h2>
+                  <p className="text-sm text-[var(--color-text-muted)] mt-2 max-w-md mx-auto leading-relaxed">
+                    Ask about Indian Standards, BIS certification, gold HUID verification,
+                    or accredited testing labs — in English, Hindi, or Tamil.
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] mb-2">
-                  Namaste! What are you trying to do today?
-                </h2>
-                <p className="text-sm text-[var(--color-text-muted)] max-w-lg mx-auto">
-                  Ask any question about Indian Standards, mandatory certification schemes, hallmark verification,
-                  or accredited testing laboratories.
-                </p>
-              </div>
-
-              {/* 2x3 Quick-Start Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-left pt-2">
-                {QUICK_START_CARDS.map((card) => {
+              {/* Quick-Start Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {QUICK_START_CARDS.map((card, i) => {
                   const Icon = card.icon;
                   return (
                     <div
                       key={card.title}
                       onClick={() => sendMessage(card.query)}
-                      className="quick-start-card group"
+                      className="quick-start-card group animate-fade-up"
+                      style={{ animationDelay: `${i * 0.06}s` }}
                       role="button"
                       tabIndex={0}
                     >
-                      <div className="w-9 h-9 rounded-lg bg-[var(--blue-50)] text-[var(--blue-600)] flex items-center justify-center mb-2 group-hover:bg-[var(--blue-100)] transition-colors">
-                        <Icon size={18} />
+                      <div className={`w-9 h-9 rounded-lg ${card.iconBg} ${card.iconColor} flex items-center justify-center flex-shrink-0`}>
+                        <Icon size={17} />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-[var(--color-text-primary)] mb-1">{card.title}</h3>
@@ -868,94 +884,88 @@ function ChatContent() {
           <div ref={messagesEndRef} />
         </main>
 
-        {/* ── Multi-Modal Input Bar (Section 3.4) ── */}
-        <footer className="p-4 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
-          <div className="max-w-3xl mx-auto space-y-2">
-            {/* Live speech transcript confirmation banner (Section 3.4) */}
+        {/* ── Input Bar ── */}
+        <footer className="px-4 py-4 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
+          <div className="max-w-3xl mx-auto space-y-3">
+            {/* Speech transcript banner */}
             {speechTranscript !== null && (
-              <div className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-[var(--blue-50)] border border-[var(--blue-200)] text-xs text-[var(--blue-700)]">
+              <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-[var(--blue-50)] border border-[var(--blue-200)] text-xs text-[var(--blue-700)]">
                 <div className="flex items-center gap-2 truncate">
-                  <span className="w-2 h-2 rounded-full bg-[var(--red-500)] animate-ping" />
-                  <span className="font-semibold">Transcribed Speech:</span>
+                  <span className="w-2 h-2 rounded-full bg-[var(--red-500)] animate-ping flex-shrink-0" />
+                  <span className="font-semibold flex-shrink-0">Transcribed:</span>
                   <span className="italic truncate">&quot;{speechTranscript}&quot;</span>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  <button
-                    onClick={() => sendMessage(input)}
-                    className="btn-primary py-1 px-3 text-xs min-h-[30px]"
-                  >
-                    Confirm &amp; Send
+                  <button onClick={() => sendMessage(input)} className="btn-primary py-1 px-3 text-xs min-h-[28px] rounded-lg">
+                    Send
                   </button>
-                  <button
-                    onClick={() => {
-                      setSpeechTranscript(null);
-                      setInput("");
-                    }}
-                    className="btn-icon w-7 h-7 text-[var(--color-text-muted)]"
-                  >
-                    <X size={14} />
+                  <button onClick={() => { setSpeechTranscript(null); setInput(""); }} className="btn-icon w-7 h-7">
+                    <X size={13} />
                   </button>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center gap-2">
-              {/* Photo Capture Button (Section 3.4) */}
+            {/* Main input row */}
+            <div className="flex items-center gap-2.5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-3 py-2 shadow-sm focus-within:border-[var(--blue-400)] focus-within:shadow-blue-sm transition-all duration-200">
+              {/* Photo */}
               <button
-                className="btn-photo"
+                className="btn-photo flex-shrink-0"
+                style={{ width: '38px', height: '38px' }}
                 onClick={() => setShowPhotoUpload(true)}
-                title="Capture or upload photo"
+                title="Upload photo"
                 aria-label="Upload photo of product or hallmark"
               >
-                <Camera size={19} />
+                <Camera size={17} />
               </button>
 
-              {/* Voice Record Button with Waveform (Section 3.4) */}
+              {/* Voice */}
               <button
                 onClick={toggleVoiceRecording}
-                className={`btn-voice ${isRecording ? "recording" : ""}`}
-                title={isRecording ? "Stop recording" : "Speak your inquiry"}
-                aria-label={isRecording ? "Stop recording voice inquiry" : "Speak your inquiry"}
+                className={`btn-voice flex-shrink-0 ${isRecording ? "recording" : ""}`}
+                style={{ width: '38px', height: '38px' }}
+                title={isRecording ? "Stop recording" : "Record voice"}
+                aria-label={isRecording ? "Stop recording" : "Record voice inquiry"}
               >
                 {isRecording ? (
-                  <div className="flex items-center gap-0.5 h-6">
-                    {[0, 1, 2, 3, 4].map((i) => (
-                      <div key={i} className="waveform-bar" />
-                    ))}
+                  <div className="flex items-center gap-0.5 h-5">
+                    {[0,1,2,3,4].map((i) => <div key={i} className="waveform-bar" />)}
                   </div>
                 ) : (
-                  <Mic size={19} />
+                  <Mic size={17} />
                 )}
               </button>
 
-              {/* Text Input (min 44px height) */}
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  className="input-bis pr-10 text-base"
-                  placeholder="💬 Type, 🎙 speak, or 📷 photograph your product..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      sendMessage();
-                    }
-                  }}
-                  disabled={isLoading}
-                />
-              </div>
+              {/* Text Input */}
+              <input
+                type="text"
+                className="flex-1 bg-transparent text-[var(--color-text-primary)] text-sm placeholder-[var(--color-text-muted)] outline-none py-2 min-h-[36px]"
+                placeholder="Type a question, or use voice / photo above..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
+                disabled={isLoading}
+              />
 
               {/* Send Button */}
               <button
-                className="btn-primary flex-shrink-0 px-4"
+                className="btn-primary flex-shrink-0 rounded-xl px-4 min-h-0 h-9 text-sm"
                 onClick={() => sendMessage()}
                 disabled={isLoading || !input.trim()}
                 aria-label="Send message"
               >
-                {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
               </button>
             </div>
+
+            <p className="text-center text-xs text-[var(--color-text-muted)] opacity-60">
+              Responses are grounded in official BIS records. Always verify critical compliance decisions with a registered BIS officer.
+            </p>
           </div>
         </footer>
       </div>

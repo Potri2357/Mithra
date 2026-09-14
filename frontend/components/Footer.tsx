@@ -7,154 +7,142 @@ import {
   ExternalLink,
   MapPin,
   CheckCircle,
+  ArrowRight,
 } from "lucide-react";
+
+const modules = [
+  { href: "/standards", label: "Standards Directory" },
+  { href: "/schemes",   label: "Certification Schemes" },
+  { href: "/hallmark",  label: "Hallmark & HUID" },
+  { href: "/labs",      label: "Accredited Labs" },
+  { href: "/consumer",  label: "Consumer Protection" },
+  { href: "/chat",      label: "AI Chat Assistant" },
+];
+
+const certRoutes = [
+  { href: "/schemes", label: "ISI Mark (Scheme I)" },
+  { href: "/schemes", label: "CRS (Scheme II)" },
+  { href: "/schemes", label: "FMCS (Foreign Mfr)" },
+  { href: "/schemes", label: "MSME Concessions" },
+  { href: "/consumer", label: "Verify CM/L License" },
+];
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--color-surface)] border-t border-[var(--color-border)] text-[var(--color-text-body)] text-xs mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
-          {/* Col 1: Institutional Identity */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-white p-1.5 rounded-lg border border-[var(--color-border)] flex items-center justify-center flex-shrink-0">
+    <footer className="bg-[var(--color-surface)] border-t border-[var(--color-border)] text-[var(--color-text-body)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-8">
+
+        {/* Top Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+
+          {/* Col 1 — Brand */}
+          <div className="lg:col-span-1 space-y-5">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-white rounded-xl border border-[var(--color-border)] flex items-center justify-center shadow-xs flex-shrink-0">
                 <Image
                   src="/bis_logo.png"
                   alt="Bureau of Indian Standards"
-                  width={52}
+                  width={32}
                   height={32}
                   className="object-contain h-7 w-auto"
                 />
               </div>
               <div>
-                <span className="font-extrabold text-sm text-[var(--color-text-primary)] block">
+                <div className="font-extrabold text-sm text-[var(--color-text-primary)] group-hover:text-[var(--blue-600)] transition-colors">
                   Mithra
-                </span>
-                <span className="text-[11px] text-[var(--red-700)] font-semibold">
-                  मानकः पथप्रदर्शकः • Bureau of Indian Standards
-                </span>
+                </div>
+                <div className="text-[11px] text-[var(--red-700)] font-semibold">
+                  Bureau of Indian Standards
+                </div>
               </div>
-            </div>
+            </Link>
 
-            <p className="text-[var(--color-text-muted)] leading-relaxed text-xs max-w-sm">
-              Official conversational guidance platform for Indian Standards (IS), mandatory certification schemes
-              (ISI, CRS, FMCS), gold hallmark verification, and accredited laboratory testing networks across India.
+            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+              Official conversational intelligence platform for Indian Standards, certification
+              schemes, HUID verification, and accredited laboratory networks.
             </p>
 
-            <div className="flex flex-wrap gap-2 pt-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[var(--blue-50)] text-[var(--blue-700)] font-medium text-[11px] border border-[var(--blue-200)]">
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--blue-50)] text-[var(--blue-700)] font-medium text-xs border border-[var(--blue-100)]">
                 <ShieldCheck size={12} />
-                <span>BIS Act, 2016 Compliant</span>
+                BIS Act 2016 Compliant
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#E6F4EA] text-[var(--color-success)] font-medium text-[11px] border border-[#B7E1CD]">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-medium text-xs border border-emerald-100">
                 <CheckCircle size={12} />
-                <span>22,000+ Active Standards</span>
+                22,000+ Standards
               </span>
             </div>
           </div>
 
-          {/* Col 2: Core Digital Modules */}
+          {/* Col 2 — Core Modules */}
           <div>
-            <h4 className="font-bold text-[var(--color-text-primary)] uppercase tracking-wider text-[11px] mb-3">
+            <h4 className="font-bold text-[var(--color-text-primary)] text-xs uppercase tracking-widest mb-4">
               Core Modules
             </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link href="/standards" className="hover:text-[var(--blue-600)] transition-colors">
-                  Standards Directory (IS)
-                </Link>
-              </li>
-              <li>
-                <Link href="/schemes" className="hover:text-[var(--blue-600)] transition-colors">
-                  Certification Schemes Navigator
-                </Link>
-              </li>
-              <li>
-                <Link href="/hallmark" className="hover:text-[var(--blue-600)] transition-colors">
-                  Hallmark &amp; HUID Authenticator
-                </Link>
-              </li>
-              <li>
-                <Link href="/labs" className="hover:text-[var(--blue-600)] transition-colors">
-                  Accredited Labs Radar (LRS)
-                </Link>
-              </li>
-              <li>
-                <Link href="/consumer" className="hover:text-[var(--blue-600)] transition-colors">
-                  Consumer Protection &amp; Grievances
-                </Link>
-              </li>
-              <li>
-                <Link href="/chat" className="hover:text-[var(--blue-600)] transition-colors">
-                  Guided Chat Assistant
-                </Link>
-              </li>
+            <ul className="space-y-2.5">
+              {modules.map((m) => (
+                <li key={m.href}>
+                  <Link
+                    href={m.href}
+                    className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--blue-600)] transition-colors group"
+                  >
+                    <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 -ml-1 transition-all" />
+                    {m.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Col 3: Key Certification Routes */}
+          {/* Col 3 — Certification Routes */}
           <div>
-            <h4 className="font-bold text-[var(--color-text-primary)] uppercase tracking-wider text-[11px] mb-3">
+            <h4 className="font-bold text-[var(--color-text-primary)] text-xs uppercase tracking-widest mb-4">
               Certification Routes
             </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link href="/schemes" className="hover:text-[var(--blue-600)] transition-colors">
-                  ISI Mark (Scheme I)
-                </Link>
-              </li>
-              <li>
-                <Link href="/schemes" className="hover:text-[var(--blue-600)] transition-colors">
-                  Compulsory Registration (CRS)
-                </Link>
-              </li>
-              <li>
-                <Link href="/schemes" className="hover:text-[var(--blue-600)] transition-colors">
-                  Foreign Manufacturers (FMCS)
-                </Link>
-              </li>
-              <li>
-                <Link href="/schemes" className="hover:text-[var(--blue-600)] transition-colors">
-                  MSME &amp; Start-up Concessions
-                </Link>
-              </li>
-              <li>
-                <Link href="/consumer" className="hover:text-[var(--blue-600)] transition-colors">
-                  Verify CM/L License Number
-                </Link>
-              </li>
+            <ul className="space-y-2.5">
+              {certRoutes.map((r) => (
+                <li key={r.label}>
+                  <Link
+                    href={r.href}
+                    className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--blue-600)] transition-colors group"
+                  >
+                    <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 -ml-1 transition-all" />
+                    {r.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Col 4: Consumer Redressal & Help */}
+          {/* Col 4 — Contact */}
           <div>
-            <h4 className="font-bold text-[var(--color-text-primary)] uppercase tracking-wider text-[11px] mb-3">
+            <h4 className="font-bold text-[var(--color-text-primary)] text-xs uppercase tracking-widest mb-4">
               Consumer Support
             </h4>
-            <ul className="space-y-2.5 text-xs">
-              <li className="flex items-center gap-2">
-                <Phone size={13} className="text-[var(--blue-600)] flex-shrink-0" />
-                <span>Helpline: <strong>1800-11-4000</strong></span>
+            <ul className="space-y-3 text-sm text-[var(--color-text-muted)]">
+              <li className="flex items-center gap-2.5">
+                <Phone size={14} className="text-[var(--blue-600)] flex-shrink-0" />
+                <span>Helpline: <strong className="text-[var(--color-text-primary)]">1800-11-4000</strong></span>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail size={13} className="text-[var(--blue-600)] flex-shrink-0" />
-                <a href="mailto:complaints@bis.gov.in" className="hover:underline">
+              <li className="flex items-center gap-2.5">
+                <Mail size={14} className="text-[var(--blue-600)] flex-shrink-0" />
+                <a href="mailto:complaints@bis.gov.in" className="hover:text-[var(--blue-600)] hover:underline transition-colors">
                   complaints@bis.gov.in
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <MapPin size={13} className="text-[var(--blue-600)] flex-shrink-0" />
-                <span>Manak Bhavan, 9 B.S. Zafar Marg, New Delhi</span>
+              <li className="flex items-start gap-2.5">
+                <MapPin size={14} className="text-[var(--blue-600)] flex-shrink-0 mt-0.5" />
+                <span>Manak Bhavan, 9 B.S. Zafar Marg, New Delhi 110 002</span>
               </li>
               <li className="pt-1">
                 <a
                   href="https://www.bis.gov.in"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[var(--blue-600)] font-semibold hover:underline"
+                  className="inline-flex items-center gap-1.5 text-sm text-[var(--blue-600)] font-semibold hover:underline"
                 >
-                  <span>Official BIS Web Portal</span>
-                  <ExternalLink size={11} />
+                  Official BIS Web Portal
+                  <ExternalLink size={12} />
                 </a>
               </li>
             </ul>
@@ -162,20 +150,20 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[var(--color-text-muted)]">
-          <div>
-            © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Mithra Intelligent Advisory System.
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/consumer" className="hover:underline">
-              Statutory Consumer Rights
+        <div className="pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-[var(--color-text-muted)]">
+            © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Mithra Intelligent Advisory System. All rights reserved.
+          </p>
+          <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)]">
+            <Link href="/consumer" className="hover:text-[var(--blue-600)] hover:underline transition-colors">
+              Consumer Rights
             </Link>
-            <span>•</span>
-            <Link href="/standards" className="hover:underline">
-              Standardization Matrix
+            <span className="text-[var(--color-border)]">•</span>
+            <Link href="/standards" className="hover:text-[var(--blue-600)] hover:underline transition-colors">
+              Standards Matrix
             </Link>
-            <span>•</span>
-            <span className="font-medium text-[var(--blue-600)]">SIH PS 26107</span>
+            <span className="text-[var(--color-border)]">•</span>
+            <span className="font-semibold text-[var(--blue-600)]">SIH PS 26107</span>
           </div>
         </div>
       </div>
