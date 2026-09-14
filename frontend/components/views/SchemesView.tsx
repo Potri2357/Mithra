@@ -1,21 +1,42 @@
 "use client";
 
 import { useState } from "react";
-import MaterialIcon from "@/components/MaterialIcon";
+import {
+  CheckCircle2,
+  ShieldCheck,
+  Clock,
+  Factory,
+  CreditCard,
+  FileText,
+  Sparkles,
+  ArrowRight,
+  Award,
+  Check,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export const SCHEMES = [
   {
     id: "isi",
     name: "ISI Mark Scheme (Product Certification — Scheme I)",
     code: "Scheme I",
-    badgeClass: "bg-blue-50 text-[#0052CC] dark:bg-blue-950/70 dark:text-blue-300 border border-blue-200/80 dark:border-blue-900/60",
+    badgeVariant: "blue" as const,
     target: "Domestic Manufacturers (India)",
     overview:
       "The classic ISI mark signifies conformity to an Indian Standard (IS). Operates under the BIS (Conformity Assessment) Regulations, 2018. Requires factory inspection, in-house laboratory setup, and periodic surveillance testing.",
     timeline: "30 – 60 Days (Normal) / 30 Days (Simplified)",
     auditRequired: "Mandatory On-Site Factory Audit",
     fees: "Application Fee ₹1,000 + Inspection ₹7,000/day + Minimum Marking Fee",
-    eligibleProducts: "Over 22,000 Indian Standards including Cement, Steel, PVC pipes, Packaged Drinking Water, Helmets.",
+    eligibleProducts:
+      "Over 22,000 Indian Standards including Cement, Steel, PVC pipes, Packaged Drinking Water, Helmets.",
     checklist: [
       "Factory registration / Manufacturing License",
       "Process flow chart showing in-house quality control (QC)",
@@ -28,14 +49,15 @@ export const SCHEMES = [
     id: "crs",
     name: "Compulsory Registration Scheme (CRS — Scheme II)",
     code: "Scheme II",
-    badgeClass: "bg-emerald-50 text-[#059669] dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-900/60",
+    badgeVariant: "success" as const,
     target: "IT, Electronics, Solar & Telecom Goods",
     overview:
       "Self-declaration of conformity based on safety testing reports from BIS-recognized laboratories. No initial factory inspection is conducted before granting registration.",
     timeline: "15 – 20 Days",
     auditRequired: "No Factory Audit required before grant",
     fees: "Application Fee ₹1,000 + Processing Fee ₹50,000 per brand",
-    eligibleProducts: "LED Lamps, Mobile Phones, Laptops, Solar Inverters, Power Banks, Smart Watches (Over 60 product categories under MeitY).",
+    eligibleProducts:
+      "LED Lamps, Mobile Phones, Laptops, Solar Inverters, Power Banks, Smart Watches (Over 60 product categories under MeitY).",
     checklist: [
       "Test report issued by BIS-recognized laboratory (under 90 days old)",
       "Trademark / Brand registration certificate or authorization",
@@ -47,14 +69,15 @@ export const SCHEMES = [
     id: "fmcs",
     name: "Foreign Manufacturers Certification Scheme (FMCS — Scheme I)",
     code: "FMCS",
-    badgeClass: "bg-purple-50 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300 border border-purple-200/80 dark:border-purple-900/60",
+    badgeVariant: "default" as const,
     target: "Overseas Production Units outside India",
     overview:
       "Enables overseas manufacturers to use the standard ISI mark on goods imported into the Indian market. Requires nomination of an Authorized Indian Representative (AIR) and on-site audit of the foreign plant by a BIS inspecting officer.",
     timeline: "90 – 180 Days",
     auditRequired: "Mandatory overseas factory audit by BIS Officers",
     fees: "Application Fee $1,000 USD + Inspection charges + Marking Fee in USD",
-    eligibleProducts: "All products covered under mandatory Quality Control Orders (QCOs) exported to India.",
+    eligibleProducts:
+      "All products covered under mandatory Quality Control Orders (QCOs) exported to India.",
     checklist: [
       "Appointment of Authorized Indian Representative (AIR)",
       "Manufacturing & testing equipment inventory list",
@@ -66,14 +89,15 @@ export const SCHEMES = [
     id: "hallmark",
     name: "Hallmarking Scheme (Precious Metals)",
     code: "Hallmarking",
-    badgeClass: "bg-amber-50 text-amber-700 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/60",
+    badgeVariant: "warning" as const,
     target: "Jewellers & Retailers across India",
     overview:
       "Mandatory certification for Gold Jewellery and Silver Artefacts under IS 1417 & IS 2112. Requires laser engraving of BIS Logo, Purity mark (e.g. 22K916), and 6-digit alphanumeric HUID at accredited AHCs.",
     timeline: "Instant via Portal (Jeweller Registration)",
     auditRequired: "Audit of Assaying Centres (AHC) only",
     fees: "Zero registration fee for jewellers (one-time portal registration)",
-    eligibleProducts: "Gold Jewellery (14K, 18K, 20K, 22K, 23K, 24K) and Silver Artefacts.",
+    eligibleProducts:
+      "Gold Jewellery (14K, 18K, 20K, 22K, 23K, 24K) and Silver Artefacts.",
     checklist: [
       "GST registration certificate",
       "Proof of jewellery sales establishment / outlet",
@@ -140,12 +164,12 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       {/* Page Hero Header */}
       <div className="space-y-3 max-w-3xl">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-900/60 text-xs font-bold text-[#059669] dark:text-emerald-400 shadow-2xs">
-          <MaterialIcon name="verified" size={15} />
+        <Badge variant="success" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
+          <ShieldCheck className="w-3.5 h-3.5" />
           <span>Licensing &amp; Conformity Assessment</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          BIS Certification <span className="text-[#0052CC] dark:text-blue-400">Schemes Navigator</span>
+        </Badge>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+          BIS Certification <span className="text-[#024DA1] dark:text-blue-400">Schemes Navigator</span>
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Compare compliance routes: ISI Mark (Scheme I), Compulsory Registration (CRS), Foreign Manufacturers (FMCS),
@@ -154,20 +178,20 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
       </div>
 
       {/* ── Interactive Scheme Wizard ── */}
-      <section className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
+      <Card className="p-6 sm:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <MaterialIcon name="auto_awesome" size={20} className="text-[#0052CC] dark:text-blue-400" />
+              <Sparkles className="w-5 h-5 text-[#024DA1] dark:text-blue-400" />
               <span>Interactive Scheme Applicability Advisor</span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
               Answer 3 quick questions to identify the exact BIS licensing pathway for your enterprise.
             </p>
           </div>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0052CC] dark:text-blue-300 border border-blue-200/80 dark:border-blue-900/60 self-start sm:self-auto">
+          <Badge variant="blue" className="self-start sm:self-auto font-semibold">
             Regulatory Guidance
-          </span>
+          </Badge>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -177,7 +201,7 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
               1. Product category
             </label>
             <select
-              className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC] cursor-pointer"
+              className="w-full h-11 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#024DA1] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 cursor-pointer transition-all"
               value={productType}
               onChange={(e) => setProductType(e.target.value)}
             >
@@ -194,7 +218,7 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
               2. Manufacturing facility location
             </label>
             <select
-              className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC] cursor-pointer"
+              className="w-full h-11 px-3.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#024DA1] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 cursor-pointer transition-all"
               value={origin}
               onChange={(e) => setOrigin(e.target.value)}
             >
@@ -209,7 +233,7 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
               3. Enterprise scale (concessions)
             </label>
             <select
-              className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC] cursor-pointer"
+              className="w-full h-11 px-3.5 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#024DA1] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 cursor-pointer transition-all"
               value={msmeStatus}
               onChange={(e) => setMsmeStatus(e.target.value)}
             >
@@ -221,45 +245,45 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
         </div>
 
         {/* Recommendation Output Card */}
-        <div className="p-6 rounded-2xl bg-blue-50/70 dark:bg-blue-950/50 border border-blue-200/90 dark:border-blue-900/60 flex flex-col md:flex-row md:items-center justify-between gap-5">
+        <div className="p-5 sm:p-6 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/90 dark:border-blue-900/60 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-1.5 max-w-2xl">
             <div className="flex items-center gap-2">
-              <MaterialIcon name="check_circle" size={18} className="text-[#059669] dark:text-emerald-400" />
-              <span className="text-xs font-bold text-[#0052CC] dark:text-blue-300 uppercase tracking-wide">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs font-bold text-[#024DA1] dark:text-blue-300 uppercase tracking-wide">
                 Recommended Compliance Route
               </span>
             </div>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white">{rec.scheme}</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{rec.scheme}</h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{rec.description}</p>
             {msmeStatus !== "large" && (
-              <div className="text-xs font-semibold text-[#059669] dark:text-emerald-400 pt-1">
+              <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 pt-1">
                 ✓ Eligible for 20% MSME/Start-up fee concession on marking &amp; application fees.
               </div>
             )}
           </div>
 
-          <button
+          <Button
             type="button"
             onClick={() => handleAsk(rec.query)}
-            className="h-11 px-6 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer"
+            className="h-10 px-5 rounded-full bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold shrink-0 gap-2 shadow-xs"
           >
             <span>Start Application Guidance</span>
-            <MaterialIcon name="arrow_forward" size={16} />
-          </button>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Button>
         </div>
-      </section>
+      </Card>
 
       {/* ── Scheme Tabs & Deep Details ── */}
       <section className="space-y-5">
-        {/* Pill Tabs with Better Styling and Proper Padding */}
+        {/* Pill Tabs with Clean Styling */}
         <div className="flex flex-wrap gap-2.5">
           {SCHEMES.map((scheme) => (
             <button
               key={scheme.id}
               onClick={() => setActiveScheme(scheme)}
-              className={`h-10 px-5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`h-9.5 px-4 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeScheme.id === scheme.id
-                  ? "bg-[#0052CC] text-white shadow-sm"
+                  ? "bg-[#024DA1] text-white shadow-xs"
                   : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
               }`}
             >
@@ -268,27 +292,28 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
           ))}
         </div>
 
-        {/* Detailed Scheme Breakdown Card with Generous Padding */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
+        {/* Detailed Scheme Breakdown Card */}
+        <Card className="p-6 sm:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className={`text-xs font-bold px-3 py-1 rounded-full ${activeScheme.badgeClass}`}>
+                <Badge variant={activeScheme.badgeVariant} className="font-semibold text-xs">
                   {activeScheme.code}
-                </span>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Target: {activeScheme.target}</span>
+                </Badge>
+                <span className="text-xs text-slate-500 dark:text-slate-400">Target: {activeScheme.target}</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{activeScheme.name}</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{activeScheme.name}</h3>
             </div>
 
-            <button
+            <Button
               type="button"
               onClick={() => handleAsk(`How to apply for ${activeScheme.name}`)}
-              className="h-10 px-5 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold inline-flex items-center gap-2 shadow-2xs hover:shadow transition-all flex-shrink-0 cursor-pointer"
+              size="sm"
+              className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-full px-4 gap-1.5 shrink-0 shadow-xs"
             >
-              <MaterialIcon name="auto_awesome" size={16} />
+              <Sparkles className="w-3.5 h-3.5 text-blue-200" />
               <span>Ask Mithra Compliance</span>
-            </button>
+            </Button>
           </div>
 
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -297,25 +322,25 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
 
           {/* Metric Boxes with Proper Padding */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
               <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-medium mb-1.5">
-                <MaterialIcon name="schedule" size={16} className="text-[#0052CC] dark:text-blue-400" />
+                <Clock className="w-4 h-4 text-[#024DA1] dark:text-blue-400" />
                 <span>Processing Timeline</span>
               </div>
               <div className="text-sm font-bold text-slate-900 dark:text-white">{activeScheme.timeline}</div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
               <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-medium mb-1.5">
-                <MaterialIcon name="factory" size={16} className="text-[#0052CC] dark:text-blue-400" />
+                <Factory className="w-4 h-4 text-[#024DA1] dark:text-blue-400" />
                 <span>Factory Audit</span>
               </div>
               <div className="text-sm font-bold text-slate-900 dark:text-white">{activeScheme.auditRequired}</div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
               <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-medium mb-1.5">
-                <MaterialIcon name="payments" size={16} className="text-[#0052CC] dark:text-blue-400" />
+                <CreditCard className="w-4 h-4 text-[#024DA1] dark:text-blue-400" />
                 <span>Fee Structure</span>
               </div>
               <div className="text-sm font-bold text-slate-900 dark:text-white" title={activeScheme.fees}>
@@ -328,13 +353,13 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <MaterialIcon name="description" size={17} className="text-[#0052CC]" />
+                <FileText className="w-4 h-4 text-[#024DA1]" />
                 <span>Mandatory Application Checklist</span>
               </h4>
               <ul className="space-y-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
                 {activeScheme.checklist.map((c, i) => (
                   <li key={i} className="flex items-start gap-2.5">
-                    <MaterialIcon name="check_circle" size={17} className="text-[#059669] dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                     <span>{c}</span>
                   </li>
                 ))}
@@ -343,15 +368,15 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
 
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <MaterialIcon name="verified_user" size={17} className="text-[#0052CC]" />
+                <Award className="w-4 h-4 text-[#024DA1]" />
                 <span>Key Products Covered</span>
               </h4>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
                 {activeScheme.eligibleProducts}
               </p>
 
               <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 text-xs space-y-1.5">
-                <span className="font-bold text-[#0052CC] dark:text-blue-300 block">Government Concessions Notice:</span>
+                <span className="font-bold text-[#024DA1] dark:text-blue-300 block">Government Concessions Notice:</span>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                   Under BIS Gazette S.O. 1290, Micro &amp; Small Enterprises (MSEs) and registered Start-ups receive a
                   20% concession on annual minimum marking fees and 50% concession on application audit fees.
@@ -359,7 +384,7 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
               </div>
             </div>
           </div>
-        </div>
+        </Card>
       </section>
     </div>
   );

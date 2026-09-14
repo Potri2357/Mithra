@@ -1,6 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import MaterialIcon from "@/components/MaterialIcon";
+import {
+  ShieldCheck,
+  BookOpen,
+  ChevronRight,
+  Phone,
+  Mail,
+  MapPin,
+  ExternalLink,
+} from "lucide-react";
 
 const modules = [
   { href: "/standards", label: "Standards Catalogue" },
@@ -22,7 +30,7 @@ const certRoutes = [
 export default function Footer() {
   return (
     <footer className="bg-white dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-400">
-      <div className="site-container pt-16 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Col 1 — Brand */}
@@ -32,13 +40,13 @@ export default function Footer() {
                 <Image
                   src="/bis_logo.png"
                   alt="Bureau of Indian Standards"
-                  width={34}
-                  height={34}
-                  className="object-contain h-7 w-auto"
+                  width={32}
+                  height={32}
+                  className="object-contain"
                 />
               </div>
               <div>
-                <div className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-[#0052CC] transition-colors">
+                <div className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-[#024DA1] dark:group-hover:text-blue-400 transition-colors">
                   Mithra
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
@@ -54,12 +62,12 @@ export default function Footer() {
 
             <div className="flex flex-wrap gap-2 pt-1">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-                <MaterialIcon name="verified" size={13} className="text-[#0052CC]" />
-                BIS Act 2016 Grounded
+                <ShieldCheck className="w-3.5 h-3.5 text-[#024DA1] dark:text-blue-400" />
+                <span>BIS Act 2016 Grounded</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-                <MaterialIcon name="library_books" size={13} className="text-[#0052CC]" />
-                22,000+ Standards
+                <BookOpen className="w-3.5 h-3.5 text-[#024DA1] dark:text-blue-400" />
+                <span>22,000+ Standards</span>
               </span>
             </div>
           </div>
@@ -71,12 +79,12 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {modules.map((m) => (
-                <li key={m.href}>
+                <li key={m.label}>
                   <Link
                     href={m.href}
-                    className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 group"
+                    className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 group"
                   >
-                    <MaterialIcon name="chevron_right" size={14} className="text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                     <span>{m.label}</span>
                   </Link>
                 </li>
@@ -94,9 +102,9 @@ export default function Footer() {
                 <li key={r.label}>
                   <Link
                     href={r.href}
-                    className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 group"
+                    className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 group"
                   >
-                    <MaterialIcon name="chevron_right" size={14} className="text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                     <span>{r.label}</span>
                   </Link>
                 </li>
@@ -111,17 +119,17 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               <li className="flex items-center gap-2.5">
-                <MaterialIcon name="call" size={16} className="text-[#0052CC] flex-shrink-0" />
+                <Phone className="w-4 h-4 text-[#024DA1] dark:text-blue-400 shrink-0" />
                 <span>Toll-Free: <strong className="text-slate-900 dark:text-white font-mono">1800-11-4000</strong></span>
               </li>
               <li className="flex items-center gap-2.5">
-                <MaterialIcon name="mail" size={16} className="text-[#0052CC] flex-shrink-0" />
-                <a href="mailto:complaints@bis.gov.in" className="hover:text-[#0052CC] hover:underline transition-colors">
+                <Mail className="w-4 h-4 text-[#024DA1] dark:text-blue-400 shrink-0" />
+                <a href="mailto:complaints@bis.gov.in" className="hover:text-[#024DA1] dark:hover:text-blue-400 hover:underline transition-colors">
                   complaints@bis.gov.in
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
-                <MaterialIcon name="location_on" size={16} className="text-[#0052CC] flex-shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-[#024DA1] dark:text-blue-400 shrink-0 mt-0.5" />
                 <span>Manak Bhavan, 9 B.S. Zafar Marg, New Delhi 110 002</span>
               </li>
               <li className="pt-1">
@@ -129,10 +137,10 @@ export default function Footer() {
                   href="https://www.bis.gov.in"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#0052CC] dark:text-blue-400 hover:underline"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#024DA1] dark:text-blue-400 hover:underline"
                 >
                   <span>Official BIS National Portal</span>
-                  <MaterialIcon name="open_in_new" size={13} />
+                  <ExternalLink className="w-3 h-3" />
                 </a>
               </li>
             </ul>
@@ -145,15 +153,15 @@ export default function Footer() {
             © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Mithra Intelligent Advisory Platform.
           </p>
           <div className="flex items-center gap-5 text-xs text-slate-500 dark:text-slate-400">
-            <Link href="/consumer" className="hover:text-[#0052CC] transition-colors">
+            <Link href="/consumer" className="hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors">
               Consumer Grievance
             </Link>
             <span className="text-slate-300 dark:text-slate-700">•</span>
-            <Link href="/standards" className="hover:text-[#0052CC] transition-colors">
+            <Link href="/standards" className="hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors">
               Standards Matrix
             </Link>
             <span className="text-slate-300 dark:text-slate-700">•</span>
-            <Link href="/chat" className="hover:text-[#0052CC] transition-colors font-semibold text-[#0052CC] dark:text-blue-400">
+            <Link href="/chat" className="hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors font-semibold text-[#024DA1] dark:text-blue-400">
               Ask Mithra
             </Link>
           </div>

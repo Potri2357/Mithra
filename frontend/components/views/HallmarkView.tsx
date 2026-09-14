@@ -1,7 +1,29 @@
 "use client";
 
 import { useState, useRef } from "react";
-import MaterialIcon from "@/components/MaterialIcon";
+import {
+  Search,
+  Award,
+  Sparkles,
+  Camera,
+  ShieldCheck,
+  ShieldAlert,
+  ChevronRight,
+  ExternalLink,
+  Loader2,
+  Calculator,
+  Upload,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -100,12 +122,12 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       {/* Hero Header */}
       <div className="space-y-3 max-w-3xl">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-200/80 dark:border-amber-900/60 text-xs font-bold text-[#D97706] dark:text-amber-400 shadow-2xs">
-          <MaterialIcon name="workspace_premium" size={15} />
+        <Badge variant="warning" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
+          <Award className="w-3.5 h-3.5" />
           <span>Precious Metals Authentication</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          Gold &amp; Silver <span className="text-[#0052CC] dark:text-blue-400">Hallmark Authenticator</span>
+        </Badge>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+          Gold &amp; Silver <span className="text-[#024DA1] dark:text-blue-400">Hallmark Authenticator</span>
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Verify 6-character alphanumeric Hallmark Unique Identification (HUID) codes against Bureau
@@ -129,7 +151,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
       {/* Two Column Verification Station */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {/* Left: Input Form */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-5">
+        <Card className="p-6 sm:p-8 space-y-5">
           <div>
             <label
               htmlFor="huid-input"
@@ -138,10 +160,10 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
               Enter 6-Character HUID Code
             </label>
             <div className="flex gap-2.5">
-              <input
+              <Input
                 id="huid-input"
                 type="text"
-                className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl uppercase font-mono text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-[#0052CC] transition-all"
+                className="h-11 px-4 bg-slate-50 dark:bg-slate-800 uppercase font-mono text-sm sm:text-base tracking-wider"
                 placeholder="e.g. AA1234"
                 maxLength={8}
                 value={huid}
@@ -151,21 +173,22 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
                 }}
                 aria-label="HUID alphanumeric code"
               />
-              <button
-                className="h-11 px-6 rounded-xl bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold flex-shrink-0 flex items-center gap-2 shadow-xs hover:shadow transition-all cursor-pointer"
+              <Button
+                type="button"
+                className="h-11 px-6 rounded-xl bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-bold shrink-0 gap-2 shadow-xs cursor-pointer"
                 onClick={() => verifyHUID()}
                 disabled={isLoading || !huid.trim()}
                 aria-label="Verify HUID"
               >
                 {isLoading ? (
-                  <MaterialIcon name="progress_activity" size={16} className="animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <MaterialIcon name="search" size={16} />
+                    <Search className="w-4 h-4" />
                     <span>Verify</span>
                   </>
                 )}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -176,6 +199,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
               {SAMPLE_HUIDS.map((s) => (
                 <button
                   key={s.huid}
+                  type="button"
                   onClick={() => {
                     setHuid(s.huid);
                     verifyHUID(s.huid);
@@ -190,7 +214,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
 
           {/* Photo Dropzone */}
           <div
-            className="rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-850 p-5 text-center cursor-pointer hover:border-[#0052CC] hover:bg-blue-50/20 transition-all"
+            className="rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 p-5 text-center cursor-pointer hover:border-[#024DA1] hover:bg-blue-50/20 transition-all"
             onClick={() => fileInputRef.current?.click()}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
@@ -210,12 +234,12 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={photoPreview} alt="Hallmark" className="w-full h-full object-cover" />
                 </div>
-                <p className="text-xs font-semibold text-[#0052CC] dark:text-blue-400">Click to upload another photo</p>
+                <p className="text-xs font-semibold text-[#024DA1] dark:text-blue-400">Click to upload another photo</p>
               </div>
             ) : (
               <div className="space-y-1.5">
-                <div className="w-9 h-9 rounded-full bg-blue-50 dark:bg-blue-950/70 text-[#0052CC] dark:text-blue-400 flex items-center justify-center mx-auto">
-                  <MaterialIcon name="photo_camera" size={18} />
+                <div className="w-9 h-9 rounded-full bg-blue-50 dark:bg-blue-950/70 text-[#024DA1] dark:text-blue-400 flex items-center justify-center mx-auto">
+                  <Camera className="w-4 h-4" />
                 </div>
                 <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
                   Snap or Drop Jewellery Stamp Photo
@@ -226,15 +250,19 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
               </div>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Right: Verification Output */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs min-h-[340px] flex flex-col justify-between">
+        <Card className="p-5 sm:p-6 min-h-[340px] flex flex-col justify-between">
           {result ? (
             <div className="space-y-3.5">
               <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${result.verified ? "bg-emerald-50 text-[#059669]" : "bg-rose-50 text-rose-600"}`}>
-                  <MaterialIcon name={result.verified ? "verified" : "gpp_bad"} size={20} />
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${result.verified ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/70 dark:text-emerald-400" : "bg-rose-50 text-rose-600 dark:bg-rose-950/70 dark:text-rose-400"}`}>
+                  {result.verified ? (
+                    <ShieldCheck className="w-5 h-5" />
+                  ) : (
+                    <ShieldAlert className="w-5 h-5" />
+                  )}
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">Registry Result: {huid}</h3>
@@ -251,18 +279,18 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
                   <button
                     type="button"
                     onClick={() => onAskMithra && onAskMithra(result.follow_up || "")}
-                    className="text-xs font-bold text-[#0052CC] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer text-left"
+                    className="text-xs font-bold text-[#024DA1] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer text-left"
                   >
                     <span>{result.follow_up}</span>
-                    <MaterialIcon name="chevron_right" size={15} />
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
             </div>
           ) : (
             <div className="text-center py-10 my-auto">
-              <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-slate-850 text-[#0052CC] dark:text-blue-400 flex items-center justify-center mx-auto mb-2.5">
-                <MaterialIcon name="workspace_premium" size={24} />
+              <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-slate-800 text-[#024DA1] dark:text-blue-400 flex items-center justify-center mx-auto mb-2.5">
+                <Award className="w-6 h-6" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">Awaiting Inspection Input</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
@@ -277,19 +305,19 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
               href="https://www.bis.gov.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline flex items-center gap-1 text-[#0052CC] dark:text-blue-400 font-bold"
+              className="hover:underline flex items-center gap-1 text-[#024DA1] dark:text-blue-400 font-bold"
             >
               <span>BIS National Registry</span>
-              <MaterialIcon name="open_in_new" size={12} />
+              <ExternalLink className="w-3 h-3" />
             </a>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Visual Guide: Mandatory 3 Marks */}
-      <section className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
+      <Card className="p-5 sm:p-6 space-y-4">
         <div>
-          <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">
             Anatomy of Mandatory 3-Piece Hallmark
           </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -298,8 +326,8 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
-            <div className="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-950 text-[#0052CC] dark:text-blue-300 flex items-center justify-center mb-2.5 font-black text-xs">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
+            <div className="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-950 text-[#024DA1] dark:text-blue-300 flex items-center justify-center mb-2.5 font-black text-xs">
               1
             </div>
             <h4 className="text-xs font-bold text-slate-900 dark:text-white mb-1">BIS Triangle Logo</h4>
@@ -309,7 +337,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
             <div className="w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center mb-2.5 font-black text-xs">
               2
             </div>
@@ -320,7 +348,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
             <div className="w-7 h-7 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 flex items-center justify-center mb-2.5 font-black text-xs">
               3
             </div>
@@ -331,13 +359,13 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
             </p>
           </div>
         </div>
-      </section>
+      </Card>
 
-      {/* Interactive Gold Purity Calculator */}
-      <section className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
+      {/* Interactive Gold Purity Reference */}
+      <Card className="p-5 sm:p-6 space-y-4">
         <div className="flex items-center gap-2">
-          <MaterialIcon name="calculate" size={18} className="text-[#0052CC] dark:text-blue-400" />
-          <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Official BIS Gold Fineness Reference Table</h3>
+          <Calculator className="w-4 h-4 text-[#024DA1] dark:text-blue-400" />
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">Official BIS Gold Fineness Reference Table</h3>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
@@ -346,11 +374,12 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
             return (
               <button
                 key={p.karat}
+                type="button"
                 onClick={() => setSelectedPurity(p)}
                 className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-[#0052CC] border-[#0052CC] text-white shadow-xs"
-                    : "bg-slate-50 dark:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-blue-300"
+                    ? "bg-[#024DA1] border-[#024DA1] text-white shadow-xs"
+                    : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-blue-300"
                 }`}
               >
                 <div className="text-xs font-black">{p.karat}</div>
@@ -362,7 +391,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
 
         <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200/90 dark:border-blue-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-xs font-bold text-[#0052CC] dark:text-blue-300 uppercase tracking-wide">
+            <span className="text-xs font-bold text-[#024DA1] dark:text-blue-300 uppercase tracking-wide">
               Grade {selectedPurity.karat} (BIS Fineness {selectedPurity.fineness})
             </span>
             <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
@@ -370,16 +399,19 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
             </h4>
             <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">{selectedPurity.desc}</p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={() => handleAsk(`What is the hallmarking requirement for ${selectedPurity.karat} gold?`)}
-            className="h-10 px-5 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold flex items-center gap-2 cursor-pointer flex-shrink-0 shadow-xs hover:shadow transition-all"
+            size="sm"
+            className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-full px-4 gap-1.5 shrink-0 shadow-xs"
           >
             <span>Ask About {selectedPurity.karat}</span>
-            <MaterialIcon name="chevron_right" size={16} />
-          </button>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Button>
         </div>
-      </section>
+      </Card>
     </div>
   );
 }
+
+export default HallmarkView;

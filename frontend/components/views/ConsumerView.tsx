@@ -1,14 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import MaterialIcon from "@/components/MaterialIcon";
+import {
+  ShieldAlert,
+  ShieldCheck,
+  Phone,
+  FileText,
+  CheckCircle2,
+  AlertTriangle,
+  Gavel,
+  Sparkles,
+  Scale,
+  FileCheck,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface ConsumerViewProps {
   onAskMithra?: (query: string) => void;
 }
 
 export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
-  const [productCategory, setProductCategory] = useState("electronics");
   const [activeTab, setActiveTab] = useState<"visual-guide" | "grievance-steps" | "penalties">("visual-guide");
 
   const handleAskComplaint = (customSubject?: string) => {
@@ -21,15 +40,15 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-in fade-in duration-300">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       {/* Hero Header */}
       <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/70 border border-rose-200/80 dark:border-rose-900/60 text-xs font-bold text-[#DC2626] dark:text-rose-400">
-          <MaterialIcon name="shield" size={15} />
-          <span>Citizen Protection & Redressal</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          Consumer Protection <span className="text-[#DC2626] dark:text-rose-400">&amp; Grievance Center</span>
+        <Badge variant="danger" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
+          <ShieldAlert className="w-3.5 h-3.5" />
+          <span>Citizen Protection &amp; Redressal</span>
+        </Badge>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+          Consumer Protection <span className="text-rose-600 dark:text-rose-400">&amp; Grievance Center</span>
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal max-w-3xl leading-relaxed">
           Verify ISI mark authenticity, report counterfeit certification stamps or substandard goods,
@@ -38,13 +57,13 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
       </div>
 
       {/* Emergency Action Helpline Bar */}
-      <div className="bg-white dark:bg-slate-900 border border-rose-200/90 dark:border-rose-900/60 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
+      <Card className="border-rose-200/90 dark:border-rose-900/60 p-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/70 border border-rose-200 dark:border-rose-900/60 flex items-center justify-center text-[#DC2626] dark:text-rose-400 flex-shrink-0">
-            <MaterialIcon name="call" size={24} />
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/70 border border-rose-200 dark:border-rose-900/60 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
+            <Phone className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-[#DC2626] dark:text-rose-300">
+            <div className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
               National Consumer Toll-Free Helpline
             </div>
             <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono leading-tight">
@@ -56,61 +75,62 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <a
             href="tel:1800114000"
-            className="h-10 px-5 rounded-full bg-[#DC2626] hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="h-10 px-5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-all"
           >
-            <MaterialIcon name="call" size={16} />
+            <Phone className="w-4 h-4" />
             <span>Call Helpline</span>
           </a>
-          <button
+          <Button
             type="button"
             onClick={() => handleAskComplaint("I purchased a substandard item with a questionable ISI mark. Can you guide me step-by-step through drafting a complaint?")}
-            className="h-10 px-5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold flex items-center gap-2 transition-colors cursor-pointer"
+            variant="outline"
+            className="h-10 px-5 rounded-full text-xs font-semibold gap-2 shadow-2xs"
           >
-            <MaterialIcon name="auto_awesome" size={16} className="text-[#0052CC] dark:text-blue-400" />
+            <Sparkles className="w-4 h-4 text-[#024DA1] dark:text-blue-400" />
             <span>Draft Grievance with Mithra</span>
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
         <button
           type="button"
           onClick={() => setActiveTab("visual-guide")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
             activeTab === "visual-guide"
-              ? "bg-[#0052CC] text-white shadow-sm"
+              ? "bg-[#024DA1] text-white shadow-xs"
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
-          <MaterialIcon name="fact_check" size={16} />
+          <FileCheck className="w-4 h-4" />
           <span>ISI Mark Spotter (Real vs Fake)</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("grievance-steps")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
             activeTab === "grievance-steps"
-              ? "bg-[#0052CC] text-white shadow-sm"
+              ? "bg-[#024DA1] text-white shadow-xs"
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
-          <MaterialIcon name="playlist_add_check" size={16} />
+          <CheckCircle2 className="w-4 h-4" />
           <span>4-Step Grievance Procedure</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("penalties")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
             activeTab === "penalties"
-              ? "bg-[#0052CC] text-white shadow-sm"
+              ? "bg-[#024DA1] text-white shadow-xs"
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
-          <MaterialIcon name="gavel" size={16} />
+          <Gavel className="w-4 h-4" />
           <span>Statutory Penalties (BIS Act 2016)</span>
         </button>
       </div>
@@ -120,20 +140,20 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
         <section className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Genuine Mark Card */}
-            <div className="bg-white dark:bg-slate-900 border border-emerald-200/90 dark:border-emerald-900/60 rounded-2xl p-6 shadow-sm space-y-4">
+            <Card className="border-emerald-200/90 dark:border-emerald-900/60 p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <span className="text-xs font-bold text-[#059669] dark:text-emerald-400 flex items-center gap-1.5">
-                  <MaterialIcon name="check_circle" size={18} />
+                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4" />
                   <span>GENUINE ISI MARK SPECIMEN</span>
                 </span>
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#059669] dark:text-emerald-400 border border-emerald-200">
+                <Badge variant="success" className="text-[10px] font-bold">
                   Legal &amp; Verified
-                </span>
+                </Badge>
               </div>
 
               {/* Graphical representation */}
-              <div className="p-6 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 text-center space-y-2 font-mono">
-                <div className="text-xs text-[#0052CC] dark:text-blue-400 font-bold tracking-wider">IS 16102 (Part 1)</div>
+              <div className="p-6 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800 text-center space-y-2 font-mono">
+                <div className="text-xs text-[#024DA1] dark:text-blue-400 font-bold tracking-wider">IS 16102 (Part 1)</div>
                 <div className="text-3xl font-black text-slate-900 dark:text-white py-2 tracking-widest">
                   [ ISI ]
                 </div>
@@ -142,7 +162,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
 
               <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 flex items-center justify-center font-bold text-[10px] flex-shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                     1
                   </span>
                   <div>
@@ -152,7 +172,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 flex items-center justify-center font-bold text-[10px] flex-shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                     2
                   </span>
                   <div>
@@ -162,7 +182,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 flex items-center justify-center font-bold text-[10px] flex-shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                     3
                   </span>
                   <div>
@@ -171,18 +191,18 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Counterfeit / Fake Mark Card */}
-            <div className="bg-white dark:bg-slate-900 border border-rose-200/90 dark:border-rose-900/60 rounded-2xl p-6 shadow-sm space-y-4">
+            <Card className="border-rose-200/90 dark:border-rose-900/60 p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <span className="text-xs font-bold text-[#DC2626] dark:text-rose-400 flex items-center gap-1.5">
-                  <MaterialIcon name="cancel" size={18} />
+                <span className="text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4" />
                   <span>COMMON COUNTERFEIT WARNING SIGNS</span>
                 </span>
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 text-[#DC2626] dark:text-rose-400 border border-rose-200">
+                <Badge variant="danger" className="text-[10px] font-bold">
                   Illegal Misuse
-                </span>
+                </Badge>
               </div>
 
               {/* Graphical fake representation */}
@@ -196,7 +216,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
 
               <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-950 text-[#DC2626] dark:text-rose-400 flex items-center justify-center font-bold text-[10px] flex-shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                     !
                   </span>
                   <div>
@@ -206,7 +226,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-950 text-[#DC2626] dark:text-rose-400 flex items-center justify-center font-bold text-[10px] flex-shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                     !
                   </span>
                   <div>
@@ -216,7 +236,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-950 text-[#DC2626] dark:text-rose-400 flex items-center justify-center font-bold text-[10px] flex-shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                     !
                   </span>
                   <div>
@@ -225,16 +245,16 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
         </section>
       )}
 
       {/* Grievance Steps Tab */}
       {activeTab === "grievance-steps" && (
-        <section className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
+        <Card className="p-6 sm:p-8 space-y-6">
           <div>
-            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
               4-Step Grievance Redressal Procedure
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -243,53 +263,53 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-2">
-              <span className="text-xs font-mono font-bold text-[#0052CC] dark:text-blue-400 block">Step 01</span>
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
+              <span className="text-xs font-mono font-bold text-[#024DA1] dark:text-blue-400 block">Step 01</span>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white">Gather Evidence</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Photograph the product packaging, batch number, bill/cash memo, and clear view of the stamp.
               </p>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-2">
-              <span className="text-xs font-mono font-bold text-[#0052CC] dark:text-blue-400 block">Step 02</span>
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
+              <span className="text-xs font-mono font-bold text-[#024DA1] dark:text-blue-400 block">Step 02</span>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white">File Online via BIS Care</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Download the official BIS Care mobile app or lodge complaint on the national portal.
               </p>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-2">
-              <span className="text-xs font-mono font-bold text-[#0052CC] dark:text-blue-400 block">Step 03</span>
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
+              <span className="text-xs font-mono font-bold text-[#024DA1] dark:text-blue-400 block">Step 03</span>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white">Enforcement Raid</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 BIS Vigilance wing conducts investigation, testing, and search &amp; seizure operations.
               </p>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-2">
-              <span className="text-xs font-mono font-bold text-[#0052CC] dark:text-blue-400 block">Step 04</span>
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
+              <span className="text-xs font-mono font-bold text-[#024DA1] dark:text-blue-400 block">Step 04</span>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white">Statutory Redressal</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Prosecution under Section 29, license revocation, and consumer compensation.
               </p>
             </div>
           </div>
-        </section>
+        </Card>
       )}
 
       {/* Statutory Rights / Penalties Tab */}
       {activeTab === "penalties" && (
-        <section className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-5">
+        <Card className="p-6 sm:p-8 space-y-5">
           <div className="flex items-center gap-2">
-            <MaterialIcon name="gavel" size={20} className="text-[#0052CC] dark:text-blue-400" />
-            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
+            <Gavel className="w-5 h-5 text-[#024DA1] dark:text-blue-400" />
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
               Statutory Consumer Legal Rights (BIS Act, 2016)
             </h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
               <span className="font-bold text-slate-900 dark:text-white block">Section 29: Penalties for Misuse of Standard Mark</span>
               <p className="leading-relaxed text-slate-600 dark:text-slate-400">
                 Any person who deceives the public with unauthorized ISI mark or falsely represents compliance faces
@@ -298,7 +318,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
               </p>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
               <span className="font-bold text-slate-900 dark:text-white block">Section 30: Compensation to Consumers</span>
               <p className="leading-relaxed text-slate-600 dark:text-slate-400">
                 Where goods bearing the Standard Mark fail to conform to the relevant standard, the licensee or seller
@@ -306,14 +326,14 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
               </p>
             </div>
           </div>
-        </section>
+        </Card>
       )}
 
       {/* Quick Action footer */}
-      <div className="p-6 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <Card className="p-6 bg-blue-50/50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/40 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#0052CC] text-white flex items-center justify-center flex-shrink-0">
-            <MaterialIcon name="help_outline" size={20} />
+          <div className="w-10 h-10 rounded-xl bg-[#024DA1] text-white flex items-center justify-center shrink-0">
+            <FileText className="w-5 h-5" />
           </div>
           <div>
             <h4 className="text-xs font-bold text-slate-900 dark:text-white">Need help drafting an official complaint letter?</h4>
@@ -321,16 +341,17 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
           </div>
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={() => handleAskComplaint("Draft a formal complaint letter to BIS regarding a substandard electrical product with an unauthorized ISI mark.")}
-          className="h-9 px-4 rounded-xl bg-[#0052CC] hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 transition-all cursor-pointer flex-shrink-0 shadow-sm"
+          className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-xl px-4 gap-2 shrink-0 shadow-xs"
         >
-          <MaterialIcon name="edit_note" size={16} />
+          <Sparkles className="w-4 h-4 text-blue-200" />
           <span>Draft with Mithra AI</span>
-        </button>
-      </div>
+        </Button>
+      </Card>
     </div>
   );
 }
+
 export default ConsumerView;

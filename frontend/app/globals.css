@@ -129,14 +129,6 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--blue-400); }
 
-.material-symbols-rounded {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
 /* GLOBAL APP SYSTEM */
 .app-page {
   min-height: 100vh;

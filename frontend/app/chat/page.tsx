@@ -4,9 +4,40 @@ import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import MaterialIcon from "@/components/MaterialIcon";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import {
+  BookOpen,
+  ShieldCheck,
+  Award,
+  FlaskConical,
+  ShieldAlert,
+  Send,
+  Sparkles,
+  ExternalLink,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  Moon,
+  Sun,
+  Copy,
+  Check,
+  Volume2,
+  VolumeX,
+  Plus,
+  Trash2,
+  Download,
+  X,
+  Loader2,
+  Camera,
+  Mic,
+  Cpu,
+  ArrowRight,
+  AlertTriangle,
+  CheckCircle2,
+  MessageSquare,
+  Upload,
+} from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -35,7 +66,7 @@ const QUICK_START_CARDS = [
     title: "Find Indian Standard (IS)",
     desc: "Search IS number & QCO by product name",
     query: "Which Indian Standard (IS number) applies to my product?",
-    icon: "library_books",
+    icon: BookOpen,
     color: "text-[#0052CC] dark:text-blue-400",
     bg: "bg-blue-50 dark:bg-blue-950/60",
   },
@@ -43,7 +74,7 @@ const QUICK_START_CARDS = [
     title: "Certification Schemes",
     desc: "Compare ISI Mark Scheme I vs CRS Scheme II",
     query: "Explain the difference between ISI Mark Scheme I and CRS Scheme II",
-    icon: "verified",
+    icon: ShieldCheck,
     color: "text-[#059669] dark:text-emerald-400",
     bg: "bg-emerald-50 dark:bg-emerald-950/60",
   },
@@ -51,7 +82,7 @@ const QUICK_START_CARDS = [
     title: "Verify Hallmark & HUID",
     desc: "Decode 6-character gold hallmark authenticity",
     query: "How do I verify a 6-digit gold hallmark HUID code?",
-    icon: "workspace_premium",
+    icon: Award,
     color: "text-[#D97706] dark:text-amber-400",
     bg: "bg-amber-50 dark:bg-amber-950/60",
   },
@@ -59,7 +90,7 @@ const QUICK_START_CARDS = [
     title: "Accredited Testing Labs",
     desc: "Locate NABL & BIS testing facilities nearby",
     query: "Find accredited laboratories for testing LED lamps or electrical items",
-    icon: "biotech",
+    icon: FlaskConical,
     color: "text-[#7C3AED] dark:text-purple-400",
     bg: "bg-purple-50 dark:bg-purple-950/60",
   },
@@ -75,7 +106,7 @@ function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Med
   if (abstained || confidence === "Unverified") {
     return (
       <span className="confidence-badge confidence-badge-abstained">
-        <MaterialIcon name="gpp_bad" size={14} filled />
+        <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
         <span>Unverified — Abstained from guessing</span>
       </span>
     );
@@ -83,14 +114,14 @@ function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Med
   if (confidence === "Medium") {
     return (
       <span className="confidence-badge confidence-badge-medium">
-        <MaterialIcon name="warning" size={14} filled />
+        <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
         <span>Medium Confidence</span>
       </span>
     );
   }
   return (
     <span className="confidence-badge confidence-badge-high">
-      <MaterialIcon name="check_circle" size={14} filled />
+      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
       <span>Verified High Confidence</span>
     </span>
   );
@@ -478,7 +509,7 @@ function ChatContent() {
       {/* Drag & Drop Overlay */}
       {isDraggingFile && (
         <div className="absolute inset-0 z-50 bg-[var(--blue-700)]/92 border-2 border-dashed border-[var(--blue-200)] flex flex-col items-center justify-center pointer-events-none text-white">
-          <MaterialIcon name="upload_file" size={50} className="text-white mb-3" />
+          <Upload className="w-12 h-12 text-white mb-3" />
           <h2 className="text-xl font-bold">Drop image for Mithra analysis</h2>
           <p className="text-xs text-[var(--blue-100)] mt-1">Product photos and hallmark stamps are supported</p>
         </div>
@@ -541,7 +572,7 @@ function ChatContent() {
               }}
               className="new-chat-button"
             >
-              <MaterialIcon name="add" size={17} className="text-[var(--blue-600)]" />
+              <Plus className="w-4 h-4 text-[var(--blue-600)]" />
               <span>New Chat</span>
             </button>
 
@@ -558,7 +589,7 @@ function ChatContent() {
                 }}
                 className="sidebar-link w-full text-left cursor-pointer transition-colors font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
               >
-                <MaterialIcon name="chat" size={16} />
+                <MessageSquare className="w-4 h-4" />
                 <span>Mithra AI</span>
               </button>
 
@@ -573,10 +604,10 @@ function ChatContent() {
                 title="Open Standards Directory in new tab"
               >
                 <span className="flex items-center gap-2 min-w-0">
-                  <MaterialIcon name="library_books" size={16} />
+                  <BookOpen className="w-4 h-4" />
                   <span className="truncate">Standards Directory</span>
                 </span>
-                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
               </a>
               <a
                 href="/schemes"
@@ -586,10 +617,10 @@ function ChatContent() {
                 title="Open Certification Schemes in new tab"
               >
                 <span className="flex items-center gap-2 min-w-0">
-                  <MaterialIcon name="verified" size={16} />
+                  <ShieldCheck className="w-4 h-4" />
                   <span className="truncate">Certification Schemes</span>
                 </span>
-                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
               </a>
               <a
                 href="/hallmark"
@@ -599,10 +630,10 @@ function ChatContent() {
                 title="Open Hallmark & HUID in new tab"
               >
                 <span className="flex items-center gap-2 min-w-0">
-                  <MaterialIcon name="workspace_premium" size={16} />
+                  <Award className="w-4 h-4" />
                   <span className="truncate">Hallmark &amp; HUID</span>
                 </span>
-                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
               </a>
               <a
                 href="/labs"
@@ -612,10 +643,10 @@ function ChatContent() {
                 title="Open Accredited Labs in new tab"
               >
                 <span className="flex items-center gap-2 min-w-0">
-                  <MaterialIcon name="biotech" size={16} />
+                  <FlaskConical className="w-4 h-4" />
                   <span className="truncate">Accredited Labs</span>
                 </span>
-                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
               </a>
               <a
                 href="/consumer"
@@ -625,10 +656,10 @@ function ChatContent() {
                 title="Open Consumer Redressal in new tab"
               >
                 <span className="flex items-center gap-2 min-w-0">
-                  <MaterialIcon name="health_and_safety" size={16} />
+                  <ShieldAlert className="w-4 h-4" />
                   <span className="truncate">Consumer Redressal</span>
                 </span>
-                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
               </a>
             </nav>
 
@@ -656,7 +687,7 @@ function ChatContent() {
               disabled={messages.length === 0}
               className="sidebar-tool-button"
             >
-              <MaterialIcon name="download" size={16} />
+              <Download className="w-4 h-4" />
               <span>Export</span>
             </button>
             <button
@@ -664,7 +695,7 @@ function ChatContent() {
               disabled={messages.length === 0}
               className="sidebar-tool-button danger"
             >
-              <MaterialIcon name="delete" size={16} />
+              <Trash2 className="w-4 h-4" />
               <span>Clear</span>
             </button>
           </div>
@@ -729,7 +760,7 @@ function ChatContent() {
                 className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
                 title="Start New Chat"
               >
-                <MaterialIcon name="add" size={15} />
+                <Plus className="w-3.5 h-3.5" />
                 <span>New Chat</span>
               </button>
             )}
@@ -750,7 +781,7 @@ function ChatContent() {
               title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
               aria-label="Toggle dark/light mode"
             >
-              <MaterialIcon name={theme === "light" ? "dark_mode" : "light_mode"} size={17} />
+              {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
             </button>
 
             {isSpeaking && (
@@ -765,7 +796,7 @@ function ChatContent() {
                 }}
                 aria-label="Stop audio speech playback"
               >
-                <MaterialIcon name="volume_off" size={17} />
+                <VolumeX className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -783,7 +814,7 @@ function ChatContent() {
                 </div>
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-[#0052CC] dark:bg-blue-950/70 dark:border-blue-800 dark:text-blue-300">
-                    <MaterialIcon name="verified" size={14} />
+                    <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Mithra AI · Official BIS Compliance Assistant</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -806,7 +837,7 @@ function ChatContent() {
                     type="button"
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105 ${card.bg} ${card.color}`}>
-                      <MaterialIcon name={card.icon} size={20} />
+                      <card.icon className="w-5 h-5" />
                     </div>
                     <div className="min-w-0 flex-1 text-left">
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0052CC] dark:group-hover:text-blue-400 transition-colors">
@@ -816,10 +847,8 @@ function ChatContent() {
                         {card.desc}
                       </p>
                     </div>
-                    <MaterialIcon
-                      name="arrow_forward"
-                      size={16}
-                      className="text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all flex-shrink-0"
+                    <ArrowRight
+                      className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0"
                     />
                   </button>
                 ))}
@@ -857,12 +886,12 @@ function ChatContent() {
                   {msg.abstained && !msg.isLoading && (
                     <div className="abstention-notice">
                       <div className="flex items-center gap-2">
-                        <MaterialIcon name="gpp_bad" size={18} className="flex-shrink-0" filled />
+                        <ShieldAlert className="w-4 h-4 shrink-0" />
                         <span>Need official clarification? Consult the National Consumer Helpline: <strong>1800-11-4000</strong></span>
                       </div>
                       <a href="https://www.bis.gov.in" target="_blank" rel="noopener noreferrer" className="font-bold underline flex items-center gap-1">
                         <span>BIS Portal</span>
-                        <MaterialIcon name="open_in_new" size={13} />
+                        <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                     </div>
                   )}
@@ -877,10 +906,10 @@ function ChatContent() {
                         className="w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold text-[var(--blue-700)] dark:text-blue-300 bg-[var(--blue-50)] dark:bg-blue-950/50 hover:bg-[var(--blue-100)] dark:hover:bg-blue-900/50 transition-colors"
                       >
                         <div className="flex items-center gap-1.5">
-                          <MaterialIcon name="library_books" size={16} className="text-[var(--blue-600)] dark:text-[var(--blue-400)]" />
+                          <BookOpen className="w-4 h-4 text-[var(--blue-600)] dark:text-[var(--blue-400)]" />
                           <span>Grounded Sources ({msg.citations.length} Verified Citations)</span>
                         </div>
-                        <MaterialIcon name={expandedSources[msg.id] ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={18} />
+                        {expandedSources[msg.id] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </button>
 
                       {expandedSources[msg.id] && (
@@ -905,7 +934,7 @@ function ChatContent() {
                                 className="text-[var(--blue-600)] hover:underline flex-shrink-0 p-1"
                                 title="Open official reference"
                               >
-                                <MaterialIcon name="open_in_new" size={15} />
+                                <ExternalLink className="w-3.5 h-3.5" />
                               </a>
                             </div>
                           ))}
@@ -924,12 +953,12 @@ function ChatContent() {
                         >
                           {copiedId === msg.id ? (
                             <>
-                              <MaterialIcon name="check" size={15} className="text-[var(--color-success)]" />
+                              <Check className="w-3.5 h-3.5 text-[var(--color-success)]" />
                               <span className="text-[var(--color-success)] font-medium">Copied</span>
                             </>
                           ) : (
                             <>
-                              <MaterialIcon name="content_copy" size={15} />
+                              <Copy className="w-3.5 h-3.5" />
                               <span>Copy</span>
                             </>
                           )}
@@ -953,7 +982,7 @@ function ChatContent() {
                           }}
                           className="flex items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
                         >
-                          <MaterialIcon name="volume_up" size={15} />
+                          <Volume2 className="w-3.5 h-3.5" />
                           <span>{isSpeaking ? "Speaking..." : "Listen"}</span>
                         </button>
                       </div>
@@ -963,7 +992,7 @@ function ChatContent() {
                           onClick={() => sendMessage(msg.follow_up)}
                           className="text-[var(--blue-600)] hover:underline font-semibold flex items-center gap-1 text-left"
                         >
-                          <MaterialIcon name="auto_awesome" size={14} />
+                          <Sparkles className="w-3.5 h-3.5" />
                           <span>{msg.follow_up}</span>
                         </button>
                       )}
@@ -992,7 +1021,7 @@ function ChatContent() {
                     Send
                   </button>
                   <button onClick={() => { setSpeechTranscript(null); setInput(""); }} className="btn-icon w-7 h-7">
-                    <MaterialIcon name="close" size={15} />
+                    <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -1023,7 +1052,7 @@ function ChatContent() {
                   aria-label="Send message"
                   title="Send message"
                 >
-                  {isLoading ? <MaterialIcon name="progress_activity" size={18} className="animate-spin" /> : <MaterialIcon name="send" size={18} />}
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </button>
               </div>
 
@@ -1034,7 +1063,7 @@ function ChatContent() {
                   title="Upload photo"
                   aria-label="Upload photo of product or hallmark"
                 >
-                  <MaterialIcon name="photo_camera" size={18} />
+                  <Camera className="w-4 h-4" />
                   <span>Photo</span>
                 </button>
 
@@ -1049,7 +1078,7 @@ function ChatContent() {
                       {[0,1,2,3,4].map((i) => <div key={i} className="waveform-bar" />)}
                     </div>
                   ) : (
-                  <MaterialIcon name="mic" size={18} />
+                    <Mic className="w-4 h-4" />
                   )}
                   <span>{isRecording ? "Listening" : "Speak"}</span>
                 </button>
@@ -1075,22 +1104,22 @@ function ChatContent() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-[var(--color-text-primary)] font-bold text-base">Capture Image for BIS Analysis</h3>
-              <button className="btn-icon w-8 h-8" onClick={() => setShowPhotoUpload(false)}>
-                <MaterialIcon name="close" size={18} />
+              <button className="btn-icon w-8 h-8 cursor-pointer" onClick={() => setShowPhotoUpload(false)}>
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-5">
               <button
                 onClick={() => setPhotoMode("product")}
-                className={`p-4 rounded-xl text-left border transition-all ${
+                className={`p-4 rounded-xl text-left border transition-all cursor-pointer ${
                   photoMode === "product"
                     ? "bg-[var(--blue-50)] border-[var(--blue-600)] text-[var(--blue-900)]"
                     : "border-[var(--color-border)] text-[var(--color-text-body)]"
                 }`}
               >
                 <div className="w-8 h-8 rounded-lg bg-[var(--blue-100)] text-[var(--blue-600)] flex items-center justify-center mb-2">
-                  <MaterialIcon name="memory" size={20} />
+                  <Cpu className="w-5 h-5" />
                 </div>
                 <div className="text-sm font-bold">Product Photo</div>
                 <div className="text-xs text-[var(--color-text-muted)] mt-1">Classify applicable Indian Standard</div>
@@ -1098,14 +1127,14 @@ function ChatContent() {
 
               <button
                 onClick={() => setPhotoMode("hallmark")}
-                className={`p-4 rounded-xl text-left border transition-all ${
+                className={`p-4 rounded-xl text-left border transition-all cursor-pointer ${
                   photoMode === "hallmark"
                     ? "bg-[var(--blue-50)] border-[var(--blue-600)] text-[var(--blue-900)]"
                     : "border-[var(--color-border)] text-[var(--color-text-body)]"
                 }`}
               >
                 <div className="w-8 h-8 rounded-lg bg-[var(--blue-100)] text-[var(--blue-600)] flex items-center justify-center mb-2">
-                  <MaterialIcon name="workspace_premium" size={20} />
+                  <Award className="w-5 h-5" />
                 </div>
                 <div className="text-sm font-bold">Hallmark Stamp</div>
                 <div className="text-xs text-[var(--color-text-muted)] mt-1">Laser HUID OCR verification</div>
@@ -1133,9 +1162,9 @@ function ChatContent() {
 
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="app-primary-button w-full justify-center text-sm"
+              className="app-primary-button w-full justify-center text-sm cursor-pointer"
             >
-              <MaterialIcon name="upload_file" size={18} />
+              <Upload className="w-4 h-4" />
               <span>Choose Photo or Take Picture</span>
             </button>
           </div>
@@ -1150,7 +1179,7 @@ export default function ChatPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-screen bg-[var(--color-background)]">
-          <MaterialIcon name="progress_activity" size={38} className="animate-spin text-[var(--blue-600)]" />
+          <Loader2 className="w-9 h-9 animate-spin text-[var(--blue-600)]" />
         </div>
       }
     >

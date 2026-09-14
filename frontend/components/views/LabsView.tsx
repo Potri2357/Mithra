@@ -1,7 +1,28 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import MaterialIcon from "@/components/MaterialIcon";
+import {
+  FlaskConical,
+  MapPin,
+  Search,
+  LayoutGrid,
+  Table as TableIcon,
+  Sparkles,
+  Phone,
+  Copy,
+  Check,
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 // Official Seeded BIS Recognized Laboratories
 export const BIS_LABORATORIES = [
@@ -60,46 +81,46 @@ export const BIS_LABORATORIES = [
     state: "Delhi",
     address: "Dr. K.S. Krishnan Marg, Pusa, New Delhi - 110012",
     accreditation: "National Metrology Institute of India",
-    categories: ["Calibration", "Precision Instruments", "Time & Frequency", "Mass & Length Standards"],
+    categories: ["Primary Calibration", "Legal Metrology", "Photovoltaic Reference", "Time & Frequency"],
     bis_lab_id: "BIS-NPL-005",
     phone: "011-45609212",
     email: "director@nplindia.org",
   },
   {
     id: "lab-6",
-    name: "CSIR-Central Building Research Institute (CBRI)",
-    city: "Roorkee",
-    state: "Uttarakhand",
-    address: "Roorkee - 247667",
-    accreditation: "BIS Recognized Building Materials Lab",
-    categories: ["Cement & Concrete", "Bricks & Tiles", "Fire Safety", "Structural Elements"],
-    bis_lab_id: "BIS-CBRI-006",
-    phone: "01332-272243",
-    email: "director@cbri.res.in",
-  },
-  {
-    id: "lab-7",
     name: "Shriram Institute for Industrial Research",
     city: "Delhi",
     state: "Delhi",
     address: "19, University Road, Delhi - 110007",
-    accreditation: "NABL & BIS Recognized Commercial Lab",
-    categories: ["Plastics & Polymers", "Pesticides", "Packaging Materials", "Toys Safety (IS 9873)", "Water Testing"],
-    bis_lab_id: "BIS-SIIR-007",
+    accreditation: "NABL & BIS Recognized Independent Testing Lab",
+    categories: ["Polymers & Plastics", "Toxicology", "Rubber Products", "Textiles", "Toys Testing"],
+    bis_lab_id: "BIS-SIIR-006",
     phone: "011-27667267",
-    email: "sridlhi@shriraminstitute.org",
+    email: "sridlhi@vsnl.com",
+  },
+  {
+    id: "lab-7",
+    name: "Central Institute of Petrochemicals Engineering & Technology (CIPET)",
+    city: "Chennai",
+    state: "Tamil Nadu",
+    address: "TVK Industrial Estate, Guindy, Chennai - 600032",
+    accreditation: "Apex Plastics Testing Institute",
+    categories: ["PVC & HDPE Pipes", "Plastics", "Biodegradable Polymers", "Packaging Materials"],
+    bis_lab_id: "BIS-CIPET-007",
+    phone: "044-22254701",
+    email: "chennai@cipet.gov.in",
   },
   {
     id: "lab-8",
-    name: "TUV SUD South Asia Pvt. Ltd.",
-    city: "Bengaluru",
-    state: "Karnataka",
-    address: "No. A 151, 2nd C Main Road, Peenya Industrial Area, Bengaluru - 560058",
-    accreditation: "BIS CRS Scheme II Recognized Lab",
-    categories: ["Consumer Electronics", "IT Equipment", "Automotive Components", "Battery Testing"],
-    bis_lab_id: "BIS-TUVSUD-008",
-    phone: "080-67456789",
-    email: "info.in@tuvsud.com",
+    name: "National Metallurgical Laboratory (CSIR-NML)",
+    city: "Jamshedpur",
+    state: "Jharkhand",
+    address: "Burmamines, Jamshedpur - 831007",
+    accreditation: "Apex Metallurgy & Steel Testing Facility",
+    categories: ["Structural Steel", "TMT Rebars (IS 1786)", "Corrosion Testing", "Mechanical Hardness"],
+    bis_lab_id: "BIS-NML-008",
+    phone: "0657-2345100",
+    email: "director@nmlindia.org",
   },
 ];
 
@@ -109,18 +130,18 @@ const STATES = [
   "Uttar Pradesh",
   "Karnataka",
   "Gujarat",
-  "Uttarakhand",
+  "Tamil Nadu",
+  "Jharkhand",
 ];
 
 const POPULAR_CATEGORIES = [
   "All Categories",
   "Electrical",
-  "Electronics",
-  "Civil Engineering",
-  "Food & Water",
-  "Chemical",
-  "Toys Safety",
   "Solar PV",
+  "PVC & HDPE",
+  "TMT Rebars",
+  "Toys Testing",
+  "Food & Water",
 ];
 
 interface LabsViewProps {
@@ -178,12 +199,12 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       {/* Hero Header */}
       <div className="space-y-3 max-w-3xl">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-50 dark:bg-purple-950/70 border border-purple-200/80 dark:border-purple-900/60 text-xs font-bold text-[#7C3AED] dark:text-purple-400 shadow-2xs">
-          <MaterialIcon name="biotech" size={15} />
+        <Badge variant="blue" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
+          <FlaskConical className="w-3.5 h-3.5" />
           <span>NABL &amp; BIS-Recognized Testing Network</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          Testing &amp; Calibration <span className="text-[#0052CC] dark:text-blue-400">Laboratory Radar</span>
+        </Badge>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+          Testing &amp; Calibration <span className="text-[#024DA1] dark:text-blue-400">Laboratory Radar</span>
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Locate authorized testing laboratories recognized under the Laboratory Recognition Scheme (LRS) for
@@ -196,10 +217,11 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
         {POPULAR_CATEGORIES.map((cat) => (
           <button
             key={cat}
+            type="button"
             onClick={() => handleCategorySelect(cat)}
-            className={`h-9 px-4 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+            className={`h-9 px-4 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
               category === cat
-                ? "bg-[#0052CC] text-white shadow-xs"
+                ? "bg-[#024DA1] text-white shadow-xs"
                 : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             }`}
           >
@@ -209,7 +231,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
       </div>
 
       {/* Filter Station with Generous Spacing */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
+      <Card className="p-5 sm:p-6 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
           <div className="md:col-span-6">
             <label
@@ -219,26 +241,25 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
               Instant Text Search
             </label>
             <div className="relative flex items-center">
-              <svg
-                className="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-4 pointer-events-none"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input
+              <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 pointer-events-none z-10" />
+              <Input
                 id="search-kw"
                 type="text"
-                className="w-full h-11 pl-12 pr-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-[#0052CC] transition-all"
+                className="h-11 pl-10 pr-9 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm"
                 placeholder="Filter by city, lab name, or keyword..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
+              {keyword && (
+                <button
+                  type="button"
+                  onClick={() => setKeyword("")}
+                  className="absolute right-3 p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -253,7 +274,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
               id="state-select"
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC] cursor-pointer"
+              className="w-full h-11 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#024DA1] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 cursor-pointer transition-all"
             >
               {STATES.map((s) => (
                 <option key={s} value={s}>
@@ -265,111 +286,120 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
 
           <div className="md:col-span-2 flex items-center justify-end gap-2">
             <button
+              type="button"
               onClick={() => setViewMode("grid")}
-              className={`h-11 px-4 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "grid"
-                  ? "bg-[#0052CC] text-white border-[#0052CC] shadow-xs"
-                  : "bg-slate-50 dark:bg-slate-850 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                  ? "bg-[#024DA1] text-white border-[#024DA1] shadow-xs"
+                  : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
               }`}
               title="Grid View"
             >
-              <MaterialIcon name="grid_view" size={17} />
+              <LayoutGrid className="w-4 h-4" />
               <span>Grid</span>
             </button>
             <button
+              type="button"
               onClick={() => setViewMode("table")}
-              className={`h-11 px-4 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "table"
-                  ? "bg-[#0052CC] text-white border-[#0052CC] shadow-xs"
-                  : "bg-slate-50 dark:bg-slate-850 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                  ? "bg-[#024DA1] text-white border-[#024DA1] shadow-xs"
+                  : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
               }`}
               title="Table View"
             >
-              <MaterialIcon name="table_chart" size={17} />
+              <TableIcon className="w-4 h-4" />
               <span>Table</span>
             </button>
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
           <span>
             Showing <strong className="text-slate-900 dark:text-white font-bold">{filteredLabs.length}</strong> of {labs.length} laboratories
           </span>
           {(keyword || selectedState !== "All States" || category !== "All Categories") && (
             <button
+              type="button"
               onClick={() => {
                 setKeyword("");
                 setSelectedState("All States");
                 setCategory("All Categories");
               }}
-              className="text-[#0052CC] dark:text-blue-400 hover:underline font-bold cursor-pointer"
+              className="text-[#024DA1] dark:text-blue-400 hover:underline font-bold cursor-pointer inline-flex items-center gap-1"
             >
-              Reset Filters
+              <X className="w-3 h-3" />
+              <span>Reset Filters</span>
             </button>
           )}
         </div>
-      </div>
+      </Card>
 
-      {/* Grid or Table Display with Proper Padding and Better Buttons */}
+      {/* Grid or Table Display with Clean Cards & Proper Padding */}
       {filteredLabs.length === 0 ? (
-        <div className="p-10 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3 shadow-sm">
-          <MaterialIcon name="search_off" size={36} className="text-slate-300 mx-auto" />
+        <Card className="p-10 text-center space-y-3">
+          <FlaskConical className="w-10 h-10 text-slate-300 mx-auto" />
           <h3 className="text-base font-bold text-slate-900 dark:text-white">No accredited laboratories match your criteria</h3>
           <p className="text-xs text-slate-500">Try broadening your keyword or selecting &quot;All States&quot;.</p>
-          <button
+          <Button
             type="button"
             onClick={() => handleAsk(`Which BIS recognized lab tests ${keyword || category}?`)}
-            className="h-10 px-5 rounded-full bg-[#0052CC] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs cursor-pointer"
+            className="bg-[#024DA1] text-white text-xs font-semibold rounded-full px-5 gap-2 shadow-xs"
           >
-            <MaterialIcon name="auto_awesome" size={16} />
+            <Sparkles className="w-4 h-4" />
             <span>Ask Mithra For Testing Guidance</span>
-          </button>
-        </div>
+          </Button>
+        </Card>
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredLabs.map((lab) => (
-            <div
+            <Card
               key={lab.id}
-              className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all flex flex-col justify-between group space-y-5"
+              className="flex flex-col justify-between group hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200"
             >
-              <div className="space-y-3">
+              <CardHeader className="space-y-3 pb-3">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#0052CC] transition-colors">{lab.name}</h3>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/70 text-[#0052CC] dark:text-blue-300 border border-blue-200/80 dark:border-blue-900/60 flex-shrink-0">
+                  <CardTitle className="text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#024DA1] dark:group-hover:text-blue-400 transition-colors">
+                    {lab.name}
+                  </CardTitle>
+                  <Badge variant="blue" className="text-[11px] font-semibold shrink-0">
                     {lab.accreditation}
-                  </span>
+                  </Badge>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                  <MaterialIcon name="location_on" size={16} className="text-[#0052CC] flex-shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-[#024DA1] shrink-0" />
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
                     {lab.city}, {lab.state}
                   </span>
                 </div>
+              </CardHeader>
 
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{lab.address}</p>
+              <CardContent className="space-y-3 text-xs text-slate-600 dark:text-slate-400">
+                <p className="leading-relaxed">{lab.address}</p>
 
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {lab.categories.map((c, i) => (
                     <span
                       key={i}
-                      className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700"
+                      className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700"
                     >
                       {c}
                     </span>
                   ))}
                 </div>
-              </div>
+              </CardContent>
 
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <button
+              <CardFooter className="pt-4 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+                <Button
                   type="button"
                   onClick={() => handleAsk(`What is the testing procedure and sample size required for BIS certification at ${lab.name}?`)}
-                  className="h-9 px-4 rounded-full bg-blue-50 hover:bg-[#0052CC] hover:text-white text-[#0052CC] dark:bg-blue-950/70 dark:text-blue-300 dark:hover:bg-[#0052CC] dark:hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                  size="sm"
+                  className="bg-blue-50 hover:bg-[#024DA1] hover:text-white text-[#024DA1] dark:bg-blue-950/70 dark:text-blue-300 dark:hover:bg-[#024DA1] dark:hover:text-white text-xs font-semibold rounded-full px-4 gap-1.5 transition-all shadow-2xs"
                 >
-                  <MaterialIcon name="auto_awesome" size={14} />
+                  <Sparkles className="w-3.5 h-3.5" />
                   <span>Ask Testing Scope</span>
-                </button>
+                </Button>
 
                 <div className="flex items-center gap-2 ml-auto">
                   {lab.phone && (
@@ -377,31 +407,32 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
                       href={`tel:${lab.phone}`}
                       className="h-8 px-3 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition-colors"
                     >
-                      <MaterialIcon name="call" size={13} />
+                      <Phone className="w-3 h-3" />
                       <span>{lab.phone}</span>
                     </a>
                   )}
 
                   <button
+                    type="button"
                     onClick={() => copyLabId(lab.bis_lab_id)}
                     className="h-8 px-3 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-mono font-semibold flex items-center gap-1 cursor-pointer transition-colors"
                     title="Copy BIS Lab ID"
                   >
                     <span>{lab.bis_lab_id}</span>
                     {copiedId === lab.bis_lab_id ? (
-                      <MaterialIcon name="check" size={14} className="text-[#059669]" />
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
                     ) : (
-                      <MaterialIcon name="content_copy" size={13} />
+                      <Copy className="w-3 h-3" />
                     )}
                   </button>
                 </div>
-              </div>
-            </div>
+              </CardFooter>
+            </Card>
           ))}
         </div>
       ) : (
-        /* Table View with Generous Spacing */
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 overflow-x-auto shadow-sm">
+        /* Table View */
+        <Card className="p-5 overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm border-collapse">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold">
@@ -420,13 +451,13 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
                     {lab.city}, {lab.state}
                   </td>
                   <td className="p-3.5">
-                    <span className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 text-[#0052CC] text-xs font-bold">
+                    <Badge variant="blue" className="text-xs font-semibold">
                       {lab.accreditation}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="p-3.5 space-x-2">
                     {lab.phone && (
-                      <a href={`tel:${lab.phone}`} className="text-[#0052CC] font-semibold hover:underline">
+                      <a href={`tel:${lab.phone}`} className="text-[#024DA1] font-semibold hover:underline">
                         {lab.phone}
                       </a>
                     )}
@@ -436,7 +467,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
               ))}
             </tbody>
           </table>
-        </div>
+        </Card>
       )}
     </div>
   );

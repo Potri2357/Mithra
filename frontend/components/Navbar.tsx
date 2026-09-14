@@ -3,11 +3,18 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import MaterialIcon from "@/components/MaterialIcon";
+import { useRouter } from "next/navigation";
+import {
+  Search,
+  X,
+  ChevronDown,
+  Moon,
+  Sun,
+  Menu,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
-  const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -63,21 +70,21 @@ export default function Navbar() {
         scrolled ? "shadow-sm shadow-slate-900/5" : ""
       }`}
     >
-      <div className="site-container flex items-center justify-between h-18">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Brand Lockup */}
-        <Link href="/" className="flex items-center gap-3.5 group flex-shrink-0">
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 dark:border-slate-800 p-1 flex items-center justify-center shadow-2xs group-hover:border-blue-300 transition-colors">
             <Image
               src="/bis_logo.png"
-              alt="BIS"
-              width={34}
-              height={34}
+              alt="BIS Logo"
+              width={32}
+              height={32}
               className="object-contain"
               priority
             />
           </div>
           <div className="leading-tight">
-            <div className="text-slate-900 dark:text-white font-extrabold text-lg tracking-tight group-hover:text-[#0052CC] transition-colors flex items-center gap-1.5">
+            <div className="text-slate-900 dark:text-white font-extrabold text-lg tracking-tight group-hover:text-[#024DA1] dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
               <span>Mithra</span>
             </div>
             <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">
@@ -86,98 +93,110 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Center Nav Pills removed as requested - option-free navbar */}
-
         {/* Right Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Nav Search Toggle / Input */}
           <div className="relative">
             {searchOpen ? (
-              <form onSubmit={handleNavSearch} className="flex items-center gap-1 animate-fadeIn">
+              <form onSubmit={handleNavSearch} className="flex items-center gap-1.5 animate-fadeIn">
                 <input
                   type="text"
                   value={navSearchQuery}
                   onChange={(e) => setNavSearchQuery(e.target.value)}
-                  placeholder="Quick search standard or HUID..."
+                  placeholder="Search standard or HUID..."
                   autoFocus
-                  className="w-48 sm:w-64 h-9 px-3 text-xs bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-full outline-none focus:border-[#0052CC]"
+                  className="w-48 sm:w-64 h-9 px-3 text-xs bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-full outline-none focus:border-[#024DA1]"
                 />
                 <button
                   type="button"
                   onClick={() => setSearchOpen(false)}
-                  className="w-8 h-8 rounded-full text-slate-400 hover:text-slate-600 flex items-center justify-center"
+                  className="w-8 h-8 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center cursor-pointer"
+                  title="Close search"
                 >
-                  <MaterialIcon name="close" size={16} />
+                  <X className="w-4 h-4" />
                 </button>
               </form>
             ) : (
               <button
+                type="button"
                 onClick={() => setSearchOpen(true)}
                 className="w-9 h-9 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Search"
                 title="Search"
               >
-                <MaterialIcon name="search" size={19} />
+                <Search className="w-4 h-4" />
               </button>
             )}
           </div>
 
           {/* Language Selector Pill */}
           <button
+            type="button"
             onClick={cycleLang}
             className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer"
             title="Switch Language"
             aria-label={`Current language: ${currentLang}. Click to cycle.`}
           >
             <span>{currentLang}</span>
-            <MaterialIcon name="expand_more" size={16} className="text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
           {/* Theme Toggle Button */}
           <button
+            type="button"
             onClick={toggleTheme}
             className="w-9 h-9 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
             title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
             aria-label="Toggle Theme"
           >
-            <MaterialIcon name={theme === "light" ? "dark_mode" : "light_mode"} size={18} />
+            {theme === "light" ? (
+              <Moon className="w-4 h-4" />
+            ) : (
+              <Sun className="w-4 h-4" />
+            )}
           </button>
 
-          {/* Elite Royal Blue Pill Button (Login / Ask Mithra) */}
+          {/* Modern Action Button (Login / Open Chat) */}
           <Link href="/chat">
-            <button className="h-9.5 px-6 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold tracking-wide shadow-sm hover:shadow transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
+            <Button
+              size="sm"
+              className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-full px-5 shadow-xs"
+            >
               <span>Login</span>
-            </button>
+            </Button>
           </Link>
 
           {/* Mobile Menu Toggle */}
           <button
-            className="xl:hidden w-9 h-9 rounded-full text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center"
+            type="button"
+            className="sm:hidden w-9 h-9 rounded-full text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center cursor-pointer"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
-            <MaterialIcon name={mobileMenuOpen ? "close" : "menu"} size={20} />
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 py-3 space-y-1 shadow-lg animate-fadeIn">
-          <div className="py-2 flex items-center justify-between">
+        <div className="sm:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 py-3 space-y-2 shadow-md animate-fadeIn">
+          <div className="py-1 flex items-center justify-between">
             <button
+              type="button"
               onClick={cycleLang}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200"
             >
               <span>Language: {currentLang}</span>
-              <MaterialIcon name="expand_more" size={16} />
+              <ChevronDown className="w-3.5 h-3.5" />
             </button>
             <Link
               href="/chat"
               onClick={() => setMobileMenuOpen(false)}
-              className="h-9 px-5 rounded-full bg-[#0052CC] text-white text-xs font-bold inline-flex items-center"
             >
-              Ask Mithra
+              <Button size="sm" className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-full px-4">
+                Ask Mithra
+              </Button>
             </Link>
           </div>
         </div>
