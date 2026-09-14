@@ -1,0 +1,46 @@
+[
+  {
+    "id": "isi-scheme-i",
+    "scheme": "ISI Mark",
+    "scheme_code": "Scheme I",
+    "title": "ISI Mark Certification — Scheme I (Domestic Manufacturer)",
+    "keywords": ["isi", "isi mark", "isi certification", "scheme i", "domestic manufacturer", "licence"],
+    "source": "BIS Certification Scheme Guidelines — ISI Mark",
+    "content": "ISI Mark (Scheme I) — For Domestic Manufacturers. The ISI Mark is the most recognized BIS certification. Mandatory for products covered under Quality Control Orders (QCOs) issued by Ministry of Consumer Affairs. Step-by-step process: 1. Check if your product is covered under a QCO (mandatory) or if you want voluntary ISI certification. 2. Apply online at Manak Online portal (manakonline.in) with your firm details, product details, IS number, factory address. 3. BIS scrutinizes application (7-10 working days). Deficiency letter issued if documents incomplete. 4. Grant of Licence (GOL) letter issued — pay licence fee. 5. BIS factory inspection by BIS officer. Testing of product samples at BIS-recognized testing lab. 6. If samples pass, BIS issues the licence. 7. Licence is valid for 1 year (renewable). Timeline: 4-6 weeks for domestic manufacturers. Fee: Application fee ₹1000 + marking fee (product-category based, typically 0.5-1.5% of production value). MSME Concession: 50% reduction in licence fee for MSMEs registered under MSME Act. Women entrepreneur concession: 80% reduction in initial licence fee. Document checklist: Firm registration documents, Factory layout plan, List of machinery/equipment, Test reports from BIS-recognized lab, MSME/Udyam certificate (if claiming concession), Quality assurance records."
+  },
+  {
+    "id": "crs-scheme",
+    "scheme": "CRS",
+    "scheme_code": "Compulsory Registration Scheme",
+    "title": "CRS — Compulsory Registration Scheme for Electronics and IT Products",
+    "keywords": ["crs", "compulsory registration", "electronics", "it product", "led", "mobile", "laptop", "tablet", "register"],
+    "source": "BIS CRS Guidelines — Electronics and IT Goods",
+    "content": "CRS (Compulsory Registration Scheme) — For Electronics and IT Products. Mandatory for 65+ product categories under Electronics and IT Goods (Mandatory Requirements for Safety) Order. Products covered: Mobile phones, laptops, computers, monitors, LED lamps, power banks, chargers, adapters, UPS, set-top boxes, smart TVs, CCTV cameras, and more. Process: 1. Identify if your product falls under CRS (check BIS website or consult the Electronics and IT Goods Order). 2. Get product tested at a BIS-recognized or NABL-accredited lab. 3. Register online at BIS portal. 4. Submit test report + product declaration + firm details. 5. BIS reviews and grants Registration Certificate. 6. Affix the R-Mark (registration mark) on product and packaging. Timeline: 2-4 weeks (faster than ISI). Key difference from ISI: No factory inspection under CRS — self-declaration with third-party test report. Renewal: Annual renewal required. Importer note: Importers must also register under CRS. Products cannot be imported without valid CRS registration. Common mistake: Applying for ISI instead of CRS for LED products — LED lamps fall under CRS, not ISI."
+  },
+  {
+    "id": "fmcs-scheme",
+    "scheme": "FMCS",
+    "scheme_code": "Foreign Manufacturers Certification Scheme",
+    "title": "FMCS — Certification for Foreign Manufacturers Exporting to India",
+    "keywords": ["fmcs", "foreign manufacturer", "import", "export to india", "overseas", "foreign"],
+    "source": "BIS FMCS Guidelines",
+    "content": "FMCS (Foreign Manufacturers Certification Scheme) — For manufacturers outside India who want to sell ISI-marked products in India. Required for: Products covered under mandatory QCOs where the manufacturer is not Indian. Process: 1. Application to BIS from the foreign manufacturer (or their authorized Indian representative). 2. BIS scrutiny of technical documents. 3. Factory inspection by BIS officer at the overseas factory (applicant bears travel + accommodation costs for BIS inspector). 4. Product testing at BIS/NABL lab. 5. Licence granted — must appoint an Authorised Indian Representative (AIR). Timeline: 24-30 months is common due to scheduling of overseas inspection. Cost: Significantly higher than domestic ISI — BIS inspection travel costs (international) are borne by applicant; can be ₹5-10 lakhs+. AIR requirement: The AIR handles BIS correspondence and can represent the foreign manufacturer. Common alternative: Importing as a domestic manufacturer and getting Indian ISI licence — not allowed; FMCS is mandatory for foreign manufacturers."
+  },
+  {
+    "id": "hallmarking-jeweller",
+    "scheme": "Hallmarking",
+    "scheme_code": "BIS Hallmarking",
+    "title": "BIS Hallmarking — For Jewellers and Gold/Silver Sellers",
+    "keywords": ["hallmarking", "jeweller", "gold", "silver", "ahc", "huid", "purity", "assaying"],
+    "source": "BIS Hallmarking Division Guidelines",
+    "content": "BIS Hallmarking for Jewellers. Mandatory hallmarking: Compulsory for gold jewellery of 14K, 18K, 20K, 22K, 23K, 24K purity since June 2021 (for jewellers in notified cities). Expanded to all cities as of 2023. Silver hallmarking: Voluntary currently (BIS recommends getting it done). How to get jewellery hallmarked: 1. Take jewellery to a BIS-recognized Assaying and Hallmarking Centre (AHC). Find AHC at: bis.gov.in/hallmarking 2. AHC tests purity using XRF or cupellation and assigns a HUID. 3. HUID is registered in BIS database. 4. The 3 marks affixed: BIS logo (triangle) + purity mark (e.g., 916 for 22K) + HUID (6 alphanumeric chars). AHC Registration: Jewellers wanting to open their own AHC must apply to BIS. Requirements: Equipment (XRF/cupellation furnace), trained staff, laboratory space. Fee: ₹25,000 application fee. Consumer HUID verification: Via BIS Care app, or https://www.bis.gov.in/verify, or calling 1800-11-4000. Mandatory hallmarking violation: Selling un-hallmarked or mismarked gold jewellery is an offence under BIS Act 2016. Penalty: Up to ₹1 lakh and/or 1 year imprisonment for first offence."
+  },
+  {
+    "id": "voluntary-scheme",
+    "scheme": "Voluntary",
+    "title": "Voluntary BIS Certification",
+    "keywords": ["voluntary", "optional certification", "non-mandatory", "quality mark"],
+    "source": "BIS Certification Overview",
+    "content": "Voluntary BIS Certification — Products not covered under mandatory QCOs can still seek ISI Mark certification voluntarily. Benefits: Market differentiation, consumer trust, export readiness. Process same as Scheme I. Products that benefit: Export goods (many international buyers require BIS or equivalent), premium consumer products, government procurement (many government tenders prefer ISI-marked products)."
+  }
+]
