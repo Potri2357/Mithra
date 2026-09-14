@@ -148,7 +148,14 @@ function ChatContent() {
   const [isRecording, setIsRecording] = useState(false);
   const [speechTranscript, setSpeechTranscript] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Set initial sidebar state based on screen width on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSidebarOpen(window.innerWidth >= 1024);
+    }
+  }, []);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [photoMode, setPhotoMode] = useState<"product" | "hallmark">("product");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -477,28 +484,44 @@ function ChatContent() {
         </div>
       )}
 
+      {/* Mobile Backdrop Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/30 backdrop-blur-xs z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Close sidebar overlay"
+        />
+      )}
+
       {/* ── Collapsible Left Sidebar (ChatGPT style with history & portal links) ── */}
       <aside
-        className={`chat-sidebar fixed inset-y-0 left-0 z-40 w-[280px] transition-transform duration-200 lg:relative lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        className={`chat-sidebar fixed inset-y-0 left-0 z-40 w-[275px] transition-all duration-200 lg:relative ${
+          sidebarOpen
+            ? "translate-x-0 lg:w-[275px]"
+            : "-translate-x-full lg:w-0 lg:overflow-hidden lg:border-r-0 lg:p-0"
         }`}
       >
         <div className="flex flex-col h-full p-3 justify-between">
           <div className="space-y-4">
             <div className="sidebar-brand">
-              <Link href="/" className="flex items-center gap-3 min-w-0">
+              <Link href="/" className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="brand-mark">
                   <Image src="/bis_logo.png" alt="BIS Logo" width={28} height={28} className="object-contain" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <span className="font-extrabold text-[16px] text-[var(--color-text-primary)] block leading-tight">
                     Mithra
                   </span>
-                  <span className="text-[11px] text-[var(--color-text-muted)] font-semibold">Bureau of Indian Standards</span>
+                  <span className="text-[11px] text-[var(--color-text-muted)] font-semibold truncate block">Bureau of Indian Standards</span>
                 </div>
               </Link>
-              <button className="btn-icon w-8 h-8 lg:hidden" onClick={() => setSidebarOpen(false)}>
-                <MaterialIcon name="close" size={18} />
+              <button
+                className="btn-icon w-8 h-8 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                onClick={() => setSidebarOpen(false)}
+                title="Collapse sidebar"
+                aria-label="Collapse sidebar"
+              >
+                <MaterialIcon name="chevron_left" size={20} />
               </button>
             </div>
 
@@ -599,55 +622,84 @@ function ChatContent() {
       {/* ── Main Chat Area ── */}
       <div className="flex-1 flex flex-col h-full min-w-0">
         {/* Header */}
-        <header className="chat-header flex items-center justify-between px-4 sm:px-6 py-3 flex-shrink-0">
+        <header className="chat-header flex items-center justify-between px-4 sm:px-6 py-2.5 flex-shrink-0 min-h-[58px]">
           <div className="flex items-center gap-3">
-            <button
-              className="btn-icon w-9 h-9 lg:hidden"
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open sidebar menu"
-            >
-              <MaterialIcon name="menu" size={20} />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="brand-mark">
-                <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
+            {!sidebarOpen && (
+              <button
+                className="btn-icon w-9 h-9 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                onClick={() => setSidebarOpen(true)}
+                aria-label="Open sidebar"
+                title="Open sidebar"
+              >
+                <MaterialIcon name="menu" size={20} />
+              </button>
+            )}
+
+            {!sidebarOpen ? (
+              <div className="flex items-center gap-2.5">
+                <div className="brand-mark">
+                  <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
+                </div>
+                <div>
+                  <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
+                    <span>Mithra</span>
+                    <span className="status-pill">
+                      <span className="status-dot" />
+                      Verified mode
+                    </span>
+                  </h1>
+                  <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                    BIS standards intelligence
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
-                  <span>Mithra</span>
-                  <span className="status-pill">
-                    <span className="status-dot" />
-                    Verified mode
-                  </span>
-                </h1>
-                <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-                  BIS standards intelligence
-                </p>
+            ) : (
+              <div className="flex items-center gap-2.5">
+                <span className="status-pill">
+                  <span className="status-dot" />
+                  Verified mode
+                </span>
+                <span className="text-xs text-[var(--color-text-muted)] hidden sm:inline font-medium">
+                  BIS standards intelligence · Grounded RAG
+                </span>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            {!sidebarOpen && (
+              <button
+                onClick={clearChat}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
+                title="Start New Chat"
+              >
+                <MaterialIcon name="add" size={15} />
+                <span>New Chat</span>
+              </button>
+            )}
+
             <button
               onClick={cycleLang}
               className="language-button"
               aria-label="Switch Language"
+              title="Switch Language (EN / हिं / த)"
             >
-              <span>EN · हिं · த</span>
+              <span className="text-xs font-semibold text-slate-500 hidden sm:inline">Language:</span>
               <span className="active-lang">{currentLang}</span>
             </button>
 
             <button
               onClick={toggleTheme}
-              className="btn-icon w-8 h-8"
+              className="btn-icon w-8.5 h-8.5"
               title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              aria-label="Toggle dark/light mode"
             >
               <MaterialIcon name={theme === "light" ? "dark_mode" : "light_mode"} size={17} />
             </button>
 
             {isSpeaking && (
               <button
-                className="btn-icon w-8 h-8 text-[var(--blue-600)]"
+                className="btn-icon w-8.5 h-8.5 text-[var(--blue-600)]"
                 onClick={() => {
                   audioRef.current?.pause();
                   if (typeof window !== "undefined" && "speechSynthesis" in window) {
