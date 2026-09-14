@@ -10,7 +10,6 @@ import {
   FlaskConical,
   Award,
   ChevronRight,
-  CheckCircle,
   ArrowRight,
   Factory,
   Rocket,
@@ -19,6 +18,8 @@ import {
   Search,
   BookOpen,
   ShieldAlert,
+  CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
 
 const STATS = [
@@ -35,7 +36,6 @@ const DIRECT_MODULES = [
     desc: "Browse 22,000+ Indian Standards (IS), mandatory QCOs, and technical committees.",
     icon: BookOpen,
     badge: "Catalogue",
-    accent: "text-blue-400 bg-blue-950/60 border-blue-800/60",
   },
   {
     href: "/schemes",
@@ -43,7 +43,6 @@ const DIRECT_MODULES = [
     desc: "Eligibility wizard, checklists, and fee concession guides for ISI, CRS, and FMCS.",
     icon: Award,
     badge: "Licensing",
-    accent: "text-blue-400 bg-blue-950/60 border-blue-800/60",
   },
   {
     href: "/hallmark",
@@ -51,7 +50,6 @@ const DIRECT_MODULES = [
     desc: "Verify 6-character HUID jewellery codes, gold fineness calculator, and assaying rules.",
     icon: Award,
     badge: "Assaying",
-    accent: "text-red-400 bg-red-950/60 border-red-800/60",
   },
   {
     href: "/labs",
@@ -59,7 +57,6 @@ const DIRECT_MODULES = [
     desc: "Locate NABL and BIS-accredited testing facilities by product category and state.",
     icon: FlaskConical,
     badge: "Laboratories",
-    accent: "text-cyan-400 bg-cyan-950/60 border-cyan-800/60",
   },
   {
     href: "/consumer",
@@ -67,15 +64,13 @@ const DIRECT_MODULES = [
     desc: "Verify genuine ISI marks, spot fake imprints, and file statutory complaints.",
     icon: ShieldAlert,
     badge: "Enforcement",
-    accent: "text-red-400 bg-red-950/60 border-red-800/60",
   },
   {
     href: "/chat",
-    title: "AI Saathi Assistant",
-    desc: "Consult our multi-agent AI engine with text, voice, or photo in English and Hindi.",
+    title: "Guided Chat Assistant",
+    desc: "Consult our multi-agent AI engine with text, voice, or photo in English, Hindi, or Tamil.",
     icon: MessageSquare,
-    badge: "GenAI RAG",
-    accent: "text-blue-400 bg-blue-950/60 border-blue-800/60",
+    badge: "Maanak AI",
   },
 ];
 
@@ -98,34 +93,34 @@ const PREVIEWS = [
   },
   {
     id: "hallmark",
-    label: "Hallmark & HUID Scanner",
+    label: "Hallmark & HUID",
     icon: Award,
-    title: "Gold & Silver Hallmark Authenticity Verification",
-    desc: "Verify the mandatory 3-mark hallmark: BIS Triangle Logo, Purity Grade (e.g. 22K916), and the 6-character alphanumeric Hallmark Unique Identification (HUID).",
-    sampleQuery: "Verify HUID AA123456",
-    badge: "Consumer Assurance",
+    title: "Gold & Silver Jewellery Authentication",
+    desc: "Verify 6-character alphanumeric HUID stamps against BIS central registries. Calculate exact purity fineness from 24K down to 9K.",
+    sampleQuery: "Verify hallmark HUID AA123456",
+    badge: "National Registry",
     previewData: {
-      standard: "IS 1417 & IS 15820",
-      title: "Gold & Silver Jewellery Hallmarking Standard",
-      committee: "Assaying & Hallmarking Centres (AHC)",
+      standard: "IS 1417: 2016 (Gold Purity Grading)",
+      title: "Hallmark Unique Identification (HUID) Verification",
+      committee: "Gold & Silver Jewellery Assaying Council",
       scheme: "Mandatory Hallmarking Order 2021",
-      citation: "[S1] BIS Hallmarking Guidelines for AHC Jewellers",
+      citation: "[S1] Central Hallmarking Register Entry AH-DEL-2024-916",
     },
   },
   {
     id: "labs",
-    label: "Accredited Lab Radar",
+    label: "Laboratory Radar",
     icon: FlaskConical,
-    title: "Directory of Testing & Calibration Laboratories",
-    desc: "Locate NABL-accredited and BIS government testing facilities by product category, state, and specialized testing scope.",
-    sampleQuery: "Find LED lamp testing labs in Maharashtra",
-    badge: "Testing Infrastructure",
+    title: "Authorized Conformity Testing Facilities",
+    desc: "Locate accredited laboratories recognized under the Laboratory Recognition Scheme (LRS) to run mandatory product batch inspections.",
+    sampleQuery: "Where can I test wires and cables in Maharashtra?",
+    badge: "Accredited Testing",
     previewData: {
-      standard: "ISO/IEC 17025 / BIS Lab Recognition Scheme (LRS)",
-      title: "National Testing & Calibration Directory",
-      committee: "Laboratory Recognition Division (LRD)",
-      scheme: "BIS Testing & Certification Network",
-      citation: "[S1] Central Laboratory Directory Gazette 2026",
+      standard: "IS 694: 2010 (PVC Insulated Cables)",
+      title: "Central Laboratory Western Region (CLWR)",
+      committee: "Laboratory Recognition Scheme (LRS)",
+      scheme: "NABL & BIS Recognized Testing Facility",
+      citation: "[S1] Bureau Directory of Recognized Laboratories 2024-25",
     },
   },
 ];
@@ -173,37 +168,37 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060B14] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text-body)] flex flex-col">
       <Navbar />
 
       <main className="flex-1 space-y-16">
-        {/* ── Hero Section with BIS Official Logo & Colors ──────────────── */}
+        {/* ── Hero Section with Maanak Saathi Official Brand ─────────────── */}
         <section className="pt-16 pb-12 px-6 max-w-5xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-950/70 border border-blue-800/60 text-blue-300 text-xs font-semibold">
-            <span className="w-2 h-2 rounded-full bg-[#EC171F] animate-pulse" />
-            <span>Bureau of Indian Standards • SIH Problem Statement 26107</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--blue-50)] border border-[var(--blue-200)] text-[var(--blue-700)] text-xs font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[var(--red-500)] animate-pulse" />
+            <span>Maanak Saathi (मानक साथी) • Bureau of Indian Standards</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
-            National Standards Advisory,{" "}
-            <span className="text-[#024DA1]">Authoritatively Delivered</span>
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-[var(--color-text-primary)] leading-tight">
+            National Standards Intelligence,{" "}
+            <span className="text-[var(--blue-600)]">Authoritatively Grounded</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
-            Direct, citation-grounded intelligence on Indian Standards (IS), mandatory QCOs,
-            certification schemes, gold HUID verification, and accredited laboratories — in English and Hindi.
+          <p className="text-lg sm:text-xl text-[var(--color-text-muted)] max-w-3xl mx-auto leading-relaxed font-normal">
+            Direct, citation-grounded advisory on 22,000+ Indian Standards (IS), mandatory QCOs,
+            certification schemes, gold HUID verification, and accredited laboratories.
           </p>
 
           {/* ── Interactive Instant Query Box ───────────────────────────── */}
           <form
             onSubmit={handleSearchSubmit}
-            className="max-w-3xl mx-auto p-2 rounded-2xl bg-[#0B1324] border border-slate-700/80 shadow-2xl flex flex-col sm:flex-row items-center gap-2"
+            className="max-w-3xl mx-auto p-2 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-md flex flex-col sm:flex-row items-center gap-2"
           >
             <div className="flex items-center gap-3 flex-1 px-4 py-2 w-full">
-              <Search size={20} className="text-blue-400 flex-shrink-0" />
+              <Search size={20} className="text-[var(--blue-600)] flex-shrink-0" />
               <input
                 type="text"
-                className="bg-transparent text-white placeholder-slate-400 text-sm sm:text-base outline-none w-full"
+                className="bg-transparent text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] text-sm sm:text-base outline-none w-full"
                 placeholder="Ask an IS number, product compliance, or paste HUID..."
                 value={heroInput}
                 onChange={(e) => setHeroInput(e.target.value)}
@@ -220,70 +215,76 @@ export default function Home() {
             </button>
           </form>
 
-          {/* Quick Query Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
-            <span className="text-slate-400 font-semibold mr-1">Frequent Inquiries:</span>
+          {/* Quick query chips */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-[var(--color-text-muted)] pt-1">
+            <span className="font-semibold text-[var(--color-text-primary)]">Quick Inquiries:</span>
             {[
-              "IS 16102 LED lamps",
+              "IS 16102 LED Lamps",
+              "How to get ISI mark",
               "Verify HUID AA123456",
-              "Cables testing in Maharashtra",
-              "ISI mark vs CRS scheme",
-              "Fake ISI complaint procedure",
-            ].map((prompt, i) => (
+              "QCO on Footwear",
+              "Electronics CRS Scheme",
+            ].map((chip) => (
               <button
-                key={i}
-                onClick={() => navigateToQuery(prompt)}
-                className="px-3 py-1.5 rounded-full bg-[#0B1324] border border-slate-800 text-slate-300 hover:border-blue-500 hover:text-white transition-colors"
+                key={chip}
+                onClick={() => navigateToQuery(chip)}
+                className="px-3 py-1.5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--blue-400)] hover:text-[var(--blue-600)] transition-colors"
               >
-                {prompt}
+                {chip}
               </button>
             ))}
           </div>
         </section>
 
-        {/* ── Multi-Page Navigation Grid ─────────────────────────────────── */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="mb-6 flex items-end justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h2 className="text-2xl font-black text-white">
-                Explore Dedicated Service Modules
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Access specialized tools tailored for manufacturers, exporters, labs, and consumers.
-              </p>
-            </div>
+        {/* ── Platform Metrics ──────────────────────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {STATS.map((stat, i) => (
+              <div key={i} className="bis-panel p-6 text-center">
+                <div className="text-3xl sm:text-4xl font-black text-[var(--blue-600)] mb-1">{stat.value}</div>
+                <div className="text-xs sm:text-sm font-bold text-[var(--color-text-primary)] mb-0.5">{stat.label}</div>
+                <div className="text-[11px] text-[var(--color-text-muted)]">{stat.sub}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Direct Multi-Page Portal Modules ──────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-6 space-y-6">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-text-primary)] mb-2 tracking-tight">
+              Specialized Compliance Portals
+            </h2>
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Direct access to tools for manufacturers, importers, consumers, and accredited testing labs.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {DIRECT_MODULES.map((mod) => {
               const Icon = mod.icon;
               return (
-                <Link
-                  key={mod.href}
-                  href={mod.href}
-                  className="bis-panel p-6 bg-[#0B1324] border border-slate-800 hover:border-blue-600/70 transition-all flex flex-col justify-between group"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${mod.accent}`}>
-                        <Icon size={20} />
+                <Link key={mod.href} href={mod.href} className="block group">
+                  <div className="bis-panel-interactive p-6 h-full flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-[var(--blue-50)] text-[var(--blue-600)] flex items-center justify-center">
+                          <Icon size={20} />
+                        </div>
+                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)] border border-[var(--color-border)]">
+                          {mod.badge}
+                        </span>
                       </div>
-                      <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">
-                        {mod.badge}
-                      </span>
+                      <h3 className="text-base font-bold text-[var(--color-text-primary)] group-hover:text-[var(--blue-600)] transition-colors mb-2">
+                        {mod.title}
+                      </h3>
+                      <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">{mod.desc}</p>
                     </div>
 
-                    <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
-                      {mod.title}
-                    </h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      {mod.desc}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-blue-400 group-hover:text-blue-300">
-                    <span>Open Module</span>
-                    <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    <div className="pt-4 mt-4 border-t border-[var(--color-border)] flex items-center justify-between text-xs font-semibold text-[var(--blue-600)]">
+                      <span>Open Tool</span>
+                      <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </Link>
               );
@@ -291,121 +292,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Live Key Metrics Ticker ────────────────────────────────────── */}
-        <section className="border-y border-slate-800 bg-[#0B1324]/80 py-10 px-6">
-          <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {STATS.map((stat, i) => (
-              <div key={i} className="px-3">
-                <div className="text-3xl sm:text-4xl font-black text-white mb-1 font-mono">
-                  {stat.value}
-                </div>
-                <div className="text-xs sm:text-sm font-semibold text-slate-200 mb-0.5">
-                  {stat.label}
-                </div>
-                <div className="text-xs text-slate-400">{stat.sub}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Interactive Feature Showcase ───────────────────────────────── */}
-        <section className="py-8 px-6 max-w-6xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Cross-Referencing Bureau Registers
+        {/* ── User Persona Entry Points ─────────────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-6 space-y-6">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-text-primary)] mb-2 tracking-tight">
+              Tailored Guidance by User Role
             </h2>
-            <p className="text-sm text-slate-400 mt-1 max-w-xl mx-auto">
-              How the multi-agent system verifies official specifications without ungrounded speculation.
-            </p>
-          </div>
-
-          {/* Tab Selector */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-8" role="tablist">
-            {PREVIEWS.map((tab) => {
-              const Icon = tab.icon;
-              const isSelected = activePreview.id === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  role="tab"
-                  aria-selected={isSelected}
-                  onClick={() => setActivePreview(tab)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all border ${
-                    isSelected
-                      ? "bg-[#024DA1] text-white border-blue-500 shadow-lg"
-                      : "bg-[#0B1324] text-slate-400 border-slate-800 hover:text-white hover:border-slate-700"
-                  }`}
-                >
-                  <Icon size={16} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Tab Showcase Card */}
-          <div className="bis-panel p-8 bg-[#0B1324] border border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 space-y-4">
-              <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-blue-950/80 border border-blue-800/60 text-blue-400">
-                {activePreview.badge}
-              </span>
-              <h3 className="text-2xl font-bold text-white tracking-tight">
-                {activePreview.title}
-              </h3>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                {activePreview.desc}
-              </p>
-              <div className="pt-2">
-                <button
-                  onClick={() => navigateToQuery(activePreview.sampleQuery)}
-                  className="btn-primary text-xs py-2 px-4 rounded-lg"
-                >
-                  <span>Run Demonstration: &ldquo;{activePreview.sampleQuery}&rdquo;</span>
-                  <ArrowRight size={13} />
-                </button>
-              </div>
-            </div>
-
-            {/* Interactive Mock Terminal / Card Display */}
-            <div className="lg:col-span-6 bg-[#060B14] border border-slate-800 rounded-xl p-5 space-y-3 font-mono text-xs">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <span className="text-slate-400 uppercase tracking-widest text-[11px]">
-                  Official Bureau Record
-                </span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              </div>
-              <div>
-                <span className="text-slate-400">Code / Standard:</span>
-                <p className="text-white font-bold mt-0.5">{activePreview.previewData.standard}</p>
-              </div>
-              <div>
-                <span className="text-slate-400">Title / Subject:</span>
-                <p className="text-slate-200 mt-0.5">{activePreview.previewData.title}</p>
-              </div>
-              <div>
-                <span className="text-slate-400">Governance Committee:</span>
-                <p className="text-slate-200 mt-0.5">{activePreview.previewData.committee}</p>
-              </div>
-              <div>
-                <span className="text-slate-400">Regulatory Framework:</span>
-                <p className="text-slate-200 mt-0.5">{activePreview.previewData.scheme}</p>
-              </div>
-              <div className="pt-2 border-t border-slate-800/80 text-[11px] text-blue-400 flex items-center gap-1.5">
-                <CheckCircle size={13} />
-                <span>{activePreview.previewData.citation}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Audience Segment Cards ─────────────────────────────────────── */}
-        <section className="py-12 px-6 max-w-6xl mx-auto border-t border-slate-800/60">
-          <div className="mb-10 text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Tailored For Every Stakeholder
-            </h2>
-            <p className="text-sm text-slate-400 mt-1">
-              Select your category to explore direct compliance answers.
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Maanak Saathi adapts terminology and recommendations depending on your specific compliance objective.
             </p>
           </div>
 
@@ -416,29 +310,114 @@ export default function Home() {
                 <div
                   key={p.label}
                   onClick={() => navigateToQuery(p.prompt)}
-                  className="bis-panel-interactive p-5 bg-[#0B1324] border border-slate-800 flex flex-col justify-between cursor-pointer group"
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") navigateToQuery(p.prompt);
-                  }}
+                  className="bis-panel p-5 cursor-pointer hover:border-[var(--blue-400)] transition-all flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="w-10 h-10 rounded-lg bg-blue-950/60 border border-blue-800/60 flex items-center justify-center text-blue-400 mb-3.5 group-hover:scale-105 transition-transform">
-                      <Icon size={20} />
+                    <div className="w-9 h-9 rounded-lg bg-[var(--blue-50)] text-[var(--blue-600)] flex items-center justify-center mb-3">
+                      <Icon size={18} />
                     </div>
-                    <h3 className="text-sm font-bold text-white mb-1.5 group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-sm font-bold text-[var(--color-text-primary)] group-hover:text-[var(--blue-600)] transition-colors mb-1.5">
                       {p.label}
                     </h3>
-                    <p className="text-xs text-slate-400 leading-relaxed mb-4">{p.desc}</p>
+                    <p className="text-xs text-[var(--color-text-muted)] leading-relaxed mb-4">{p.desc}</p>
                   </div>
-                  <div className="pt-3 border-t border-slate-800/80 text-xs font-semibold text-blue-400 flex items-center gap-1">
-                    <span>Inquire now</span>
-                    <ArrowRight size={12} />
+                  <div className="pt-3 border-t border-[var(--color-border)] flex items-center gap-1.5 text-xs font-semibold text-[var(--blue-600)]">
+                    <span>Ask this query</span>
+                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        {/* ── Interactive Domain Demonstrator ───────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-6 space-y-6 pb-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-text-primary)] mb-2 tracking-tight">
+              Authoritative Citations &amp; Grounded RAG
+            </h2>
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Every assertion references gazette notifications, Quality Control Orders, or standard clauses.
+            </p>
+          </div>
+
+          <div className="bis-panel p-6 sm:p-8 space-y-6">
+            <div className="flex flex-wrap gap-2 pb-4 border-b border-[var(--color-border)]">
+              {PREVIEWS.map((tab) => {
+                const Icon = tab.icon;
+                const isSelected = activePreview.id === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActivePreview(tab)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                      isSelected
+                        ? "bg-[var(--blue-600)] border-[var(--blue-600)] text-white shadow-xs"
+                        : "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                    }`}
+                  >
+                    <Icon size={14} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              <div className="lg:col-span-6 space-y-3">
+                <span className="text-xs font-semibold px-2.5 py-1 rounded bg-[var(--blue-50)] text-[var(--blue-700)] border border-[var(--blue-200)]">
+                  {activePreview.badge}
+                </span>
+                <h3 className="text-xl font-bold text-[var(--color-text-primary)]">{activePreview.title}</h3>
+                <p className="text-xs sm:text-sm text-[var(--color-text-muted)] leading-relaxed">{activePreview.desc}</p>
+                <div className="pt-2">
+                  <button
+                    onClick={() => navigateToQuery(activePreview.sampleQuery)}
+                    className="btn-primary py-2.5 px-4 text-xs rounded-lg"
+                  >
+                    <span>Run Query: &quot;{activePreview.sampleQuery}&quot;</span>
+                    <ArrowRight size={13} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="lg:col-span-6 p-5 rounded-xl bg-[var(--color-surface-subtle)] border border-[var(--color-border)] space-y-3 text-xs">
+                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border)]">
+                  <span className="font-bold text-[var(--color-text-primary)] flex items-center gap-1.5">
+                    <CheckCircle2 size={14} className="text-[var(--color-success)]" />
+                    <span>Authoritative Registry Output</span>
+                  </span>
+                  <span className="text-[11px] font-mono text-[var(--blue-600)]">SIH-PS-26107</span>
+                </div>
+
+                <div className="space-y-1.5 text-xs">
+                  <div>
+                    <span className="text-[var(--color-text-muted)]">Standard: </span>
+                    <span className="font-mono font-bold text-[var(--color-text-primary)]">
+                      {activePreview.previewData.standard}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--color-text-muted)]">Subject: </span>
+                    <span className="text-[var(--color-text-primary)]">{activePreview.previewData.title}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--color-text-muted)]">Committee: </span>
+                    <span className="text-[var(--color-text-primary)]">{activePreview.previewData.committee}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--color-text-muted)]">Mandate: </span>
+                    <span className="text-[var(--color-text-primary)]">{activePreview.previewData.scheme}</span>
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[11px] font-mono text-[var(--blue-700)] flex items-center justify-between">
+                  <span>{activePreview.previewData.citation}</span>
+                  <ExternalLink size={11} className="text-[var(--blue-600)]" />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </main>

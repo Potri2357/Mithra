@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
-import { Public_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const publicSans = Public_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-public-sans",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-inter",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "BIS Saathi — Bureau of Indian Standards AI Assistant",
+  title: "Maanak Saathi (मानक साथी) — Bureau of Indian Standards Intelligence",
   description:
-    "Official-grade AI Assistant for the Bureau of Indian Standards (SIH PS 26107). Instant, source-grounded guidance on Indian Standards (IS), certification schemes, HUID hallmarking, and accredited laboratories.",
-  keywords: "BIS, Indian Standards, Bureau of Indian Standards, ISI Mark, CRS, FMCS, Hallmarking, HUID, BIS Certification, IS Standards",
+    "Official-grade AI Assistant for the Bureau of Indian Standards. Source-grounded guidance on Indian Standards (IS), certification schemes (ISI, CRS, FMCS), HUID hallmark verification, and accredited testing laboratories.",
+  keywords:
+    "Maanak Saathi, BIS, Indian Standards, Bureau of Indian Standards, ISI Mark, CRS, FMCS, Hallmarking, HUID, BIS Certification, IS Standards, NABL Labs",
   openGraph: {
-    title: "BIS Saathi — Bureau of Indian Standards AI Assistant",
-    description: "Instant, source-grounded guidance on Indian Standards (IS), certification schemes, hallmarking, and accredited testing labs.",
+    title: "Maanak Saathi (मानक साथी) — Bureau of Indian Standards Intelligence",
+    description:
+      "Instant, verified guidance on 22,000+ Indian Standards, certification schemes, gold hallmark verification, and accredited testing labs.",
     type: "website",
   },
 };
@@ -25,11 +26,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${publicSans.variable} font-sans antialiased text-slate-100 bg-[#090D16] min-h-screen`}>
+    <html lang="en" data-theme="light">
+      <body className={`${inter.variable} font-sans antialiased min-h-screen`}>
         {children}
       </body>
     </html>
   );
 }
-

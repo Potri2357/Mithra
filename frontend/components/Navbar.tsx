@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -12,13 +12,43 @@ import {
   Award,
   FlaskConical,
   ShieldAlert,
-  ChevronRight,
+  Sun,
+  Moon,
   Sparkles,
 } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("maanak-theme") as "light" | "dark" | null;
+      return saved || "light";
+    }
+    return "light";
+  });
+  const [currentLang, setCurrentLang] = useState<"EN" | "हिं" | "த">("EN");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const next = theme === "light" ? "dark" : "light";
+    setTheme(next);
+    localStorage.setItem("maanak-theme", next);
+    document.documentElement.setAttribute("data-theme", next);
+    if (next === "dark") document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  };
+
+  const cycleLang = () => {
+    const order: Array<"EN" | "हिं" | "த"> = ["EN", "हिं", "த"];
+    const next = order[(order.indexOf(currentLang) + 1) % order.length];
+    setCurrentLang(next);
+  };
 
   const navItems = [
     { href: "/", label: "Portal", icon: Sparkles },
@@ -27,15 +57,15 @@ export default function Navbar() {
     { href: "/hallmark", label: "Hallmark Authenticator", icon: Award },
     { href: "/labs", label: "Testing Labs", icon: FlaskConical },
     { href: "/consumer", label: "Consumer Grievances", icon: ShieldAlert },
-    { href: "/chat", label: "AI Saathi", icon: MessageSquare },
+    { href: "/chat", label: "Guided Chat", icon: MessageSquare },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#070D1A]/95 backdrop-blur-md border-b border-slate-800/80">
+    <header className="sticky top-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)]">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2.5">
-        {/* Logo & National Motto */}
+        {/* Brand Lockup */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="bg-white px-2 py-1 rounded-lg border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0">
+          <div className="bg-white px-2 py-1 rounded-lg border border-[var(--color-border)] shadow-xs flex items-center justify-center flex-shrink-0">
             <Image
               src="/bis_logo.png"
               alt="Bureau of Indian Standards"
@@ -47,20 +77,20 @@ export default function Navbar() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-white font-extrabold text-base tracking-tight leading-none group-hover:text-blue-400 transition-colors">
-                BIS Saathi
+              <span className="text-[var(--color-text-primary)] font-extrabold text-base tracking-tight leading-none group-hover:text-[var(--blue-600)] transition-colors">
+                Maanak Saathi
               </span>
-              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-red-950/80 text-red-400 border border-red-800/60 hidden sm:inline-block">
-                मानकः पथप्रदर्शकः
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--red-50)] text-[var(--red-700)] border border-[var(--red-200)] hidden sm:inline-block">
+                मानक साथी
               </span>
             </div>
-            <div className="text-[11px] text-slate-400 font-medium leading-none mt-1">
-              Bureau of Indian Standards Advisory
+            <div className="text-[11px] text-[var(--color-text-muted)] font-medium leading-none mt-1">
+              Bureau of Indian Standards Intelligence
             </div>
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation Links */}
         <nav className="hidden xl:flex items-center gap-1" aria-label="Main Navigation">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -68,8 +98,8 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`nav-link text-xs font-semibold px-3 py-1.5 rounded-lg transition-all ${
-                  isActive ? "active" : ""
+                className={`nav-link text-xs font-semibold px-3 py-2 rounded-lg transition-all ${
+                  isActive ? "active font-bold" : ""
                 }`}
               >
                 {item.label}
@@ -78,44 +108,66 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Action Button & Mobile Toggle */}
-        <div className="flex items-center gap-2.5">
+        {/* Utility Controls & Action Button */}
+        <div className="flex items-center gap-2">
+          {/* Flag-Free Language Switcher (Section 4) */}
+          <button
+            onClick={cycleLang}
+            className="btn-ghost px-2.5 py-1.5 text-xs font-semibold tracking-wide"
+            title="Switch Language (Flag-Free)"
+            aria-label={`Current language: ${currentLang}. Click to change.`}
+          >
+            <span>{currentLang}</span>
+            <span className="text-[10px] text-[var(--color-text-muted)]">▾</span>
+          </button>
+
+          {/* Theme Toggle (Section 7) */}
+          <button
+            onClick={toggleTheme}
+            className="btn-icon w-9 h-9"
+            title={theme === "light" ? "Switch to Institutional Dark Mode" : "Switch to Light Mode"}
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+
+          {/* Chat CTA Button */}
           <Link href="/chat">
-            <button className="btn-primary py-2 px-3.5 text-xs rounded-lg" aria-label="Consult AI Assistant">
-              <MessageSquare size={14} />
+            <button className="btn-primary py-2 px-3.5 text-xs rounded-lg" aria-label="Open Guided Chat Assistant">
+              <MessageSquare size={15} />
               <span className="hidden sm:inline">Ask Saathi</span>
-              <ChevronRight size={13} className="hidden sm:inline" />
             </button>
           </Link>
 
+          {/* Mobile Menu Toggle */}
           <button
-            className="btn-icon w-8 h-8 xl:hidden text-slate-300"
+            className="btn-icon w-9 h-9 xl:hidden text-[var(--color-text-primary)]"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-[#0B1324] border-b border-slate-800 px-4 py-3 space-y-1 fade-in">
+        <div className="xl:hidden bg-[var(--color-surface)] border-b border-[var(--color-border)] px-4 py-3 space-y-1">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = pathname === item.href;
+            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold ${
+                className={`flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-                    ? "bg-[#024DA1] text-white"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                    ? "bg-[var(--blue-100)] text-[var(--blue-700)] font-bold"
+                    : "text-[var(--color-text-body)] hover:bg-[var(--blue-50)]"
                 }`}
               >
-                <Icon size={16} />
+                <Icon size={16} className="text-[var(--blue-600)]" />
                 <span>{item.label}</span>
               </Link>
             );
