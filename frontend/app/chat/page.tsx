@@ -37,7 +37,14 @@ import {
   CheckCircle2,
   MessageSquare,
   Upload,
+  Hammer,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { StandardsView } from "@/components/views/StandardsView";
+import { SchemesView } from "@/components/views/SchemesView";
+import { HallmarkView } from "@/components/views/HallmarkView";
+import { LabsView } from "@/components/views/LabsView";
+import { ConsumerView } from "@/components/views/ConsumerView";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -161,9 +168,39 @@ interface SpeechRecognitionEventInstance {
   };
 }
 
+type ActiveView = "chat" | "standards" | "schemes" | "hallmark" | "labs" | "consumer";
+
 function ChatContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const initialViewParam = searchParams.get("view");
+  const [activeView, setActiveView] = useState<ActiveView>(() => {
+    if (
+      initialViewParam === "standards" ||
+      initialViewParam === "schemes" ||
+      initialViewParam === "hallmark" ||
+      initialViewParam === "labs" ||
+      initialViewParam === "consumer"
+    ) {
+      return initialViewParam;
+    }
+    return "chat";
+  });
+
+  useEffect(() => {
+    const v = searchParams.get("view");
+    if (
+      v === "standards" ||
+      v === "schemes" ||
+      v === "hallmark" ||
+      v === "labs" ||
+      v === "consumer"
+    ) {
+      setActiveView(v);
+    } else if (!v && !initialQuery) {
+      setActiveView("chat");
+    }
+  }, [searchParams, initialQuery]);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState(initialQuery);
@@ -557,17 +594,14 @@ function ChatContent() {
                 title="Toggle sidebar (Collapse)"
                 aria-label="Toggle sidebar"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+                <Hammer className="w-4 h-4" />
               </button>
             </div>
 
             {/* + New Chat Button (Section 3.3) */}
             <button
               onClick={() => {
+                setActiveView("chat");
                 clearChat();
               }}
               className="new-chat-button"
@@ -584,10 +618,14 @@ function ChatContent() {
               <button
                 type="button"
                 onClick={() => {
-                  clearChat();
+                  setActiveView("chat");
                   if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
                 }}
-                className="sidebar-link w-full text-left cursor-pointer transition-colors font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                className={`sidebar-link w-full text-left cursor-pointer transition-colors font-bold ${
+                  activeView === "chat"
+                    ? "text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                    : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                }`}
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Mithra AI</span>
@@ -596,71 +634,151 @@ function ChatContent() {
               <span className="sidebar-section-label mt-3">
                 Portals &amp; Tools
               </span>
-              <a
-                href="/standards"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
-                title="Open Standards Directory in new tab"
-              >
-                <span className="flex items-center gap-2 min-w-0">
+
+              {/* Standards Directory */}
+              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView("standards");
+                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
+                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
+                    activeView === "standards"
+                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                      : "text-slate-700 dark:text-slate-300"
+                  }`}
+                  title="View Standards Directory in this page"
+                >
                   <BookOpen className="w-4 h-4" />
                   <span className="truncate">Standards Directory</span>
-                </span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
-              </a>
-              <a
-                href="/schemes"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
-                title="Open Certification Schemes in new tab"
-              >
-                <span className="flex items-center gap-2 min-w-0">
+                </button>
+                <a
+                  href="/standards"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
+                  title="Open Standards Directory in new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Certification Schemes */}
+              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView("schemes");
+                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
+                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
+                    activeView === "schemes"
+                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                      : "text-slate-700 dark:text-slate-300"
+                  }`}
+                  title="View Certification Schemes in this page"
+                >
                   <ShieldCheck className="w-4 h-4" />
                   <span className="truncate">Certification Schemes</span>
-                </span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
-              </a>
-              <a
-                href="/hallmark"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
-                title="Open Hallmark & HUID in new tab"
-              >
-                <span className="flex items-center gap-2 min-w-0">
+                </button>
+                <a
+                  href="/schemes"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
+                  title="Open Certification Schemes in new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Hallmark & HUID */}
+              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView("hallmark");
+                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
+                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
+                    activeView === "hallmark"
+                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                      : "text-slate-700 dark:text-slate-300"
+                  }`}
+                  title="View Hallmark & HUID in this page"
+                >
                   <Award className="w-4 h-4" />
                   <span className="truncate">Hallmark &amp; HUID</span>
-                </span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
-              </a>
-              <a
-                href="/labs"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
-                title="Open Accredited Labs in new tab"
-              >
-                <span className="flex items-center gap-2 min-w-0">
+                </button>
+                <a
+                  href="/hallmark"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
+                  title="Open Hallmark & HUID in new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Accredited Labs */}
+              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView("labs");
+                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
+                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
+                    activeView === "labs"
+                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                      : "text-slate-700 dark:text-slate-300"
+                  }`}
+                  title="View Accredited Labs in this page"
+                >
                   <FlaskConical className="w-4 h-4" />
                   <span className="truncate">Accredited Labs</span>
-                </span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
-              </a>
-              <a
-                href="/consumer"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
-                title="Open Consumer Redressal in new tab"
-              >
-                <span className="flex items-center gap-2 min-w-0">
+                </button>
+                <a
+                  href="/labs"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
+                  title="Open Accredited Labs in new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Consumer Redressal */}
+              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView("consumer");
+                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
+                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
+                    activeView === "consumer"
+                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
+                      : "text-slate-700 dark:text-slate-300"
+                  }`}
+                  title="View Consumer Redressal in this page"
+                >
                   <ShieldAlert className="w-4 h-4" />
                   <span className="truncate">Consumer Redressal</span>
-                </span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors" />
-              </a>
+                </button>
+                <a
+                  href="/consumer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
+                  title="Open Consumer Redressal in new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </nav>
 
             <div className="recent-block">
@@ -714,11 +832,7 @@ function ChatContent() {
                 aria-label="Open sidebar"
                 title="Toggle sidebar (Expand)"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+                <Hammer className="w-4 h-4" />
               </button>
             )}
 
@@ -726,15 +840,20 @@ function ChatContent() {
               <div className="flex items-center gap-2.5">
                 <button
                   type="button"
-                  onClick={clearChat}
+                  onClick={() => setActiveView("chat")}
                   className="brand-mark cursor-pointer border-0 p-0 bg-transparent flex items-center"
                   title="Return to Mithra Chat"
                 >
                   <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
                 </button>
                 <div>
-                  <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight">
-                    Mithra AI
+                  <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
+                    <span>Mithra</span>
+                    {activeView !== "chat" && (
+                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#024DA1] dark:text-blue-300 uppercase tracking-wide">
+                        {activeView}
+                      </span>
+                    )}
                   </h1>
                   <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
                     BIS standards intelligence · Grounded RAG
@@ -743,8 +862,13 @@ function ChatContent() {
               </div>
             ) : (
               <div className="flex items-center gap-2.5">
-                <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight">
-                  Mithra AI
+                <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
+                  <span>Mithra AI</span>
+                  {activeView !== "chat" && (
+                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#024DA1] dark:text-blue-300 uppercase tracking-wide">
+                      {activeView}
+                    </span>
+                  )}
                 </h1>
                 <span className="text-xs text-[var(--color-text-muted)] hidden sm:inline font-medium">
                   · BIS standards intelligence · Grounded RAG
@@ -754,15 +878,28 @@ function ChatContent() {
           </div>
 
           <div className="flex items-center gap-2">
-            {!sidebarOpen && (
-              <button
-                onClick={clearChat}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
-                title="Start New Chat"
+            {activeView !== "chat" ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveView("chat")}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-900 transition-colors cursor-pointer"
+                title="Return to Mithra Chat"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>New Chat</span>
-              </button>
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Return to Chat</span>
+              </Button>
+            ) : (
+              !sidebarOpen && (
+                <button
+                  onClick={clearChat}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
+                  title="Start New Chat"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>New Chat</span>
+                </button>
+              )
             )}
 
             <button
@@ -802,8 +939,56 @@ function ChatContent() {
           </div>
         </header>
 
-        {/* Message Thread (Section 3.3 & 4) */}
-        <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        {/* Dynamic Main Content: Either Portal Views or Chatbot Thread */}
+        {activeView === "standards" ? (
+          <div className="flex-1 overflow-y-auto">
+            <StandardsView
+              onAskMithra={(q) => {
+                setActiveView("chat");
+                sendMessage(q);
+              }}
+            />
+          </div>
+        ) : activeView === "schemes" ? (
+          <div className="flex-1 overflow-y-auto">
+            <SchemesView
+              onAskMithra={(q) => {
+                setActiveView("chat");
+                sendMessage(q);
+              }}
+            />
+          </div>
+        ) : activeView === "hallmark" ? (
+          <div className="flex-1 overflow-y-auto">
+            <HallmarkView
+              onAskMithra={(q) => {
+                setActiveView("chat");
+                sendMessage(q);
+              }}
+            />
+          </div>
+        ) : activeView === "labs" ? (
+          <div className="flex-1 overflow-y-auto">
+            <LabsView
+              onAskMithra={(q) => {
+                setActiveView("chat");
+                sendMessage(q);
+              }}
+            />
+          </div>
+        ) : activeView === "consumer" ? (
+          <div className="flex-1 overflow-y-auto">
+            <ConsumerView
+              onAskMithra={(q) => {
+                setActiveView("chat");
+                sendMessage(q);
+              }}
+            />
+          </div>
+        ) : (
+          <>
+            {/* Message Thread (Section 3.3 & 4) */}
+            <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
           {messages.length === 0 ? (
             /* ── Empty State ── */
             <div className="empty-state">
@@ -1090,6 +1275,8 @@ function ChatContent() {
             </p>
           </div>
         </footer>
+          </>
+        )}
       </div>
 
       {/* ── Photo Upload & Hallmark Guide Overlay Dialog (Section 3.4) ── */}
