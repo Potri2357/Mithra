@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
@@ -40,11 +40,7 @@ import {
   Hammer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { StandardsView } from "@/components/views/StandardsView";
-import { SchemesView } from "@/components/views/SchemesView";
-import { HallmarkView } from "@/components/views/HallmarkView";
-import { LabsView } from "@/components/views/LabsView";
-import { ConsumerView } from "@/components/views/ConsumerView";
+import { BisLoadingIndicator } from "@/components/BisLoadingIndicator";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -134,16 +130,6 @@ function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Med
   );
 }
 
-function TypingIndicator() {
-  return (
-    <div className="flex items-center gap-1.5 px-3 py-2" aria-label="Assistant is analyzing query">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="typing-dot w-2.5 h-2.5 rounded-full bg-[var(--blue-400)]" />
-      ))}
-    </div>
-  );
-}
-
 interface SpeechRecognitionInstance {
   continuous: boolean;
   interimResults: boolean;
@@ -168,13 +154,14 @@ interface SpeechRecognitionEventInstance {
   };
 }
 
-type ActiveView = "chat" | "standards" | "schemes" | "hallmark" | "labs" | "consumer";
-
 function ChatContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const initialViewParam = searchParams.get("view");
-  const [activeView, setActiveView] = useState<ActiveView>(() => {
+
+  // Redirect legacy /chat?view=... directly to the dedicated portal page
+  useEffect(() => {
     if (
       initialViewParam === "standards" ||
       initialViewParam === "schemes" ||
@@ -182,25 +169,9 @@ function ChatContent() {
       initialViewParam === "labs" ||
       initialViewParam === "consumer"
     ) {
-      return initialViewParam;
+      router.replace(`/${initialViewParam}`);
     }
-    return "chat";
-  });
-
-  useEffect(() => {
-    const v = searchParams.get("view");
-    if (
-      v === "standards" ||
-      v === "schemes" ||
-      v === "hallmark" ||
-      v === "labs" ||
-      v === "consumer"
-    ) {
-      setActiveView(v);
-    } else if (!v && !initialQuery) {
-      setActiveView("chat");
-    }
-  }, [searchParams, initialQuery]);
+  }, [initialViewParam, router]);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState(initialQuery);
@@ -600,10 +571,7 @@ function ChatContent() {
 
             {/* + New Chat Button (Section 3.3) */}
             <button
-              onClick={() => {
-                setActiveView("chat");
-                clearChat();
-              }}
+              onClick={() => clearChat()}
               className="new-chat-button"
             >
               <Plus className="w-4 h-4 text-[var(--blue-600)]" />
@@ -617,15 +585,7 @@ function ChatContent() {
               </span>
               <button
                 type="button"
-                onClick={() => {
-                  setActiveView("chat");
-                  if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
-                }}
-                className={`sidebar-link w-full text-left cursor-pointer transition-colors font-bold ${
-                  activeView === "chat"
-                    ? "text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                    : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                }`}
+                className="sidebar-link w-full text-left cursor-pointer transition-colors font-bold text-[#005EB8] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Mithra AI</span>
@@ -636,149 +596,79 @@ function ChatContent() {
               </span>
 
               {/* Standards Directory */}
-              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveView("standards");
-                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
-                  }}
-                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
-                    activeView === "standards"
-                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                      : "text-slate-700 dark:text-slate-300"
-                  }`}
-                  title="View Standards Directory in this page"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span className="truncate">Standards Directory</span>
-                </button>
-                <a
-                  href="/standards"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
-                  title="Open Standards Directory in new tab"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
+              <a
+                href="/standards"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open Standards Directory in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                  <span className="truncate text-xs font-semibold">Standards Directory</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </a>
 
               {/* Certification Schemes */}
-              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveView("schemes");
-                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
-                  }}
-                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
-                    activeView === "schemes"
-                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                      : "text-slate-700 dark:text-slate-300"
-                  }`}
-                  title="View Certification Schemes in this page"
-                >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span className="truncate">Certification Schemes</span>
-                </button>
-                <a
-                  href="/schemes"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
-                  title="Open Certification Schemes in new tab"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
+              <a
+                href="/schemes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open Certification Schemes in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <ShieldCheck className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                  <span className="truncate text-xs font-semibold">Certification Schemes</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </a>
 
               {/* Hallmark & HUID */}
-              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveView("hallmark");
-                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
-                  }}
-                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
-                    activeView === "hallmark"
-                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                      : "text-slate-700 dark:text-slate-300"
-                  }`}
-                  title="View Hallmark & HUID in this page"
-                >
-                  <Award className="w-4 h-4" />
-                  <span className="truncate">Hallmark &amp; HUID</span>
-                </button>
-                <a
-                  href="/hallmark"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
-                  title="Open Hallmark & HUID in new tab"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
+              <a
+                href="/hallmark"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open Hallmark & HUID in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Award className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                  <span className="truncate text-xs font-semibold">Hallmark &amp; HUID</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </a>
 
               {/* Accredited Labs */}
-              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveView("labs");
-                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
-                  }}
-                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
-                    activeView === "labs"
-                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                      : "text-slate-700 dark:text-slate-300"
-                  }`}
-                  title="View Accredited Labs in this page"
-                >
-                  <FlaskConical className="w-4 h-4" />
-                  <span className="truncate">Accredited Labs</span>
-                </button>
-                <a
-                  href="/labs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
-                  title="Open Accredited Labs in new tab"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
+              <a
+                href="/labs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open Accredited Labs in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <FlaskConical className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                  <span className="truncate text-xs font-semibold">Accredited Labs</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </a>
 
               {/* Consumer Redressal */}
-              <div className="flex items-center justify-between group rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors pr-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveView("consumer");
-                    if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
-                  }}
-                  className={`sidebar-link flex-1 text-left cursor-pointer transition-colors ${
-                    activeView === "consumer"
-                      ? "text-[#0052CC] font-bold bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                      : "text-slate-700 dark:text-slate-300"
-                  }`}
-                  title="View Consumer Redressal in this page"
-                >
-                  <ShieldAlert className="w-4 h-4" />
-                  <span className="truncate">Consumer Redressal</span>
-                </button>
-                <a
-                  href="/consumer"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg text-slate-400 hover:text-[#0052CC] dark:hover:text-blue-300 transition-colors"
-                  title="Open Consumer Redressal in new tab"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
+              <a
+                href="/consumer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open Consumer Redressal in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <ShieldAlert className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                  <span className="truncate text-xs font-semibold">Consumer Redressal</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </a>
             </nav>
 
             <div className="recent-block">
@@ -838,22 +728,16 @@ function ChatContent() {
 
             {!sidebarOpen ? (
               <div className="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setActiveView("chat")}
+                <Link
+                  href="/"
                   className="brand-mark cursor-pointer border-0 p-0 bg-transparent flex items-center"
-                  title="Return to Mithra Chat"
+                  title="Mithra Homepage"
                 >
                   <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
-                </button>
+                </Link>
                 <div>
                   <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
-                    <span>Mithra</span>
-                    {activeView !== "chat" && (
-                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#024DA1] dark:text-blue-300 uppercase tracking-wide">
-                        {activeView}
-                      </span>
-                    )}
+                    <span>Mithra AI</span>
                   </h1>
                   <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
                     BIS standards intelligence · Grounded RAG
@@ -864,11 +748,6 @@ function ChatContent() {
               <div className="flex items-center gap-2.5">
                 <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
                   <span>Mithra AI</span>
-                  {activeView !== "chat" && (
-                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#024DA1] dark:text-blue-300 uppercase tracking-wide">
-                      {activeView}
-                    </span>
-                  )}
                 </h1>
                 <span className="text-xs text-[var(--color-text-muted)] hidden sm:inline font-medium">
                   · BIS standards intelligence · Grounded RAG
@@ -878,28 +757,15 @@ function ChatContent() {
           </div>
 
           <div className="flex items-center gap-2">
-            {activeView !== "chat" ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveView("chat")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-900 transition-colors cursor-pointer"
-                title="Return to Mithra Chat"
+            {!sidebarOpen && (
+              <button
+                onClick={clearChat}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
+                title="Start New Chat"
               >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>Return to Chat</span>
-              </Button>
-            ) : (
-              !sidebarOpen && (
-                <button
-                  onClick={clearChat}
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
-                  title="Start New Chat"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>New Chat</span>
-                </button>
-              )
+                <Plus className="w-3.5 h-3.5" />
+                <span>New Chat</span>
+              </button>
             )}
 
             <button
@@ -939,56 +805,8 @@ function ChatContent() {
           </div>
         </header>
 
-        {/* Dynamic Main Content: Either Portal Views or Chatbot Thread */}
-        {activeView === "standards" ? (
-          <div className="flex-1 overflow-y-auto">
-            <StandardsView
-              onAskMithra={(q) => {
-                setActiveView("chat");
-                sendMessage(q);
-              }}
-            />
-          </div>
-        ) : activeView === "schemes" ? (
-          <div className="flex-1 overflow-y-auto">
-            <SchemesView
-              onAskMithra={(q) => {
-                setActiveView("chat");
-                sendMessage(q);
-              }}
-            />
-          </div>
-        ) : activeView === "hallmark" ? (
-          <div className="flex-1 overflow-y-auto">
-            <HallmarkView
-              onAskMithra={(q) => {
-                setActiveView("chat");
-                sendMessage(q);
-              }}
-            />
-          </div>
-        ) : activeView === "labs" ? (
-          <div className="flex-1 overflow-y-auto">
-            <LabsView
-              onAskMithra={(q) => {
-                setActiveView("chat");
-                sendMessage(q);
-              }}
-            />
-          </div>
-        ) : activeView === "consumer" ? (
-          <div className="flex-1 overflow-y-auto">
-            <ConsumerView
-              onAskMithra={(q) => {
-                setActiveView("chat");
-                sendMessage(q);
-              }}
-            />
-          </div>
-        ) : (
-          <>
-            {/* Message Thread (Section 3.3 & 4) */}
-            <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        {/* Main Chatbot Message Thread */}
+        <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
           {messages.length === 0 ? (
             /* ── Empty State ── */
             <div className="empty-state">
@@ -1060,7 +878,7 @@ function ChatContent() {
                   )}
 
                   {msg.isLoading ? (
-                    <TypingIndicator />
+                    <BisLoadingIndicator size="md" />
                   ) : (
                     <div className="prose-bis text-[var(--color-text-body)]">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
@@ -1275,8 +1093,6 @@ function ChatContent() {
             </p>
           </div>
         </footer>
-          </>
-        )}
       </div>
 
       {/* ── Photo Upload & Hallmark Guide Overlay Dialog (Section 3.4) ── */}
