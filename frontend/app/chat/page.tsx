@@ -8,32 +8,6 @@ import MaterialIcon from "@/components/MaterialIcon";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { StandardsView } from "@/components/views/StandardsView";
-import { SchemesView } from "@/components/views/SchemesView";
-import { HallmarkView } from "@/components/views/HallmarkView";
-import { LabsView } from "@/components/views/LabsView";
-import { ConsumerView } from "@/components/views/ConsumerView";
-
-export type ActiveView = "chat" | "standards" | "schemes" | "hallmark" | "labs" | "consumer";
-
-const VIEW_TITLES: Record<ActiveView, string> = {
-  chat: "Mithra AI",
-  standards: "Standards Directory",
-  schemes: "Certification Schemes",
-  hallmark: "Hallmark & HUID",
-  labs: "Accredited Labs",
-  consumer: "Consumer Redressal",
-};
-
-const VIEW_SUBTITLES: Record<ActiveView, string> = {
-  chat: "BIS standards intelligence · Grounded RAG",
-  standards: "Browse 22,000+ Indian Standards (IS), mandatory QCOs & Committees",
-  schemes: "Interactive Schemes Comparison & Applicability Advisor",
-  hallmark: "Gold & Silver Fineness Verification Station",
-  labs: "National Laboratory Network Radar & Testing Scope",
-  consumer: "Statutory Grievance Redressal & ISI Authenticity Verification",
-};
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 interface Citation {
@@ -156,18 +130,9 @@ interface SpeechRecognitionEventInstance {
   };
 }
 
-function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
+function ChatContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
-
-  const [activeView, setActiveView] = useState<ActiveView>(() => {
-    if (initialQuery) return "chat";
-    const viewParam = searchParams.get("view") as ActiveView | null;
-    if (viewParam && ["chat", "standards", "schemes", "hallmark", "labs", "consumer"].includes(viewParam)) {
-      return viewParam;
-    }
-    return initialView || "chat";
-  });
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState(initialQuery);
@@ -184,33 +149,6 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
   const [speechTranscript, setSpeechTranscript] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  // Sync view when searchParams changes
-  useEffect(() => {
-    const q = searchParams.get("q");
-    if (q) {
-      setActiveView("chat");
-    } else {
-      const v = searchParams.get("view") as ActiveView | null;
-      if (v && ["chat", "standards", "schemes", "hallmark", "labs", "consumer"].includes(v)) {
-        setActiveView(v);
-      }
-    }
-  }, [searchParams]);
-
-  const handleSelectView = useCallback((view: ActiveView) => {
-    setActiveView(view);
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 1024) setSidebarOpen(false);
-      const url = new URL(window.location.href);
-      if (view === "chat") {
-        url.searchParams.delete("view");
-      } else {
-        url.searchParams.set("view", view);
-      }
-      window.history.replaceState({}, "", url.toString());
-    }
-  }, []);
 
   // Set initial sidebar state based on screen width on mount
   useEffect(() => {
@@ -342,16 +280,6 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
       }
     },
     [input, currentLang, isLoading, messages]
-  );
-
-  const handleAskMithra = useCallback(
-    (query: string) => {
-      handleSelectView("chat");
-      setTimeout(() => {
-        sendMessage(query);
-      }, 80);
-    },
-    [handleSelectView, sendMessage]
   );
 
   // Auto-send initial query passed via URL
@@ -578,7 +506,7 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
             <div className="sidebar-brand">
               <button
                 type="button"
-                onClick={() => handleSelectView("chat")}
+                onClick={clearChat}
                 className="flex items-center gap-3 min-w-0 flex-1 text-left bg-transparent border-0 cursor-pointer p-0 group"
                 title="Mithra Home"
               >
@@ -593,19 +521,22 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
                 </div>
               </button>
               <button
-                className="btn-icon w-8 h-8 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                className="btn-icon w-8.5 h-8.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                 onClick={() => setSidebarOpen(false)}
-                title="Collapse sidebar"
-                aria-label="Collapse sidebar"
+                title="Toggle sidebar (Collapse)"
+                aria-label="Toggle sidebar"
               >
-                <MaterialIcon name="chevron_left" size={20} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
               </button>
             </div>
 
             {/* + New Chat Button (Section 3.3) */}
             <button
               onClick={() => {
-                handleSelectView("chat");
                 clearChat();
               }}
               className="new-chat-button"
@@ -621,12 +552,11 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
               </span>
               <button
                 type="button"
-                onClick={() => handleSelectView("chat")}
-                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
-                  activeView === "chat"
-                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                    : ""
-                }`}
+                onClick={() => {
+                  clearChat();
+                  if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false);
+                }}
+                className="sidebar-link w-full text-left cursor-pointer transition-colors font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
               >
                 <MaterialIcon name="chat" size={16} />
                 <span>Mithra AI</span>
@@ -635,66 +565,71 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
               <span className="sidebar-section-label mt-3">
                 Portals &amp; Tools
               </span>
-              <button
-                type="button"
-                onClick={() => handleSelectView("standards")}
-                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
-                  activeView === "standards"
-                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                    : ""
-                }`}
+              <a
+                href="/standards"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
+                title="Open Standards Directory in new tab"
               >
-                <MaterialIcon name="library_books" size={16} />
-                <span>Standards Directory</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectView("schemes")}
-                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
-                  activeView === "schemes"
-                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                    : ""
-                }`}
+                <span className="flex items-center gap-2 min-w-0">
+                  <MaterialIcon name="library_books" size={16} />
+                  <span className="truncate">Standards Directory</span>
+                </span>
+                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+              </a>
+              <a
+                href="/schemes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
+                title="Open Certification Schemes in new tab"
               >
-                <MaterialIcon name="verified" size={16} />
-                <span>Certification Schemes</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectView("hallmark")}
-                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
-                  activeView === "hallmark"
-                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                    : ""
-                }`}
+                <span className="flex items-center gap-2 min-w-0">
+                  <MaterialIcon name="verified" size={16} />
+                  <span className="truncate">Certification Schemes</span>
+                </span>
+                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+              </a>
+              <a
+                href="/hallmark"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
+                title="Open Hallmark & HUID in new tab"
               >
-                <MaterialIcon name="workspace_premium" size={16} />
-                <span>Hallmark &amp; HUID</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectView("labs")}
-                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
-                  activeView === "labs"
-                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                    : ""
-                }`}
+                <span className="flex items-center gap-2 min-w-0">
+                  <MaterialIcon name="workspace_premium" size={16} />
+                  <span className="truncate">Hallmark &amp; HUID</span>
+                </span>
+                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+              </a>
+              <a
+                href="/labs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
+                title="Open Accredited Labs in new tab"
               >
-                <MaterialIcon name="biotech" size={16} />
-                <span>Accredited Labs</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectView("consumer")}
-                className={`sidebar-link w-full text-left cursor-pointer transition-colors ${
-                  activeView === "consumer"
-                    ? "font-bold text-[#0052CC] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-                    : ""
-                }`}
+                <span className="flex items-center gap-2 min-w-0">
+                  <MaterialIcon name="biotech" size={16} />
+                  <span className="truncate">Accredited Labs</span>
+                </span>
+                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+              </a>
+              <a
+                href="/consumer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link w-full text-left cursor-pointer transition-colors flex items-center justify-between group"
+                title="Open Consumer Redressal in new tab"
               >
-                <MaterialIcon name="health_and_safety" size={16} />
-                <span>Consumer Redressal</span>
-              </button>
+                <span className="flex items-center gap-2 min-w-0">
+                  <MaterialIcon name="health_and_safety" size={16} />
+                  <span className="truncate">Consumer Redressal</span>
+                </span>
+                <MaterialIcon name="open_in_new" size={13} className="text-slate-400 group-hover:text-[#0052CC] transition-colors" />
+              </a>
             </nav>
 
             <div className="recent-block">
@@ -704,7 +639,6 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
                   key={thread}
                   type="button"
                   onClick={() => {
-                    handleSelectView("chat");
                     sendMessage(thread);
                   }}
                   className="recent-link cursor-pointer text-left w-full"
@@ -744,12 +678,16 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
           <div className="flex items-center gap-3">
             {!sidebarOpen && (
               <button
-                className="btn-icon w-9 h-9 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="btn-icon w-8.5 h-8.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open sidebar"
-                title="Open sidebar"
+                title="Toggle sidebar (Expand)"
               >
-                <MaterialIcon name="menu" size={20} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
               </button>
             )}
 
@@ -757,53 +695,38 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
               <div className="flex items-center gap-2.5">
                 <button
                   type="button"
-                  onClick={() => handleSelectView("chat")}
+                  onClick={clearChat}
                   className="brand-mark cursor-pointer border-0 p-0 bg-transparent flex items-center"
                   title="Return to Mithra Chat"
                 >
                   <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
                 </button>
                 <div>
-                  <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
-                    <span>{VIEW_TITLES[activeView]}</span>
+                  <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight">
+                    Mithra AI
                   </h1>
                   <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-                    {VIEW_SUBTITLES[activeView]}
+                    BIS standards intelligence · Grounded RAG
                   </p>
                 </div>
               </div>
             ) : (
               <div className="flex items-center gap-2.5">
                 <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight">
-                  {VIEW_TITLES[activeView]}
+                  Mithra AI
                 </h1>
                 <span className="text-xs text-[var(--color-text-muted)] hidden sm:inline font-medium">
-                  · {VIEW_SUBTITLES[activeView]}
+                  · BIS standards intelligence · Grounded RAG
                 </span>
               </div>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            {activeView !== "chat" && (
+            {!sidebarOpen && (
               <button
-                type="button"
-                onClick={() => handleSelectView("chat")}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white bg-[#0052CC] hover:bg-[#0047B3] transition-colors cursor-pointer shadow-xs"
-                title="Open Mithra AI Chat"
-              >
-                <MaterialIcon name="chat" size={15} />
-                <span>Ask Mithra</span>
-              </button>
-            )}
-
-            {activeView === "chat" && !sidebarOpen && (
-              <button
-                onClick={() => {
-                  handleSelectView("chat");
-                  clearChat();
-                }}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
+                onClick={clearChat}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
                 title="Start New Chat"
               >
                 <MaterialIcon name="add" size={15} />
@@ -848,10 +771,8 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
           </div>
         </header>
 
-        {activeView === "chat" && (
-          <>
-            {/* Message Thread (Section 3.3 & 4) */}
-            <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        {/* Message Thread (Section 3.3 & 4) */}
+        <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
           {messages.length === 0 ? (
             /* ── Empty State ── */
             <div className="empty-state">
@@ -1140,38 +1061,6 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
             </p>
           </div>
         </footer>
-          </>
-        )}
-
-        {activeView === "standards" && (
-          <main className="flex-1 overflow-y-auto">
-            <StandardsView onAskMithra={handleAskMithra} />
-          </main>
-        )}
-
-        {activeView === "schemes" && (
-          <main className="flex-1 overflow-y-auto">
-            <SchemesView onAskMithra={handleAskMithra} />
-          </main>
-        )}
-
-        {activeView === "hallmark" && (
-          <main className="flex-1 overflow-y-auto">
-            <HallmarkView onAskMithra={handleAskMithra} />
-          </main>
-        )}
-
-        {activeView === "labs" && (
-          <main className="flex-1 overflow-y-auto">
-            <LabsView onAskMithra={handleAskMithra} />
-          </main>
-        )}
-
-        {activeView === "consumer" && (
-          <main className="flex-1 overflow-y-auto">
-            <ConsumerView onAskMithra={handleAskMithra} />
-          </main>
-        )}
       </div>
 
       {/* ── Photo Upload & Hallmark Guide Overlay Dialog (Section 3.4) ── */}
@@ -1256,7 +1145,7 @@ function ChatContent({ initialView = "chat" }: { initialView?: ActiveView }) {
   );
 }
 
-export default function ChatPage({ initialView = "chat" }: { initialView?: ActiveView }) {
+export default function ChatPage() {
   return (
     <Suspense
       fallback={
@@ -1265,7 +1154,7 @@ export default function ChatPage({ initialView = "chat" }: { initialView?: Activ
         </div>
       }
     >
-      <ChatContent initialView={initialView} />
+      <ChatContent />
     </Suspense>
   );
 }

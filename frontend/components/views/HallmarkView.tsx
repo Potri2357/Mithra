@@ -41,6 +41,14 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
   const [selectedPurity, setSelectedPurity] = useState(PURITY_STANDARDS[2]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleAsk = (query: string) => {
+    if (onAskMithra) {
+      onAskMithra(query);
+    } else if (typeof window !== "undefined") {
+      window.open(`/chat?q=${encodeURIComponent(query)}`, "_blank");
+    }
+  };
+
   const verifyHUID = async (huidVal: string = huid.trim()) => {
     if (!huidVal) return;
     setIsLoading(true);
@@ -89,17 +97,17 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 animate-fadeIn">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       {/* Hero Header */}
-      <div className="space-y-2 text-center sm:text-left max-w-3xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-200/80 dark:border-amber-900/60 text-xs font-bold text-[#D97706] dark:text-amber-400">
+      <div className="space-y-3 max-w-3xl">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-200/80 dark:border-amber-900/60 text-xs font-bold text-[#D97706] dark:text-amber-400 shadow-2xs">
           <MaterialIcon name="workspace_premium" size={15} />
           <span>Precious Metals Authentication</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
           Gold &amp; Silver <span className="text-[#0052CC] dark:text-blue-400">Hallmark Authenticator</span>
         </h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Verify 6-character alphanumeric Hallmark Unique Identification (HUID) codes against Bureau
           registries, or upload a photo of the jewellery hallmark stamp.
         </p>
@@ -119,21 +127,21 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
       />
 
       {/* Two Column Verification Station */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {/* Left: Input Form */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
+        <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-5">
           <div>
             <label
               htmlFor="huid-input"
-              className="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2"
+              className="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2.5"
             >
               Enter 6-Character HUID Code
             </label>
-            <div className="flex gap-2">
+            <div className="flex gap-2.5">
               <input
                 id="huid-input"
                 type="text"
-                className="w-full h-10 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full uppercase font-mono text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-[#0052CC]"
+                className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl uppercase font-mono text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-[#0052CC] transition-all"
                 placeholder="e.g. AA1234"
                 maxLength={8}
                 value={huid}
@@ -144,7 +152,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
                 aria-label="HUID alphanumeric code"
               />
               <button
-                className="h-10 px-5 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold flex-shrink-0 flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                className="h-11 px-6 rounded-xl bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold flex-shrink-0 flex items-center gap-2 shadow-xs hover:shadow transition-all cursor-pointer"
                 onClick={() => verifyHUID()}
                 disabled={isLoading || !huid.trim()}
                 aria-label="Verify HUID"
@@ -364,11 +372,11 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
           </div>
           <button
             type="button"
-            onClick={() => onAskMithra && onAskMithra(`What is the hallmarking requirement for ${selectedPurity.karat} gold?`)}
-            className="h-9 px-4 rounded-full bg-[#0052CC] text-white text-xs font-bold flex items-center gap-1 cursor-pointer flex-shrink-0"
+            onClick={() => handleAsk(`What is the hallmarking requirement for ${selectedPurity.karat} gold?`)}
+            className="h-10 px-5 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold flex items-center gap-2 cursor-pointer flex-shrink-0 shadow-xs hover:shadow transition-all"
           >
             <span>Ask About {selectedPurity.karat}</span>
-            <MaterialIcon name="chevron_right" size={15} />
+            <MaterialIcon name="chevron_right" size={16} />
           </button>
         </div>
       </section>

@@ -176,48 +176,61 @@ export function StandardsView({ onAskMithra }: StandardsViewProps) {
   }, [searchTerm, selectedSector, schemeFilter]);
 
   const handleAsk = (isNumber: string) => {
-    const q = `Tell me full testing requirements and licensing procedure for ${isNumber}`;
+    const q = `Tell me full testing requirements, applicable standards clauses, and licensing procedure for ${isNumber}`;
     if (onAskMithra) {
       onAskMithra(q);
+    } else if (typeof window !== "undefined") {
+      window.open(`/chat?q=${encodeURIComponent(q)}`, "_blank");
     }
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 animate-fadeIn">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       {/* Page Hero Header */}
-      <div className="space-y-2 text-center sm:text-left max-w-3xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/70 border border-blue-200/80 dark:border-blue-900/60 text-xs font-bold text-[#0052CC] dark:text-blue-400">
+      <div className="space-y-3 max-w-3xl">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/70 border border-blue-200/80 dark:border-blue-900/60 text-xs font-bold text-[#0052CC] dark:text-blue-400 shadow-2xs">
           <MaterialIcon name="library_books" size={15} />
           <span>Official BIS Catalogue</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
           Indian Standards <span className="text-[#0052CC] dark:text-blue-400">(IS) Directory</span>
         </h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Search active Bureau of Indian Standards specifications, governing technical committees,
           and mandatory Quality Control Order (QCO) gazette notifications.
         </p>
       </div>
 
-      {/* Filter Toolbar with Pill Input */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-          {/* Search Input */}
-          <div className="sm:col-span-6 relative flex items-center">
-            <MaterialIcon name="search" size={18} className="absolute left-3.5 text-slate-400" />
+      {/* Filter Toolbar with Generous Spacing and Proper Padding */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5">
+          {/* Search Input with Non-Overlapping Icon */}
+          <div className="md:col-span-6 relative flex items-center">
+            <svg
+              className="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-4 pointer-events-none"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
             <input
               type="text"
-              className="w-full h-10 pl-10 pr-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-[#0052CC] transition-all"
-              placeholder="Search by IS number (e.g. IS 16102), product, or committee..."
+              className="w-full h-11 pl-12 pr-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-[#0052CC] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 transition-all"
+              placeholder="Search by IS number (e.g. IS 16102), keyword, or committee..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
           {/* Sector Selector */}
-          <div className="sm:col-span-3">
+          <div className="md:col-span-3">
             <select
-              className="w-full h-10 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC]"
+              className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC] transition-all cursor-pointer"
               value={selectedSector}
               onChange={(e) => setSelectedSector(e.target.value)}
             >
@@ -230,9 +243,9 @@ export function StandardsView({ onAskMithra }: StandardsViewProps) {
           </div>
 
           {/* Scheme Selector */}
-          <div className="sm:col-span-3">
+          <div className="md:col-span-3">
             <select
-              className="w-full h-10 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC]"
+              className="w-full h-11 px-4 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 outline-none focus:border-[#0052CC] transition-all cursor-pointer"
               value={schemeFilter}
               onChange={(e) => setSchemeFilter(e.target.value)}
             >
@@ -244,7 +257,7 @@ export function StandardsView({ onAskMithra }: StandardsViewProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
           <span>
             Showing <strong className="text-slate-900 dark:text-white font-bold">{filteredStandards.length}</strong> of {STANDARDS_CATALOGUE.length} standards catalogued
           </span>
@@ -263,40 +276,40 @@ export function StandardsView({ onAskMithra }: StandardsViewProps) {
         </div>
       </div>
 
-      {/* Standards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+      {/* Standards Grid with Proper Spacing and Redesigned Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-7">
         {filteredStandards.map((item) => (
           <div
             key={item.is_number}
-            className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all flex flex-col justify-between group"
+            className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all flex flex-col justify-between group space-y-5"
           >
-            <div className="space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <span className="text-base font-black text-[#0052CC] dark:text-blue-400 font-mono tracking-tight">
+            <div className="space-y-3.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-black text-[#0052CC] dark:text-blue-400 font-mono tracking-tight">
                     {item.is_number}
                   </span>
-                  <span className="text-xs text-slate-400 dark:text-slate-500 ml-1.5 font-mono">
+                  <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">
                     :{item.year}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/70 text-[#0052CC] dark:text-blue-300 border border-blue-200/80 dark:border-blue-900/60">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/70 text-[#0052CC] dark:text-blue-300 border border-blue-200/80 dark:border-blue-900/60">
                     {item.scheme}
                   </span>
                   {item.mandatory && (
-                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60">
+                    <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60">
                       QCO Mandatory
                     </span>
                   )}
                 </div>
               </div>
 
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#0052CC] transition-colors">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#0052CC] transition-colors">
                 {item.title}
-              </h3>
+              </h2>
 
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
                 {item.scope}
               </p>
 
@@ -311,30 +324,32 @@ export function StandardsView({ onAskMithra }: StandardsViewProps) {
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300">
-                <span className="font-bold text-slate-900 dark:text-white">QCO Order: </span>
-                {item.qco_order}
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                <span className="font-bold text-slate-900 dark:text-white flex-shrink-0">QCO Order:</span>
+                <span className="leading-relaxed">{item.qco_order}</span>
               </div>
             </div>
 
-            <div className="pt-3.5 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            {/* Redesigned Button with Better Padding and Aesthetics */}
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => handleAsk(item.is_number)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0052CC] dark:text-blue-400 hover:underline cursor-pointer"
+                className="h-10 px-5 rounded-full bg-[#0052CC] hover:bg-[#0047B3] text-white text-xs font-bold transition-all flex items-center gap-2 shadow-xs hover:shadow cursor-pointer"
               >
                 <MaterialIcon name="auto_awesome" size={15} />
-                <span>Ask Mithra About {item.is_number}</span>
+                <span>Ask Mithra Compliance AI</span>
               </button>
 
               <a
                 href="https://www.bis.gov.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 transition-colors"
+                className="h-10 px-4 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="Official BIS Standard Reference"
               >
-                <MaterialIcon name="open_in_new" size={15} />
+                <span>BIS Ref</span>
+                <MaterialIcon name="open_in_new" size={14} />
               </a>
             </div>
           </div>
@@ -343,3 +358,5 @@ export function StandardsView({ onAskMithra }: StandardsViewProps) {
     </div>
   );
 }
+
+export default StandardsView;

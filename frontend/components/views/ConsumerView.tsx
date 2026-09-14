@@ -15,11 +15,13 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
     const topic = customSubject || "How do I file an official consumer complaint with BIS against a fake ISI marked product?";
     if (onAskMithra) {
       onAskMithra(topic);
+    } else if (typeof window !== "undefined") {
+      window.open(`/chat?q=${encodeURIComponent(topic)}`, "_blank");
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-in fade-in duration-300">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-in fade-in duration-300">
       {/* Hero Header */}
       <div className="space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/70 border border-rose-200/80 dark:border-rose-900/60 text-xs font-bold text-[#DC2626] dark:text-rose-400">
