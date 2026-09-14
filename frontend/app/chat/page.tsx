@@ -4,42 +4,9 @@ import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import MaterialIcon from "@/components/MaterialIcon";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  Send,
-  Mic,
-  Camera,
-  Volume2,
-  VolumeX,
-  BookOpen,
-  X,
-  Upload,
-  Loader2,
-  Copy,
-  Check,
-  Award,
-  FlaskConical,
-  ShieldCheck,
-  ShieldAlert,
-  Sparkles,
-  Download,
-  Trash2,
-  Home,
-  Menu,
-  Cpu,
-  FileText,
-  Layers,
-  Scale,
-  Sun,
-  Moon,
-  ExternalLink,
-  ChevronDown,
-  ChevronUp,
-  AlertTriangle,
-  CheckCircle2,
-  Plus,
-} from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -66,59 +33,53 @@ interface Message {
 const QUICK_START_CARDS = [
   {
     title: "Find my standard",
-    desc: "Identify which IS number applies to your product",
+    desc: "Identify the IS number and certification path",
     query: "Which Indian Standard (IS number) applies to my product?",
-    icon: BookOpen,
-    iconBg: "bg-blue-50",
-    iconColor: "text-[#024DA1]",
+    icon: "library_books",
   },
   {
     title: "Understand a scheme",
     desc: "Compare ISI Mark, CRS, and FMCS certification paths",
     query: "Explain the difference between ISI Mark Scheme I and CRS Scheme II",
-    icon: Award,
-    iconBg: "bg-amber-50",
-    iconColor: "text-amber-600",
+    icon: "verified",
   },
   {
     title: "Verify a hallmark",
-    desc: "Check 6-character HUID code against BIS registry",
+    desc: "Check a HUID and spot possible mismatch signals",
     query: "How do I verify a 6-digit gold hallmark HUID code?",
-    icon: ShieldCheck,
-    iconBg: "bg-emerald-50",
-    iconColor: "text-emerald-600",
+    icon: "workspace_premium",
   },
   {
     title: "Find a lab near me",
     desc: "Locate NABL & BIS accredited testing facilities",
     query: "Find accredited laboratories for testing LED lamps or electrical items",
-    icon: FlaskConical,
-    iconBg: "bg-purple-50",
-    iconColor: "text-purple-600",
+    icon: "biotech",
   },
   {
     title: "File a complaint",
     desc: "Report fake ISI marks or substandard products",
     query: "How do I file a consumer complaint against a fake ISI marked product?",
-    icon: ShieldAlert,
-    iconBg: "bg-red-50",
-    iconColor: "text-red-600",
+    icon: "gpp_bad",
   },
   {
     title: "Ask anything",
     desc: "Any compliance, testing, or regulatory question",
     query: "What are the latest Quality Control Orders (QCO) issued by BIS?",
-    icon: Sparkles,
-    iconBg: "bg-cyan-50",
-    iconColor: "text-cyan-600",
+    icon: "auto_awesome",
   },
+];
+
+const RECENT_THREADS = [
+  "LED bulb certification",
+  "Gold hallmark HUID check",
+  "Packaged drinking water ISI",
 ];
 
 function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Medium" | "Unverified"; abstained?: boolean }) {
   if (abstained || confidence === "Unverified") {
     return (
       <span className="confidence-badge confidence-badge-abstained">
-        <ShieldAlert size={13} />
+        <MaterialIcon name="gpp_bad" size={14} filled />
         <span>Unverified — Abstained from guessing</span>
       </span>
     );
@@ -126,14 +87,14 @@ function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Med
   if (confidence === "Medium") {
     return (
       <span className="confidence-badge confidence-badge-medium">
-        <AlertTriangle size={13} />
+        <MaterialIcon name="warning" size={14} filled />
         <span>Medium Confidence</span>
       </span>
     );
   }
   return (
     <span className="confidence-badge confidence-badge-high">
-      <CheckCircle2 size={13} />
+      <MaterialIcon name="check_circle" size={14} filled />
       <span>Verified High Confidence</span>
     </span>
   );
@@ -202,6 +163,7 @@ function ChatContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const initialQuerySentRef = useRef(false);
 
   // Sync theme
   useEffect(() => {
@@ -260,9 +222,9 @@ function ChatContent() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            query,
+            message: query,
             language: langCode,
-            history: messages.slice(-6).map((m) => ({ role: m.role, content: m.content })),
+            context: messages.slice(-6).map((m) => ({ role: m.role, content: m.content })),
           }),
         });
 
@@ -300,7 +262,7 @@ function ChatContent() {
               ? {
                   ...m,
                   content:
-                    "⚠️ Unable to reach the Mithra backend service. Please check that the server is active on `" +
+                    "Mithra could not reach the backend service. Please check that the server is active on `" +
                     API_URL +
                     "`.",
                   isLoading: false,
@@ -319,8 +281,13 @@ function ChatContent() {
 
   // Auto-send initial query passed via URL
   useEffect(() => {
-    if (initialQuery) {
-      const timer = setTimeout(() => sendMessage(initialQuery), 250);
+    if (initialQuery && !initialQuerySentRef.current) {
+      const timer = setTimeout(() => {
+        if (!initialQuerySentRef.current) {
+          initialQuerySentRef.current = true;
+          sendMessage(initialQuery);
+        }
+      }, 250);
       return () => clearTimeout(timer);
     }
   }, [initialQuery, sendMessage]);
@@ -379,7 +346,7 @@ function ChatContent() {
     const userMsg: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: `📷 [Photo submitted: ${mode === "product" ? "Product for Standard Classification" : "Hallmark Stamp for HUID OCR"}]`,
+      content: `[Photo submitted: ${mode === "product" ? "Product for standard classification" : "Hallmark stamp for HUID OCR"}]`,
     };
     const aiMsg: Message = {
       id: (Date.now() + 1).toString(),
@@ -430,7 +397,7 @@ function ChatContent() {
           m.id === aiMsg.id
             ? {
                 ...m,
-                content: "⚠️ Image analysis could not be completed. Please enter details manually.",
+                content: "Image analysis could not be completed. Please enter the product or HUID details manually.",
                 confidence: "Unverified",
                 isLoading: false,
               }
@@ -476,7 +443,7 @@ function ChatContent() {
 
   return (
     <div
-      className="flex h-screen bg-[var(--color-background)] text-[var(--color-text-body)] overflow-hidden relative"
+      className="mithra-chat-shell flex h-screen text-[var(--color-text-body)] overflow-hidden relative"
       onDragOver={(e) => {
         e.preventDefault();
         setIsDraggingFile(true);
@@ -507,114 +474,123 @@ function ChatContent() {
 
       {/* Drag & Drop Overlay */}
       {isDraggingFile && (
-        <div className="absolute inset-0 z-50 bg-[var(--blue-600)]/90 border-2 border-dashed border-[var(--blue-200)] flex flex-col items-center justify-center pointer-events-none text-white">
-          <Upload size={48} className="text-white mb-3" />
-          <h2 className="text-xl font-bold">Drop Image for Instant BIS Inspection</h2>
-          <p className="text-xs text-[var(--blue-100)] mt-1">Supports product photos or hallmark stamps</p>
+        <div className="absolute inset-0 z-50 bg-[var(--blue-700)]/92 border-2 border-dashed border-[var(--blue-200)] flex flex-col items-center justify-center pointer-events-none text-white">
+          <MaterialIcon name="upload_file" size={50} className="text-white mb-3" />
+          <h2 className="text-xl font-bold">Drop image for Mithra analysis</h2>
+          <p className="text-xs text-[var(--blue-100)] mt-1">Product photos and hallmark stamps are supported</p>
         </div>
       )}
 
       {/* ── Collapsible Left Sidebar (ChatGPT style with history & portal links) ── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[var(--color-surface)] border-r border-[var(--color-border)] transition-transform duration-200 lg:relative lg:translate-x-0 ${
+        className={`chat-sidebar fixed inset-y-0 left-0 z-40 w-[280px] transition-transform duration-200 lg:relative lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex flex-col h-full p-4 justify-between">
+        <div className="flex flex-col h-full p-3 justify-between">
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)]">
-              <Link href="/" className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-white p-1 border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 shadow-xs">
+            <div className="sidebar-brand">
+              <Link href="/" className="flex items-center gap-3 min-w-0">
+                <div className="brand-mark">
                   <Image src="/bis_logo.png" alt="BIS Logo" width={28} height={28} className="object-contain" />
                 </div>
-                <div>
-                  <span className="font-extrabold text-[15px] text-[var(--color-text-primary)] block leading-tight">
-                    Mithra
+                <div className="min-w-0">
+                  <span className="font-extrabold text-[16px] text-[var(--color-text-primary)] block leading-tight">
+                    Maanak Saathi
                   </span>
-                  <span className="text-[10px] text-[var(--red-700)] font-semibold tracking-wide">Bureau of Indian Standards</span>
+                  <span className="text-[11px] text-[var(--color-text-muted)] font-semibold">Bureau of Indian Standards</span>
                 </div>
               </Link>
               <button className="btn-icon w-8 h-8 lg:hidden" onClick={() => setSidebarOpen(false)}>
-                <X size={16} />
+                <MaterialIcon name="close" size={18} />
               </button>
             </div>
 
             {/* + New Chat Button (Section 3.3) */}
             <button
               onClick={clearChat}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-[var(--color-border)] text-xs font-semibold text-[var(--color-text-primary)] hover:bg-[var(--blue-50)] hover:border-[var(--blue-300)] transition-colors"
+              className="new-chat-button"
             >
-              <Plus size={15} className="text-[var(--blue-600)]" />
-              <span>New Conversation</span>
+              <MaterialIcon name="add" size={17} className="text-[var(--blue-600)]" />
+              <span>New Chat</span>
             </button>
 
             {/* Navigation links */}
-            <nav className="space-y-0.5 pt-1">
-              <span className="text-[11px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wider px-3 block mb-1">
-                Portal Modules
+            <nav className="sidebar-nav">
+              <span className="sidebar-section-label">
+                Explore
               </span>
               <Link
                 href="/"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[var(--color-text-body)] rounded-lg hover:bg-[var(--blue-50)] hover:text-[var(--blue-600)] transition-colors"
+                className="sidebar-link"
               >
-                <Home size={14} />
+                <MaterialIcon name="home" size={16} />
                 <span>Home Portal</span>
               </Link>
               <Link
                 href="/standards"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[var(--color-text-body)] rounded-lg hover:bg-[var(--blue-50)] hover:text-[var(--blue-600)] transition-colors"
+                className="sidebar-link"
               >
-                <FileText size={14} />
+                <MaterialIcon name="library_books" size={16} />
                 <span>Standards Directory</span>
               </Link>
               <Link
                 href="/schemes"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[var(--color-text-body)] rounded-lg hover:bg-[var(--blue-50)] hover:text-[var(--blue-600)] transition-colors"
+                className="sidebar-link"
               >
-                <Layers size={14} />
+                <MaterialIcon name="verified" size={16} />
                 <span>Certification Schemes</span>
               </Link>
               <Link
                 href="/hallmark"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[var(--color-text-body)] rounded-lg hover:bg-[var(--blue-50)] hover:text-[var(--blue-600)] transition-colors"
+                className="sidebar-link"
               >
-                <Award size={14} />
+                <MaterialIcon name="workspace_premium" size={16} />
                 <span>Hallmark &amp; HUID</span>
               </Link>
               <Link
                 href="/labs"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[var(--color-text-body)] rounded-lg hover:bg-[var(--blue-50)] hover:text-[var(--blue-600)] transition-colors"
+                className="sidebar-link"
               >
-                <FlaskConical size={14} />
+                <MaterialIcon name="biotech" size={16} />
                 <span>Accredited Labs</span>
               </Link>
               <Link
                 href="/consumer"
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[var(--color-text-body)] rounded-lg hover:bg-[var(--blue-50)] hover:text-[var(--blue-600)] transition-colors"
+                className="sidebar-link"
               >
-                <Scale size={14} />
+                <MaterialIcon name="health_and_safety" size={16} />
                 <span>Consumer Redressal</span>
               </Link>
             </nav>
+
+            <div className="recent-block">
+              <span className="sidebar-section-label">Recent</span>
+              {RECENT_THREADS.map((thread) => (
+                <button key={thread} type="button" onClick={() => sendMessage(thread)} className="recent-link">
+                  <span>{thread}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Session tools */}
-          <div className="pt-3 border-t border-[var(--color-border)] space-y-2">
+          <div className="sidebar-tools">
             <button
               onClick={exportTranscript}
               disabled={messages.length === 0}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium text-[var(--color-text-body)] bg-[var(--color-surface-subtle)] hover:bg-[var(--blue-50)] rounded-lg border border-[var(--color-border)] disabled:opacity-40"
+              className="sidebar-tool-button"
             >
-              <Download size={14} />
-              <span>Export Consultation</span>
+              <MaterialIcon name="download" size={16} />
+              <span>Export</span>
             </button>
             <button
               onClick={clearChat}
               disabled={messages.length === 0}
-              className="btn-destructive w-full text-xs py-2 disabled:opacity-40"
+              className="sidebar-tool-button danger"
             >
-              <Trash2 size={14} />
-              <span>Clear Session</span>
+              <MaterialIcon name="delete" size={16} />
+              <span>Clear</span>
             </button>
           </div>
         </div>
@@ -623,29 +599,29 @@ function ChatContent() {
       {/* ── Main Chat Area ── */}
       <div className="flex-1 flex flex-col h-full min-w-0">
         {/* Header */}
-        <header className="flex items-center justify-between px-4 sm:px-6 py-3 bg-[var(--color-surface)] border-b border-[var(--color-border)] flex-shrink-0 shadow-2xs">
+        <header className="chat-header flex items-center justify-between px-4 sm:px-6 py-3 flex-shrink-0">
           <div className="flex items-center gap-3">
             <button
               className="btn-icon w-9 h-9 lg:hidden"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar menu"
             >
-              <Menu size={18} />
+              <MaterialIcon name="menu" size={20} />
             </button>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white p-1 border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 shadow-xs">
+              <div className="brand-mark">
                 <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
               </div>
               <div>
                 <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
-                  <span>Mithra</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Online
+                  <span>Maanak Saathi</span>
+                  <span className="status-pill">
+                    <span className="status-dot" />
+                    Verified mode
                   </span>
                 </h1>
                 <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-                  BIS Intelligence • 22,000+ Standards
+                  BIS standards intelligence
                 </p>
               </div>
             </div>
@@ -654,11 +630,11 @@ function ChatContent() {
           <div className="flex items-center gap-1.5">
             <button
               onClick={cycleLang}
-              className="btn-ghost text-xs font-semibold px-2.5 py-1 min-h-0 h-8"
+              className="language-button"
               aria-label="Switch Language"
             >
-              <span>{currentLang}</span>
-              <span className="text-[10px] text-[var(--color-text-muted)] ml-0.5">▾</span>
+              <span>EN · हिं · த</span>
+              <span className="active-lang">{currentLang}</span>
             </button>
 
             <button
@@ -666,7 +642,7 @@ function ChatContent() {
               className="btn-icon w-8 h-8"
               title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
             >
-              {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
+              <MaterialIcon name={theme === "light" ? "dark_mode" : "light_mode"} size={17} />
             </button>
 
             {isSpeaking && (
@@ -681,54 +657,51 @@ function ChatContent() {
                 }}
                 aria-label="Stop audio speech playback"
               >
-                <VolumeX size={15} />
+                <MaterialIcon name="volume_off" size={17} />
               </button>
             )}
           </div>
         </header>
 
         {/* Message Thread (Section 3.3 & 4) */}
-        <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6">
+        <main className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
           {messages.length === 0 ? (
             /* ── Empty State ── */
-            <div className="max-w-2xl mx-auto px-2 pt-8 pb-6 space-y-8">
+            <div className="empty-state">
               {/* Greeting */}
-              <div className="text-center space-y-3 animate-fade-up">
-                <div className="w-16 h-16 rounded-2xl bg-[var(--color-surface)] p-2 border border-[var(--color-border)] flex items-center justify-center mx-auto shadow-sm">
+              <div className="empty-hero animate-fade-up">
+                <div className="hero-brand-mark">
                   <Image src="/bis_logo.png" alt="BIS Logo" width={44} height={44} className="object-contain" />
                 </div>
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-text-primary)] tracking-tight">
-                    Namaste! How can I help you today?
+                  <h2 className="empty-title">
+                    Meet Maanak Saathi, your BIS compliance companion.
                   </h2>
-                  <p className="text-sm text-[var(--color-text-muted)] mt-2 max-w-md mx-auto leading-relaxed">
-                    Ask about Indian Standards, BIS certification, gold HUID verification,
-                    or accredited testing labs — in English, Hindi, or Tamil.
+                  <p className="empty-copy">
+                    Ask a standards question, scan a hallmark, locate a lab, or compare certification schemes with cited guidance.
                   </p>
                 </div>
               </div>
 
               {/* Quick-Start Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="quick-start-grid">
                 {QUICK_START_CARDS.map((card, i) => {
-                  const Icon = card.icon;
                   return (
-                    <div
+                    <button
                       key={card.title}
                       onClick={() => sendMessage(card.query)}
                       className="quick-start-card group animate-fade-up"
                       style={{ animationDelay: `${i * 0.06}s` }}
-                      role="button"
-                      tabIndex={0}
+                      type="button"
                     >
-                      <div className={`w-9 h-9 rounded-lg ${card.iconBg} ${card.iconColor} flex items-center justify-center flex-shrink-0`}>
-                        <Icon size={17} />
+                      <div className="quick-start-icon">
+                        <MaterialIcon name={card.icon} size={19} />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-[var(--color-text-primary)] mb-1">{card.title}</h3>
                         <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">{card.desc}</p>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -737,17 +710,17 @@ function ChatContent() {
             messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"} bubble-enter`}
+                className={`message-row ${msg.role === "user" ? "message-row-user" : "message-row-assistant"} bubble-enter`}
               >
                 {/* Chat Bubble */}
-                <div className={`max-w-3xl ${msg.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant w-full"}`}>
+                <div className={msg.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant"}>
                   {msg.role === "assistant" && (
-                    <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-[var(--color-border)]">
+                    <div className="assistant-meta">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-white p-0.5 border border-[var(--color-border)] flex items-center justify-center">
+                        <div className="assistant-mark">
                           <Image src="/bis_logo.png" alt="BIS" width={18} height={18} className="object-contain" />
                         </div>
-                        <span className="font-bold text-xs text-[var(--color-text-primary)]">Mithra</span>
+                        <span className="font-bold text-xs text-[var(--color-text-primary)]">Maanak Saathi</span>
                       </div>
                       <ConfidenceBadge confidence={msg.confidence} abstained={msg.abstained} />
                     </div>
@@ -763,14 +736,14 @@ function ChatContent() {
 
                   {/* Abstention human contact notice (Section 3.3) */}
                   {msg.abstained && !msg.isLoading && (
-                    <div className="mt-4 p-3.5 rounded-lg bg-[var(--red-50)] border border-[var(--red-200)] text-[var(--red-700)] text-xs flex items-center justify-between">
+                    <div className="abstention-notice">
                       <div className="flex items-center gap-2">
-                        <ShieldAlert size={16} className="flex-shrink-0" />
+                        <MaterialIcon name="gpp_bad" size={18} className="flex-shrink-0" filled />
                         <span>Need official clarification? Consult the National Consumer Helpline: <strong>1800-11-4000</strong></span>
                       </div>
                       <a href="https://www.bis.gov.in" target="_blank" rel="noopener noreferrer" className="font-bold underline flex items-center gap-1">
                         <span>BIS Portal</span>
-                        <ExternalLink size={11} />
+                        <MaterialIcon name="open_in_new" size={13} />
                       </a>
                     </div>
                   )}
@@ -782,13 +755,13 @@ function ChatContent() {
                         onClick={() =>
                           setExpandedSources((prev) => ({ ...prev, [msg.id]: !prev[msg.id] }))
                         }
-                        className="w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold text-[var(--blue-700)] bg-[var(--blue-50)] hover:bg-[var(--blue-100)] transition-colors"
+                        className="w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold text-[var(--blue-700)] dark:text-blue-300 bg-[var(--blue-50)] dark:bg-blue-950/50 hover:bg-[var(--blue-100)] dark:hover:bg-blue-900/50 transition-colors"
                       >
                         <div className="flex items-center gap-1.5">
-                          <BookOpen size={14} className="text-[var(--blue-600)]" />
+                          <MaterialIcon name="library_books" size={16} className="text-[var(--blue-600)] dark:text-[var(--blue-400)]" />
                           <span>Grounded Sources ({msg.citations.length} Verified Citations)</span>
                         </div>
-                        {expandedSources[msg.id] ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        <MaterialIcon name={expandedSources[msg.id] ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={18} />
                       </button>
 
                       {expandedSources[msg.id] && (
@@ -813,7 +786,7 @@ function ChatContent() {
                                 className="text-[var(--blue-600)] hover:underline flex-shrink-0 p-1"
                                 title="Open official reference"
                               >
-                                <ExternalLink size={13} />
+                                <MaterialIcon name="open_in_new" size={15} />
                               </a>
                             </div>
                           ))}
@@ -824,7 +797,7 @@ function ChatContent() {
 
                   {/* Actions & Follow-up Row */}
                   {msg.role === "assistant" && !msg.isLoading && (
-                    <div className="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-[var(--color-border)] text-xs">
+                    <div className="message-actions">
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => copyToClipboard(msg.content, msg.id)}
@@ -832,12 +805,12 @@ function ChatContent() {
                         >
                           {copiedId === msg.id ? (
                             <>
-                              <Check size={13} className="text-[var(--color-success)]" />
+                              <MaterialIcon name="check" size={15} className="text-[var(--color-success)]" />
                               <span className="text-[var(--color-success)] font-medium">Copied</span>
                             </>
                           ) : (
                             <>
-                              <Copy size={13} />
+                              <MaterialIcon name="content_copy" size={15} />
                               <span>Copy</span>
                             </>
                           )}
@@ -861,7 +834,7 @@ function ChatContent() {
                           }}
                           className="flex items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
                         >
-                          <Volume2 size={13} />
+                          <MaterialIcon name="volume_up" size={15} />
                           <span>{isSpeaking ? "Speaking..." : "Listen"}</span>
                         </button>
                       </div>
@@ -871,7 +844,7 @@ function ChatContent() {
                           onClick={() => sendMessage(msg.follow_up)}
                           className="text-[var(--blue-600)] hover:underline font-semibold flex items-center gap-1 text-left"
                         >
-                          <Sparkles size={12} />
+                          <MaterialIcon name="auto_awesome" size={14} />
                           <span>{msg.follow_up}</span>
                         </button>
                       )}
@@ -885,86 +858,87 @@ function ChatContent() {
         </main>
 
         {/* ── Input Bar ── */}
-        <footer className="px-4 py-4 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
-          <div className="max-w-3xl mx-auto space-y-3">
+        <footer className="composer-footer">
+          <div className="composer-wrap">
             {/* Speech transcript banner */}
             {speechTranscript !== null && (
-              <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-[var(--blue-50)] border border-[var(--blue-200)] text-xs text-[var(--blue-700)]">
+              <div className="speech-banner">
                 <div className="flex items-center gap-2 truncate">
                   <span className="w-2 h-2 rounded-full bg-[var(--red-500)] animate-ping flex-shrink-0" />
                   <span className="font-semibold flex-shrink-0">Transcribed:</span>
                   <span className="italic truncate">&quot;{speechTranscript}&quot;</span>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  <button onClick={() => sendMessage(input)} className="btn-primary py-1 px-3 text-xs min-h-[28px] rounded-lg">
+                  <button onClick={() => sendMessage(input)} className="app-primary-button py-1 px-3 text-xs min-h-[28px] rounded-lg">
                     Send
                   </button>
                   <button onClick={() => { setSpeechTranscript(null); setInput(""); }} className="btn-icon w-7 h-7">
-                    <X size={13} />
+                    <MaterialIcon name="close" size={15} />
                   </button>
                 </div>
               </div>
             )}
 
             {/* Main input row */}
-            <div className="flex items-center gap-2.5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-3 py-2 shadow-sm focus-within:border-[var(--blue-400)] focus-within:shadow-blue-sm transition-all duration-200">
-              {/* Photo */}
-              <button
-                className="btn-photo flex-shrink-0"
-                style={{ width: '38px', height: '38px' }}
-                onClick={() => setShowPhotoUpload(true)}
-                title="Upload photo"
-                aria-label="Upload photo of product or hallmark"
-              >
-                <Camera size={17} />
-              </button>
+            <div className="composer">
+              <div className="composer-input-row">
+                <input
+                  type="text"
+                  className="composer-input"
+                  placeholder="Ask Saathi about standards, schemes, labs, or HUID verification..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }}
+                  disabled={isLoading}
+                />
 
-              {/* Voice */}
-              <button
-                onClick={toggleVoiceRecording}
-                className={`btn-voice flex-shrink-0 ${isRecording ? "recording" : ""}`}
-                style={{ width: '38px', height: '38px' }}
-                title={isRecording ? "Stop recording" : "Record voice"}
-                aria-label={isRecording ? "Stop recording" : "Record voice inquiry"}
-              >
-                {isRecording ? (
-                  <div className="flex items-center gap-0.5 h-5">
-                    {[0,1,2,3,4].map((i) => <div key={i} className="waveform-bar" />)}
-                  </div>
-                ) : (
-                  <Mic size={17} />
-                )}
-              </button>
+                <button
+                  className="send-button"
+                  onClick={() => sendMessage()}
+                  disabled={isLoading || !input.trim()}
+                  aria-label="Send message"
+                  title="Send message"
+                >
+                  {isLoading ? <MaterialIcon name="progress_activity" size={18} className="animate-spin" /> : <MaterialIcon name="send" size={18} />}
+                </button>
+              </div>
 
-              {/* Text Input */}
-              <input
-                type="text"
-                className="flex-1 bg-transparent text-[var(--color-text-primary)] text-sm placeholder-[var(--color-text-muted)] outline-none py-2 min-h-[36px]"
-                placeholder="Type a question, or use voice / photo above..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                  }
-                }}
-                disabled={isLoading}
-              />
+              <div className="composer-tools">
+                <button
+                  className="composer-tool"
+                  onClick={() => setShowPhotoUpload(true)}
+                  title="Upload photo"
+                  aria-label="Upload photo of product or hallmark"
+                >
+                  <MaterialIcon name="photo_camera" size={18} />
+                  <span>Photo</span>
+                </button>
 
-              {/* Send Button */}
-              <button
-                className="btn-primary flex-shrink-0 rounded-xl px-4 min-h-0 h-9 text-sm"
-                onClick={() => sendMessage()}
-                disabled={isLoading || !input.trim()}
-                aria-label="Send message"
-              >
-                {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-              </button>
+                <button
+                  onClick={toggleVoiceRecording}
+                  className={`composer-tool primary ${isRecording ? "recording" : ""}`}
+                  title={isRecording ? "Stop recording" : "Record voice"}
+                  aria-label={isRecording ? "Stop recording" : "Record voice inquiry"}
+                >
+                  {isRecording ? (
+                    <div className="flex items-center gap-0.5 h-5">
+                      {[0,1,2,3,4].map((i) => <div key={i} className="waveform-bar" />)}
+                    </div>
+                  ) : (
+                  <MaterialIcon name="mic" size={18} />
+                  )}
+                  <span>{isRecording ? "Listening" : "Speak"}</span>
+                </button>
+              </div>
             </div>
 
-            <p className="text-center text-xs text-[var(--color-text-muted)] opacity-60">
-              Responses are grounded in official BIS records. Always verify critical compliance decisions with a registered BIS officer.
+            <p className="composer-disclaimer">
+              Grounded answers with citations where available. Verify critical compliance decisions with BIS.
             </p>
           </div>
         </footer>
@@ -977,13 +951,13 @@ function ChatContent() {
           onClick={() => setShowPhotoUpload(false)}
         >
           <div
-            className="w-full max-w-md p-6 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-xl"
+            className="photo-dialog"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-[var(--color-text-primary)] font-bold text-base">Capture Image for BIS Analysis</h3>
               <button className="btn-icon w-8 h-8" onClick={() => setShowPhotoUpload(false)}>
-                <X size={16} />
+                <MaterialIcon name="close" size={18} />
               </button>
             </div>
 
@@ -997,7 +971,7 @@ function ChatContent() {
                 }`}
               >
                 <div className="w-8 h-8 rounded-lg bg-[var(--blue-100)] text-[var(--blue-600)] flex items-center justify-center mb-2">
-                  <Cpu size={18} />
+                  <MaterialIcon name="memory" size={20} />
                 </div>
                 <div className="text-sm font-bold">Product Photo</div>
                 <div className="text-xs text-[var(--color-text-muted)] mt-1">Classify applicable Indian Standard</div>
@@ -1012,7 +986,7 @@ function ChatContent() {
                 }`}
               >
                 <div className="w-8 h-8 rounded-lg bg-[var(--blue-100)] text-[var(--blue-600)] flex items-center justify-center mb-2">
-                  <Award size={18} />
+                  <MaterialIcon name="workspace_premium" size={20} />
                 </div>
                 <div className="text-sm font-bold">Hallmark Stamp</div>
                 <div className="text-xs text-[var(--color-text-muted)] mt-1">Laser HUID OCR verification</div>
@@ -1022,7 +996,7 @@ function ChatContent() {
             {/* Hallmark scanning guide overlay preview */}
             {photoMode === "hallmark" && (
               <div className="mb-4 p-4 rounded-xl bg-[var(--gray-50)] border border-[var(--color-border)] text-center space-y-2">
-                <span className="text-xs font-semibold text-[var(--blue-600)] uppercase tracking-wider block">
+                <span className="text-xs font-semibold text-[var(--blue-600)] uppercase block">
                   Hallmark Stamp Guide
                 </span>
                 <div className="relative border-2 border-dashed border-[var(--blue-400)] rounded-lg p-3 bg-white/60">
@@ -1040,9 +1014,9 @@ function ChatContent() {
 
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="btn-primary w-full justify-center text-sm"
+              className="app-primary-button w-full justify-center text-sm"
             >
-              <Upload size={16} />
+              <MaterialIcon name="upload_file" size={18} />
               <span>Choose Photo or Take Picture</span>
             </button>
           </div>
@@ -1057,7 +1031,7 @@ export default function ChatPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-screen bg-[var(--color-background)]">
-          <Loader2 size={36} className="animate-spin text-[var(--blue-600)]" />
+          <MaterialIcon name="progress_activity" size={38} className="animate-spin text-[var(--blue-600)]" />
         </div>
       }
     >
