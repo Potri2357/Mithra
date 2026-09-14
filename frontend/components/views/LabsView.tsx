@@ -199,12 +199,12 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
       {/* Hero Header */}
       <div className="space-y-3 max-w-3xl">
-        <Badge variant="blue" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
+        <Badge variant="blue" className="px-3 py-1 gap-1.5 font-bold shadow-2xs rounded-md">
           <FlaskConical className="w-3.5 h-3.5" />
           <span>NABL &amp; BIS-Recognized Testing Network</span>
         </Badge>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-          Testing &amp; Calibration <span className="text-[#024DA1] dark:text-blue-400">Laboratory Radar</span>
+          Testing &amp; Calibration <span className="text-[#005EB8] dark:text-blue-400">Laboratory Radar</span>
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Locate authorized testing laboratories recognized under the Laboratory Recognition Scheme (LRS) for
@@ -219,9 +219,9 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
             key={cat}
             type="button"
             onClick={() => handleCategorySelect(cat)}
-            className={`h-9 px-4 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+            className={`h-8 px-3 rounded-md text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
               category === cat
-                ? "bg-[#024DA1] text-white shadow-xs"
+                ? "bg-[#005EB8] text-white shadow-xs"
                 : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             }`}
           >
@@ -231,7 +231,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
       </div>
 
       {/* Filter Station with Generous Spacing */}
-      <Card className="p-5 sm:p-6 space-y-4">
+      <Card className="p-5 sm:p-6 space-y-4 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
           <div className="md:col-span-6">
             <label
@@ -245,7 +245,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
               <Input
                 id="search-kw"
                 type="text"
-                className="h-11 pl-10 pr-9 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm"
+                className="h-10 !pl-10 pr-9 bg-slate-50 dark:bg-slate-800 rounded-md text-sm"
                 placeholder="Filter by city, lab name, or keyword..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
@@ -254,7 +254,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
                 <button
                   type="button"
                   onClick={() => setKeyword("")}
-                  className="absolute right-3 p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                  className="absolute right-3 p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                   title="Clear search"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -274,7 +274,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
               id="state-select"
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full h-11 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#024DA1] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950 cursor-pointer transition-all"
+              className="w-full h-10 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] cursor-pointer transition-colors"
             >
               {STATES.map((s) => (
                 <option key={s} value={s}>
@@ -288,9 +288,9 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
             <button
               type="button"
               onClick={() => setViewMode("grid")}
-              className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`h-10 px-3.5 rounded-md border text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "grid"
-                  ? "bg-[#024DA1] text-white border-[#024DA1] shadow-xs"
+                  ? "bg-[#005EB8] text-white border-[#005EB8] shadow-xs"
                   : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
               }`}
               title="Grid View"
@@ -301,9 +301,9 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
             <button
               type="button"
               onClick={() => setViewMode("table")}
-              className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`h-10 px-3.5 rounded-md border text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "table"
-                  ? "bg-[#024DA1] text-white border-[#024DA1] shadow-xs"
+                  ? "bg-[#005EB8] text-white border-[#005EB8] shadow-xs"
                   : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
               }`}
               title="Table View"
@@ -344,45 +344,45 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
           <Button
             type="button"
             onClick={() => handleAsk(`Which BIS recognized lab tests ${keyword || category}?`)}
-            className="bg-[#024DA1] text-white text-xs font-semibold rounded-full px-5 gap-2 shadow-xs"
+            className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-semibold rounded-md px-5 gap-2 shadow-xs"
           >
             <Sparkles className="w-4 h-4" />
             <span>Ask Mithra For Testing Guidance</span>
           </Button>
         </Card>
       ) : viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filteredLabs.map((lab) => (
             <Card
               key={lab.id}
-              className="flex flex-col justify-between group hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200"
+              className="flex flex-col justify-between group hover:border-slate-300 dark:hover:border-slate-700 transition-colors duration-150 rounded-lg p-5 sm:p-6"
             >
-              <CardHeader className="space-y-3 pb-3">
+              <CardHeader className="space-y-3 p-0 pb-3">
                 <div className="flex items-start justify-between gap-3">
-                  <CardTitle className="text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#024DA1] dark:group-hover:text-blue-400 transition-colors">
+                  <CardTitle className="text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors">
                     {lab.name}
                   </CardTitle>
-                  <Badge variant="blue" className="text-[11px] font-semibold shrink-0">
+                  <Badge variant="blue" className="text-[11px] font-semibold rounded-md shrink-0">
                     {lab.accreditation}
                   </Badge>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                  <MapPin className="w-3.5 h-3.5 text-[#024DA1] shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-[#005EB8] shrink-0" />
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
                     {lab.city}, {lab.state}
                   </span>
                 </div>
               </CardHeader>
 
-              <CardContent className="space-y-3 text-xs text-slate-600 dark:text-slate-400">
+              <CardContent className="space-y-3 p-0 text-xs text-slate-600 dark:text-slate-400">
                 <p className="leading-relaxed">{lab.address}</p>
 
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {lab.categories.map((c, i) => (
                     <span
                       key={i}
-                      className="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700"
+                      className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                     >
                       {c}
                     </span>
@@ -390,12 +390,12 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
                 </div>
               </CardContent>
 
-              <CardFooter className="pt-4 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+              <CardFooter className="p-0 pt-4 mt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5 text-xs">
                 <Button
                   type="button"
                   onClick={() => handleAsk(`What is the testing procedure and sample size required for BIS certification at ${lab.name}?`)}
                   size="sm"
-                  className="bg-blue-50 hover:bg-[#024DA1] hover:text-white text-[#024DA1] dark:bg-blue-950/70 dark:text-blue-300 dark:hover:bg-[#024DA1] dark:hover:text-white text-xs font-semibold rounded-full px-4 gap-1.5 transition-all shadow-2xs"
+                  className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-semibold rounded-md px-3.5 gap-1.5 shadow-xs"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Ask Testing Scope</span>
@@ -405,7 +405,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
                   {lab.phone && (
                     <a
                       href={`tel:${lab.phone}`}
-                      className="h-8 px-3 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition-colors"
+                      className="h-8 px-2.5 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition-colors border border-slate-200 dark:border-slate-700"
                     >
                       <Phone className="w-3 h-3" />
                       <span>{lab.phone}</span>
@@ -415,14 +415,14 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
                   <button
                     type="button"
                     onClick={() => copyLabId(lab.bis_lab_id)}
-                    className="h-8 px-3 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-mono font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                    className="h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-mono font-semibold flex items-center gap-1 cursor-pointer transition-colors"
                     title="Copy BIS Lab ID"
                   >
                     <span>{lab.bis_lab_id}</span>
                     {copiedId === lab.bis_lab_id ? (
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
                     ) : (
-                      <Copy className="w-3 h-3" />
+                      <Copy className="w-3.5 h-3.5" />
                     )}
                   </button>
                 </div>
