@@ -39,7 +39,7 @@ class HallmarkVerifyAgent(BaseAgent):
     async def retrieve_context(self, query: str, limit: int = 5) -> list[dict]:
         return [{"text": HALLMARK_CONTEXT, "source": "BIS Hallmarking Guidelines", "score": 1.0}]
 
-    async def run(self, query: str, session_id=None, context=None) -> dict:
+    async def run(self, query: str, session_id=None, context=None, project_context=None, **kwargs) -> dict:
         # Extract HUID from query (standard format: 2 letters + 6 digits, or 6-char alphanumeric with digits)
         import re
         huid = None

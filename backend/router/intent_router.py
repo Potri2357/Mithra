@@ -98,6 +98,7 @@ class BISRouter:
         session_id: Optional[str] = None,
         context: Optional[list] = None,
         force_intent: Optional[str] = None,
+        project_context: Optional[dict] = None,
     ) -> dict:
         """
         Main routing function.
@@ -117,6 +118,7 @@ class BISRouter:
             query=message,
             session_id=session_id,
             context=context or [],
+            project_context=project_context,
         )
         result["intent"] = intent
         return result

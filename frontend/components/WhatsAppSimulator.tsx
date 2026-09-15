@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { MithraLogo } from "@/components/MithraLogo";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 interface WhatsAppMessage {
   id: string;
@@ -54,6 +55,7 @@ const INITIAL_MESSAGES: WhatsAppMessage[] = [
 
 export function WhatsAppSimulator() {
   const { t, language } = useLanguage();
+  const isDark = useDarkMode();
   const [messages, setMessages] = useState<WhatsAppMessage[]>(INITIAL_MESSAGES);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -151,7 +153,7 @@ export function WhatsAppSimulator() {
           </Link>
 
           <div className="relative">
-            <MithraLogo size={40} className="rounded-full bg-white p-0.5 shadow-sm" />
+            <MithraLogo size={40} darkMode={isDark} className="rounded-full bg-white dark:bg-[#2B2A26] p-0.5 shadow-sm" />
             <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#075E54] dark:border-[#202c33]" />
           </div>
 

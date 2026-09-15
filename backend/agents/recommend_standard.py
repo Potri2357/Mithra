@@ -50,6 +50,6 @@ class RecommendStandardAgent(BaseAgent):
         results.sort(key=lambda x: x["score"], reverse=True)
         return results[:10]
 
-    async def run(self, query: str, session_id=None, context=None) -> dict:
-        result = await super().run(query, session_id, context)
+    async def run(self, query: str, session_id=None, context=None, project_context=None, **kwargs) -> dict:
+        result = await super().run(query, session_id, context, project_context=project_context, **kwargs)
         return result

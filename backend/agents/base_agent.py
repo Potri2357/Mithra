@@ -158,16 +158,41 @@ class BaseAgent:
             ],
         }
 
-    async def run(self, query: str, session_id: Optional[str] = None, context: Optional[list] = None) -> dict:
+    async def run(
+        self,
+        query: str,
+        session_id: Optional[str] = None,
+        context: Optional[list] = None,
+        project_context: Optional[dict] = None,
+    ) -> dict:
         """Main agent pipeline: retrieve → generate → validate citations."""
         try:
             # Step 1: Retrieve relevant passages
             passages = await self.retrieve_context(query, limit=8)
 
-            # Step 2: Build prompt with retrieved context + conversation history
+            # Step 2: Build prompt with retrieved context + conversation history + project context
             context_text = self._format_passages(passages)
             history_text = self._format_history(context or [])
-            prompt = f"""User Query: {query}
+
+            project_section = ""
+            if project_context:
+                p_name = project_context.get("name", "Active Project")
+                p_scheme = project_context.get("scheme", "")
+                p_instructions = project_context.get("instructions", "")
+                p_standards = ", ".join(project_context.get("pinnedStandards", []))
+                project_section = f"""
+==================================================
+ACTIVE PROJECT WORKSPACE CONTEXT:
+Project: {p_name}
+Target Scheme: {p_scheme}
+Pinned Standards: {p_standards}
+Custom Project System Instructions:
+{p_instructions}
+(Strictly prioritize and align your response with the above project constraints and custom instructions.)
+==================================================
+"""
+
+            prompt = f"""{project_section}User Query: {query}
 {history_text}
 Retrieved Context (Cite as [S1], [S2] etc.):
 {context_text}
@@ -217,26 +242,66 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
             lines.append(f"[S{i}] Source: {p.get('source', 'BIS')} | {p.get('text', '')[:500]}")
         return "\n\n".join(lines)
 
+    def _strip_thinking_tags(self, text: str) -> str:
+        """Remove <think>...</think> blocks produced by Qwen and similar thinking models."""
+        # Remove <think>...</think> blocks (possibly multiline)
+        text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
+        return text.strip()
+
+    def _looks_like_raw_json(self, text: str) -> bool:
+        """Detect if the answer field is actually a raw JSON dump rather than markdown prose."""
+        stripped = text.strip()
+        return stripped.startswith("{") and stripped.endswith("}")
+
     def _parse_response(self, text: str) -> dict:
+        # Step 1: Strip thinking model <think> blocks
+        text = self._strip_thinking_tags(text)
+
+        # Step 2: Try direct JSON parse
         try:
             data = json.loads(text)
             return self._extract_parsed_fields(data, text)
         except Exception:
-            # Try extracting JSON from markdown code blocks
-            match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
-            if match:
-                try:
-                    data = json.loads(match.group(1))
+            pass
+
+        # Step 3: Try JSON from markdown code blocks
+        match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
+        if match:
+            try:
+                data = json.loads(match.group(1))
+                return self._extract_parsed_fields(data, text)
+            except Exception:
+                pass
+
+        # Step 4: Try extracting the first JSON object from anywhere in the text
+        match = re.search(r"(\{.*\})", text, re.DOTALL)
+        if match:
+            try:
+                data = json.loads(match.group(1))
+                if data.get("answer"):
                     return self._extract_parsed_fields(data, text)
-                except Exception:
-                    pass
+            except Exception:
+                pass
+
+        # Step 5: Last resort — the text itself is the answer, but guard against raw JSON leak
+        if self._looks_like_raw_json(text):
+            # The model returned raw JSON but we couldn't parse it properly; abstain safely
+            logger.warning(f"[{self.name}] Model returned unparseable JSON blob; abstaining.")
             return {
-                "answer": text,
+                "answer": "",
                 "citations": [],
-                "abstained": False,
+                "abstained": True,
                 "follow_up": None,
                 "follow_ups": [],
             }
+
+        return {
+            "answer": text,
+            "citations": [],
+            "abstained": False,
+            "follow_up": None,
+            "follow_ups": [],
+        }
 
     def _extract_parsed_fields(self, data: dict, raw_text: str) -> dict:
         follow_ups = data.get("follow_ups") or []

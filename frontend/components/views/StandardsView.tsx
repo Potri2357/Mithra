@@ -273,7 +273,7 @@ export function StandardsSearchToolbar({
         {/* Sector Filter with custom ChevronDown */}
         <div className="md:col-span-3 relative">
           <select
-            className="w-full h-10 pl-3 pr-8 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-md text-xs sm:text-sm font-medium text-[#0F172A] dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] transition-colors cursor-pointer appearance-none"
+            className="w-full h-10 pl-3 pr-8 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-md text-xs sm:text-sm font-medium text-[#0F172A] dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] dark:focus:border-[#52525B] dark:focus:ring-[#52525B] transition-colors cursor-pointer appearance-none"
             value={selectedSector}
             onChange={(e) => onSectorChange(e.target.value)}
           >
@@ -289,7 +289,7 @@ export function StandardsSearchToolbar({
         {/* Scheme Filter with custom ChevronDown */}
         <div className="md:col-span-2 relative">
           <select
-            className="w-full h-10 pl-3 pr-8 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-md text-xs sm:text-sm font-medium text-[#0F172A] dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] transition-colors cursor-pointer appearance-none"
+            className="w-full h-10 pl-3 pr-8 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-md text-xs sm:text-sm font-medium text-[#0F172A] dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] dark:focus:border-[#52525B] dark:focus:ring-[#52525B] transition-colors cursor-pointer appearance-none"
             value={selectedScheme}
             onChange={(e) => onSchemeChange(e.target.value)}
           >

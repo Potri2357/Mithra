@@ -63,7 +63,7 @@ class LabFinderAgent:
 
         return results[:20]  # cap results
 
-    async def run(self, query: str, session_id=None, context=None) -> dict:
+    async def run(self, query: str, session_id=None, context=None, project_context=None, **kwargs) -> dict:
         """Handle natural language lab queries."""
         # Extract category and location from natural language
         category, state, city = self._extract_params(query)

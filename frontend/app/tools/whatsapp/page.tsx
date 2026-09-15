@@ -6,6 +6,7 @@ import { MessageSquare, ArrowLeft, ShieldCheck, Smartphone } from "lucide-react"
 import { WhatsAppSimulator } from "@/components/WhatsAppSimulator";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StandaloneBar from "@/components/StandaloneBar";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function WhatsAppToolPage() {
@@ -14,6 +15,7 @@ export default function WhatsAppToolPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <Navbar />
+      <StandaloneBar title="Mithra on WhatsApp" subtitle="Tier-2 Multi-Channel Distribution · Tools" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Navigation Breadcrumb */}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MithraLogo } from "@/components/MithraLogo";
+import { useDarkMode } from "@/hooks/useDarkMode";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -15,6 +16,7 @@ import {
   Scale,
   MessageSquare,
   Sparkles,
+  FolderKanban,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -27,19 +29,32 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [navSearchQuery, setNavSearchQuery] = useState("");
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window !== "undefined") {
-      const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
-      return saved || "light";
-    }
-    return "light";
-  });
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    // Check for standalone mode (opened in new tab from chat sidebar)
+    if (typeof window !== "undefined" && window.location.search.includes("standalone=1")) {
+      setIsStandalone(true);
+    }
+    const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
+    if (saved && (saved === "light" || saved === "dark")) {
+      setTheme(saved);
+      document.documentElement.setAttribute("data-theme", saved);
+      if (saved === "dark") document.documentElement.classList.add("dark");
+      else document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if (!mounted) return;
     document.documentElement.setAttribute("data-theme", theme);
     if (theme === "dark") document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
-  }, [theme]);
+  }, [theme, mounted]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 8);
@@ -78,18 +93,21 @@ export default function Navbar() {
     { href: "/tools/whatsapp", label: t("nav.whatsapp"), icon: MessageSquare, desc: "Instant compliance assistant on WhatsApp" },
   ];
 
+  if (isStandalone) return null;
+
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-200 bg-white/95 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 ${
-        scrolled ? "shadow-sm shadow-slate-900/5" : ""
+      className={`sticky top-0 z-50 w-full transition-all duration-200 bg-white/95 dark:bg-[#181816]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-[#34332E] ${
+        scrolled ? "shadow-sm shadow-black/10" : ""
       }`}
+      style={{ position: "sticky", top: 0, zIndex: 50 }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 gap-4">
         {/* Brand Lockup */}
         <Link href="/" className="flex items-center gap-3 group shrink-0">
-          <MithraLogo size={36} className="shadow-xs group-hover:scale-105 transition-transform" />
+          <MithraLogo size={36} darkMode={theme === "dark"} className="shadow-xs group-hover:scale-105 transition-transform" />
           <div className="leading-tight">
-            <div className="text-slate-900 dark:text-white font-bold text-base tracking-tight group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
+            <div className="text-slate-900 dark:text-white font-bold text-base tracking-tight group-hover:text-[#005EB8] dark:group-hover:text-white transition-colors flex items-center gap-1.5">
               <span>{t("brand.title")}</span>
             </div>
             <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
@@ -104,7 +122,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-[#005EB8] dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-[#005EB8] dark:hover:text-[#F5F4ED] hover:bg-slate-50 dark:hover:bg-[#2B2A26] transition-colors"
             >
               {link.label}
             </Link>
@@ -119,7 +137,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setToolsDropdownOpen(!toolsDropdownOpen)}
-              className="px-3 py-1.5 rounded-lg text-xs font-bold text-[#0052CC] bg-blue-50/80 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors flex items-center gap-1 cursor-pointer"
+              className="px-3 py-1.5 rounded-lg text-xs font-bold text-[#0052CC] bg-blue-50/80 hover:bg-blue-100 dark:bg-[#2B2A26] dark:text-[#F5F4ED] transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>{t("nav.tools")}</span>
@@ -127,7 +145,7 @@ export default function Navbar() {
             </button>
 
             {toolsDropdownOpen && (
-              <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-fadeIn">
+              <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-[#21201C] rounded-xl shadow-xl border border-slate-200 dark:border-[#34332E] p-2 z-50 animate-fadeIn">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1">
                   Interactive Tools
                 </div>
@@ -136,13 +154,13 @@ export default function Navbar() {
                     key={tool.href}
                     href={tool.href}
                     onClick={() => setToolsDropdownOpen(false)}
-                    className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                    className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-[#2B2A26] transition-colors group"
                   >
-                    <div className="p-1.5 rounded-md bg-blue-50 dark:bg-blue-950 text-[#0052CC] dark:text-blue-400 group-hover:scale-105 transition-transform shrink-0 mt-0.5">
+                    <div className="p-1.5 rounded-md bg-blue-50 dark:bg-[#2B2A26] text-[#0052CC] dark:text-blue-400 group-hover:scale-105 transition-transform shrink-0 mt-0.5">
                       <tool.icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#0052CC] dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#0052CC] dark:group-hover:text-[#F5F4ED] transition-colors">
                         {tool.label}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
@@ -154,6 +172,15 @@ export default function Navbar() {
               </div>
             )}
           </div>
+
+          {/* Projects Link (ChatGPT/Claude Inspired) */}
+          <Link
+            href="/projects"
+            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-[#005EB8] dark:hover:text-[#F5F4ED] hover:bg-slate-50 dark:hover:bg-[#2B2A26] transition-colors flex items-center gap-1.5"
+          >
+            <FolderKanban className="w-3.5 h-3.5 text-amber-500" />
+            <span>{t("nav.projects")}</span>
+          </Link>
         </nav>
 
         {/* Right Actions */}
@@ -168,7 +195,7 @@ export default function Navbar() {
                   onChange={(e) => setNavSearchQuery(e.target.value)}
                   placeholder={t("nav.searchPlaceholder")}
                   autoFocus
-                  className="w-48 sm:w-64 h-9 px-3 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8]"
+                  className="w-48 sm:w-64 h-9 px-3 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] dark:focus:border-[#52525B] dark:focus:ring-[#52525B] text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                 />
                 <button
                   type="button"
@@ -209,13 +236,14 @@ export default function Navbar() {
             type="button"
             onClick={toggleTheme}
             className="w-9 h-9 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-            title={theme === "light" ? t("nav.darkMode") : t("nav.lightMode")}
+            title={mounted && theme === "dark" ? t("nav.lightMode") : t("nav.darkMode")}
             aria-label="Toggle Theme"
+            suppressHydrationWarning
           >
-            {theme === "light" ? (
-              <Moon className="w-4 h-4" />
-            ) : (
+            {mounted && theme === "dark" ? (
               <Sun className="w-4 h-4" />
+            ) : (
+              <Moon className="w-4 h-4" />
             )}
           </button>
 
@@ -243,7 +271,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 py-4 space-y-4 shadow-md animate-fadeIn">
+        <div className="lg:hidden bg-white dark:bg-[#181816] border-b border-slate-200 dark:border-[#34332E] px-4 py-4 space-y-4 shadow-md animate-fadeIn">
           {/* Portals Section */}
           <div className="space-y-1">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">
@@ -275,13 +303,25 @@ export default function Navbar() {
                   key={tool.href}
                   href={tool.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-800 dark:text-slate-100 hover:bg-blue-50/60 dark:hover:bg-blue-950/40"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-800 dark:text-slate-100 hover:bg-blue-50/60 dark:hover:bg-[#2B2A26]"
                 >
                   <tool.icon className="w-3.5 h-3.5 text-[#0052CC] dark:text-blue-400 shrink-0" />
                   <span>{tool.label}</span>
                 </Link>
               ))}
             </nav>
+          </div>
+
+          {/* Projects Link Mobile */}
+          <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+            <Link
+              href="/projects"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+            >
+              <FolderKanban className="w-4 h-4" />
+              <span>{t("nav.projects")} Workspace</span>
+            </Link>
           </div>
           <div className="py-1 flex items-center justify-between pt-2">
             <button

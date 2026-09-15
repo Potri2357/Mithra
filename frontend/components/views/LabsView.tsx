@@ -275,7 +275,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
               id="state-select"
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full h-10 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] cursor-pointer transition-colors"
+              className="w-full h-10 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium text-slate-800 dark:text-slate-200 outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] dark:focus:border-[#52525B] dark:focus:ring-[#52525B] cursor-pointer transition-colors"
             >
               {STATES.map((s) => (
                 <option key={s} value={s}>

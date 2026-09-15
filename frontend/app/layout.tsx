@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Noto_Sans, Noto_Sans_Devanagari, Noto_Sans_Tamil } from "next/font/google";
+import { DM_Sans, Noto_Sans_Devanagari, Noto_Sans_Tamil } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { ProjectProvider } from "@/context/ProjectContext";
 import "./globals.css";
 
-const notoSans = Noto_Sans({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-noto-sans",
+  variable: "--font-dm-sans",
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -44,9 +46,29 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme="light">
-      <body className={`${notoSans.variable} ${notoSansDevanagari.variable} ${notoSansTamil.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900`}>
-        <LanguageProvider>{children}</LanguageProvider>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var s = localStorage.getItem('mithra-theme') || localStorage.getItem('maanak-theme');
+                if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.setAttribute('data-theme', 'dark');
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.setAttribute('data-theme', 'light');
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
+      <body className={`${dmSans.variable} ${notoSansDevanagari.variable} ${notoSansTamil.variable} font-sans antialiased min-h-screen`}>
+        <LanguageProvider>
+          <ProjectProvider>{children}</ProjectProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

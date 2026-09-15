@@ -143,10 +143,158 @@ export const translations: TranslationDictionary = {
     hi: "व्हाट्सएप बॉट",
     ta: "வாட்ஸ்அப் பாட்",
   },
+  "nav.projects": {
+    en: "Workspaces",
+    hi: "वर्कस्पेस",
+    ta: "பணியிடங்கள்",
+  },
   "nav.chatAssistant": {
     en: "AI Assistant",
     hi: "एआई सहायक",
     ta: "AI உதவியாளர்",
+  },
+  // ─── Projects Workspace ───
+  "projects.title": {
+    en: "Compliance Workspaces",
+    hi: "अनुपालन वर्कस्पेस",
+    ta: "இணக்க பணியிடங்கள்",
+  },
+  "projects.subtitle": {
+    en: "Dedicated workspace containers inspired by Claude & ChatGPT. Group standards, custom instructions, artifacts, and compliance conversations for your products.",
+    hi: "क्लॉड और चैटजीपीटी से प्रेरित समर्पित वर्कस्पेस। अपने उत्पादों के लिए मानक, कस्टम निर्देश, आर्टिफैक्ट्स और अनुपालन बातचीत को समूहीकृत करें।",
+    ta: "க்ளூட் மற்றும் சாட்ஜிபிடியால் ஈர்க்கப்பட்ட பிரத்யேக பணியிடம். உங்கள் தயாரிப்புகளுக்கான தரநிலைகள், தனிப்பயன் அறிவுறுத்தல்கள் மற்றும் இணக்க உரையாடல்களை ஒழுங்கமைக்கவும்.",
+  },
+  "projects.newProject": {
+    en: "New Workspace",
+    hi: "नया वर्कस्पेस",
+    ta: "புதிய பணியிடம்",
+  },
+  "projects.openWorkspace": {
+    en: "Open Workspace",
+    hi: "वर्कस्पेस खोलें",
+    ta: "பணியிடத்தை திற",
+  },
+  "projects.customInstructions": {
+    en: "Custom System Instructions",
+    hi: "कस्टम सिस्टम निर्देश",
+    ta: "தனிப்பயன் அமைப்பு வழிமுறைகள்",
+  },
+  "projects.pinnedStandards": {
+    en: "Pinned Standards",
+    hi: "पिन किए गए मानक",
+    ta: "இணைக்கப்பட்ட தரநிலைகள்",
+  },
+  "projects.artifacts": {
+    en: "Project Artifacts & Notes",
+    hi: "प्रोजेक्ट आर्टिफैक्ट्स और नोट्स",
+    ta: "திட்ட ஆவணங்கள் & குறிப்புகள்",
+  },
+  "projects.workspaces": {
+    en: "Workspaces",
+    hi: "वर्कस्पेस",
+    ta: "பணியிடங்கள்",
+  },
+  "projects.new": {
+    en: "New",
+    hi: "नया",
+    ta: "புதிய",
+  },
+  "projects.active": {
+    en: "Active",
+    hi: "सक्रिय",
+    ta: "செயலில்",
+  },
+  "projects.newChatInWorkspace": {
+    en: "New chat in workspace",
+    hi: "वर्कस्पेस में नई चैट",
+    ta: "பணியிடத்தில் புதிய அரட்டை",
+  },
+  "projects.noChatsInWorkspace": {
+    en: "No chats yet in this workspace. Click above to start.",
+    hi: "इस वर्कस्पेस में अभी तक कोई चैट नहीं है। शुरू करने के लिए ऊपर क्लिक करें।",
+    ta: "இந்தப் பணியிடத்தில் இன்னும் உரையாடல்கள் இல்லை. தொடங்க மேலே கிளிக் செய்யவும்.",
+  },
+  "projects.activeWorkspace": {
+    en: "Active Workspace",
+    hi: "सक्रिय वर्कस्पेस",
+    ta: "செயலில் உள்ள பணியிடம்",
+  },
+  "projects.exitWorkspace": {
+    en: "Exit workspace context",
+    hi: "वर्कस्पेस से बाहर निकलें",
+    ta: "பணியிடத்திலிருந்து வெளியேறு",
+  },
+  "projects.workspaceGem": {
+    en: "WORKSPACE GEM",
+    hi: "वर्कस्पेस जेम",
+    ta: "பணியிட ஜெம்",
+  },
+  "projects.workspaceQuickStarts": {
+    en: "Workspace Quick-Starts",
+    hi: "वर्कस्पेस त्वरित शुरुआत",
+    ta: "பணியிட விரைவு தொடக்கங்கள்",
+  },
+  "projects.createWorkspaceTitle": {
+    en: "Create New Compliance Workspace",
+    hi: "नया अनुपालन वर्कस्पेस बनाएं",
+    ta: "புதிய இணக்க பணியிடத்தை உருவாக்கவும்",
+  },
+  "projects.createWorkspaceSubtitle": {
+    en: "Pin dedicated standards & custom instructions to this chatbot workspace",
+    hi: "इस चैटबॉट वर्कस्पेस में समर्पित मानक और कस्टम निर्देश पिन करें",
+    ta: "இந்த சாட்பாட் பணியிடத்தில் பிரத்யேக தரநிலைகள் மற்றும் தனிப்பயன் வழிமுறைகளை இணைக்கவும்",
+  },
+  "projects.workspaceName": {
+    en: "Workspace Name",
+    hi: "वर्कस्पेस का नाम",
+    ta: "பணியிடத்தின் பெயர்",
+  },
+  "projects.workspaceCategory": {
+    en: "Industry / Sector",
+    hi: "उद्योग / क्षेत्र",
+    ta: "தொழில் / துறை",
+  },
+  "projects.workspaceScheme": {
+    en: "Certification Scheme",
+    hi: "प्रमाणन योजना",
+    ta: "சான்றிதழ் திட்டம்",
+  },
+  "projects.createWorkspaceBtn": {
+    en: "Create Workspace",
+    hi: "वर्कस्पेस बनाएं",
+    ta: "பணியிடத்தை உருவாக்கவும்",
+  },
+
+  // ── Pre-defined Workspace Names & Descriptions ──
+  "project.smart-meter-is16444.name": {
+    en: "Smart Meter & Power Equipment (IS 16444)",
+    hi: "स्मार्ट मीटर और विद्युत उपकरण (IS 16444)",
+    ta: "ஸ்மார்ட் மீட்டர் & மின்கருவிகள் (IS 16444)",
+  },
+  "project.smart-meter-is16444.desc": {
+    en: "End-to-end BIS Scheme I certification workflow for domestic AC static smart electricity meters with cellular/RF modules.",
+    hi: "सेल्युलर/आरएफ मॉड्यूल वाले घरेलू एसी स्थिर स्मार्ट बिजली मीटरों के लिए संपूर्ण बीआईएस स्कीम I प्रमाणन कार्यप्रणाली।",
+    ta: "செல்லுலார்/RF தொகுதிகள் கொண்ட வீட்டு AC நிலையான ஸ்மார்ட் மின்சார மீட்டர்களுக்கான முழுமையான BIS திட்டம் I சான்றிதழ் பணிப்பாய்வு.",
+  },
+  "project.gold-hallmarking-compliance.name": {
+    en: "Retail Gold Jewellery Hallmarking & HUID",
+    hi: "खुदरा स्वर्ण आभूषण हॉलमार्किंग और HUID",
+    ta: "சில்லறை தங்க நகை ஹால்மார்க்கிங் & HUID",
+  },
+  "project.gold-hallmarking-compliance.desc": {
+    en: "6-digit HUID tracking, karatage assaying compliance, and jeweller registration portal requirements under Scheme IV.",
+    hi: "स्कीम IV के तहत 6-अंकीय HUID ट्रैकिंग, कैरेट परख अनुपालन, और जौहरी पंजीकरण पोर्टल आवश्यकताएं।",
+    ta: "திட்டம் IV இன் கீழ் 6-இலக்க HUID கண்காணிப்பு, காரட் சோதனை இணக்கம் மற்றும் நகைக்கடை பதிவு போர்டல் தேவைகள்.",
+  },
+  "project.toys-safety-qco-2026.name": {
+    en: "Toy Safety QCO 2026 Mandate",
+    hi: "खिलौना सुरक्षा QCO 2026 शासनादेश",
+    ta: "பொம்மை பாதுகாப்பு QCO 2026 ஆணை",
+  },
+  "project.toys-safety-qco-2026.desc": {
+    en: "Mandatory safety testing for domestic and imported toys under the Toys (Quality Control) Order.",
+    hi: "खिलौने (गुणवत्ता नियंत्रण) आदेश के तहत घरेलू और आयातित खिलौनों के लिए अनिवार्य सुरक्षा परीक्षण।",
+    ta: "பொம்மைகள் (தரக் கட்டுப்பாடு) ஆணையின் கீழ் உள்நாட்டு மற்றும் இறக்குமதி செய்யப்பட்ட பொம்மைகளுக்கான கட்டாய பாதுகாப்பு சோதனை.",
   },
   "nav.searchPlaceholder": {
     en: "Search standard (e.g. IS 14543), product, or scheme...",

@@ -6,6 +6,7 @@ import { ArrowLeft, Calculator, Sparkles, ShieldCheck, HelpCircle } from "lucide
 import { CostEstimator } from "@/components/CostEstimator";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StandaloneBar from "@/components/StandaloneBar";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function CostEstimatorPage() {
@@ -14,6 +15,7 @@ export default function CostEstimatorPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <Navbar />
+      <StandaloneBar title={t("calc.title")} subtitle="BIS Certification Fee Calculator · Tools" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Navigation Breadcrumb */}

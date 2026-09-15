@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { MithraLogo } from "@/components/MithraLogo";
+import { useDarkMode } from "@/hooks/useDarkMode";
 import {
   ShieldCheck,
   BookOpen,
@@ -15,6 +16,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
   const { t } = useLanguage();
+  const isDark = useDarkMode();
 
   const portals = [
     { href: "/standards", label: t("nav.standards") },
@@ -25,6 +27,7 @@ export default function Footer() {
   ];
 
   const tools = [
+    { href: "/projects", label: `${t("nav.projects")} Workspace` },
     { href: "/tools/cost-estimator", label: t("nav.estimator") },
     { href: "/tools/complaint-drafter", label: t("nav.complaintDrafter") },
     { href: "/tools/whatsapp", label: t("nav.whatsapp") },
@@ -39,7 +42,7 @@ export default function Footer() {
           {/* Col 1 — Brand */}
           <div className="space-y-3">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <MithraLogo size={32} className="shadow-xs group-hover:scale-105 transition-transform" />
+              <MithraLogo size={32} darkMode={isDark} className="shadow-xs group-hover:scale-105 transition-transform" />
               <div>
                 <div className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors leading-tight">
                   {t("brand.title")}

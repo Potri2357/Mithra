@@ -74,6 +74,7 @@ class ChatRequest(BaseModel):
     language: str = "en"          # "en" or "hi"
     session_id: Optional[str] = None
     context: Optional[list] = []
+    project_context: Optional[dict] = None
 
 class ChatResponse(BaseModel):
     answer: str
@@ -105,6 +106,7 @@ async def chat(req: ChatRequest):
     """
     Main chat endpoint — handles all 7 text-based Tier-1 intents.
     Detects intent → retrieves → generates cited answer → validates citations.
+    Supports project_context for ChatGPT/Claude inspired project workspaces.
     """
     try:
         router: BISRouter = app.state.router
@@ -116,12 +118,30 @@ async def chat(req: ChatRequest):
             pivot_message = await translator.translate(req.message, source=req.language, target="en")
 
         # Step 2: Route + agent call
-        result = await router.route(pivot_message, session_id=req.session_id, context=req.context)
+        result = await router.route(
+            pivot_message,
+            session_id=req.session_id,
+            context=req.context,
+            project_context=req.project_context,
+        )
 
-        # Step 3: Translate answer back
-        answer = result["answer"]
-        if req.language in ("hi", "ta") and not result.get("abstained"):
-            answer = await translator.translate(answer, source="en", target=req.language)
+        # Step 3: Translate answer and follow-ups back
+        answer = result.get("answer", "")
+        follow_up = result.get("follow_up")
+        follow_ups = result.get("follow_ups", [])
+
+        if req.language in ("hi", "ta"):
+            if answer:
+                answer = await translator.translate(answer, source="en", target=req.language)
+            if follow_up:
+                follow_up = await translator.translate(follow_up, source="en", target=req.language)
+            if follow_ups:
+                translated_fups = []
+                for f in follow_ups:
+                    if f and isinstance(f, str) and f.strip():
+                        tr = await translator.translate(f, source="en", target=req.language)
+                        translated_fups.append(tr)
+                follow_ups = translated_fups
 
         return ChatResponse(
             answer=answer,
@@ -129,8 +149,8 @@ async def chat(req: ChatRequest):
             intent=result.get("intent", "unknown"),
             language=req.language,
             abstained=result.get("abstained", False),
-            follow_up=result.get("follow_up"),
-            follow_ups=result.get("follow_ups", []),
+            follow_up=follow_up,
+            follow_ups=follow_ups,
         )
     except Exception as e:
         logger.error(f"Chat error: {e}")
@@ -222,8 +242,8 @@ async def photo_product(
         )
 
         answer = result["answer"]
-        if language == "hi" and not result.get("abstained"):
-            answer = await translator.translate(answer, source="en", target="hi")
+        if language in ("hi", "ta"):
+            answer = await translator.translate(answer, source="en", target=language)
 
         return JSONResponse({
             "classification": classification,
@@ -268,8 +288,8 @@ async def photo_hallmark(
         )
 
         answer = result["answer"]
-        if language == "hi":
-            answer = await translator.translate(answer, source="en", target="hi")
+        if language in ("hi", "ta"):
+            answer = await translator.translate(answer, source="en", target=language)
 
         return JSONResponse({
             "huid": huid,
