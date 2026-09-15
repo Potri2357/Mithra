@@ -815,7 +815,6 @@ function ChatContent() {
             <div className="space-y-1.5">
               {projects.map((p) => {
                 const isCurActive = activeProjectId === p.id;
-                const isExpanded = expandedWorkspaces[p.id] ?? isCurActive;
                 const workspaceSessions = sessions.filter((s) => s.projectId === p.id);
                 const localizedName = getWorkspaceName(p, language);
 
@@ -828,18 +827,18 @@ function ChatContent() {
                         : "bg-slate-50/50 border-slate-200/60 dark:bg-[#1E1D19]/40 dark:border-[#2C2A24]"
                     }`}
                   >
-                    {/* Workspace Header */}
+                    {/* Project Header */}
                     <div
                       onClick={() => {
-                        if (!isCurActive) {
-                          setActiveProject(p.id);
+                        setActiveProject(p.id);
+                        if (!currentSessionId || sessions.find((s) => s.id === currentSessionId)?.projectId !== p.id) {
+                          clearChat(p.id);
                         }
-                        toggleWorkspaceExpanded(p.id);
                       }}
                       className="group flex items-center justify-between px-2.5 py-2 cursor-pointer select-none"
-                      title={`${localizedName} — ${t("projects.openWorkspace") || "Click to open workspace"}`}
+                      title={localizedName}
                     >
-                      <div className="flex items-center gap-2 truncate">
+                      <div className="flex items-center gap-2 truncate flex-1">
                         <FolderKanban
                           className={`w-3.5 h-3.5 shrink-0 transition-colors ${
                             isCurActive
@@ -859,100 +858,77 @@ function ChatContent() {
                       </div>
 
                       <div className="flex items-center gap-1 shrink-0">
-                        {isCurActive && (
-                          <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
-                            {t("projects.active") || "Active"}
-                          </span>
-                        )}
                         <button
                           type="button"
-                          onClick={(e) => toggleWorkspaceExpanded(p.id, e)}
-                          className="p-0.5 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            clearChat(p.id);
+                          }}
+                          className="p-1 rounded text-slate-400 hover:text-amber-700 dark:hover:text-[#F5F4ED] hover:bg-amber-500/20 dark:hover:bg-[#34332E] transition-colors"
+                          title={t("projects.newChatInWorkspace") || "New chat"}
+                          aria-label="New chat in project"
                         >
-                          {isExpanded ? (
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          ) : (
-                            <ChevronRight className="w-3.5 h-3.5" />
-                          )}
+                          <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
 
-                    {/* Chats in this Workspace (Gem-style) */}
-                    {isExpanded && (
-                      <div className="px-2 pb-2 pt-0.5 border-t border-slate-200/40 dark:border-[#34332E]/60 space-y-1">
-                        {/* New chat inside this workspace */}
-                        <button
-                          type="button"
-                          onClick={() => clearChat(p.id)}
-                          className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[11px] font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 dark:text-[#E6E4DD] dark:hover:text-white dark:hover:bg-[#34332E] transition-colors text-left cursor-pointer"
-                        >
-                          <Plus className="w-3 h-3 shrink-0" />
-                          <span className="truncate">{t("projects.newChatInWorkspace") || "New chat in workspace"}</span>
-                        </button>
-
-                        {/* List of workspace chat sessions */}
-                        {workspaceSessions.length === 0 ? (
-                          <span className="text-[11px] text-slate-400 dark:text-[#8C8A82] px-2 py-1 block italic">
-                            {t("projects.noChatsInWorkspace") || "No chats yet"}
-                          </span>
-                        ) : (
-                          <div className="space-y-0.5">
-                            {workspaceSessions.map((session) => (
-                              <div
-                                key={session.id}
-                                onClick={() => loadSession(session)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    loadSession(session);
-                                  }
-                                }}
-                                role="button"
-                                tabIndex={0}
-                                className={`recent-link cursor-pointer text-left w-full group flex items-center justify-between gap-1 pl-2 pr-1.5 py-1 rounded-md text-[11px] ${
-                                  session.id === currentSessionId
-                                    ? "bg-amber-500/20 text-amber-900 dark:bg-[#34332E] dark:text-[#F5F4ED] font-semibold"
-                                    : "text-slate-700 dark:text-[#C4C2B9] hover:bg-slate-200/50 dark:hover:bg-[#2B2A26]"
-                                }`}
-                              >
-                              <span className="truncate flex-1">{session.title}</span>
-                                {deletingSessionId === session.id ? (
-                                  <span className="flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-                                    <button
-                                      type="button"
-                                      onClick={(e) => { e.stopPropagation(); deleteSession(session.id, e); setDeletingSessionId(null); }}
-                                      className="p-0.5 rounded text-emerald-500 hover:bg-emerald-500/10 transition-colors"
-                                      title="Confirm delete"
-                                      aria-label="Confirm delete"
-                                    >
-                                      <Check className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={(e) => { e.stopPropagation(); setDeletingSessionId(null); }}
-                                      className="p-0.5 rounded text-slate-400 dark:text-[#9C9A91] hover:bg-slate-200/60 dark:hover:bg-[#34332E] transition-colors"
-                                      title="Cancel"
-                                      aria-label="Cancel delete"
-                                    >
-                                      <X className="w-3.5 h-3.5" />
-                                    </button>
-                                  </span>
-                                ) : (
+                    {/* Chats in this Project */}
+                    {workspaceSessions.length > 0 && (
+                      <div className="px-2 pb-2 pt-0.5 border-t border-slate-200/40 dark:border-[#34332E]/60 space-y-0.5">
+                        {workspaceSessions.map((session) => (
+                          <div
+                            key={session.id}
+                            onClick={() => loadSession(session)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                loadSession(session);
+                              }
+                            }}
+                            role="button"
+                            tabIndex={0}
+                            className={`recent-link cursor-pointer text-left w-full group flex items-center justify-between gap-1 pl-2 pr-1.5 py-1 rounded-md text-[11px] ${
+                              session.id === currentSessionId
+                                ? "bg-amber-500/20 text-amber-900 dark:bg-[#34332E] dark:text-[#F5F4ED] font-semibold"
+                                : "text-slate-700 dark:text-[#C4C2B9] hover:bg-slate-200/50 dark:hover:bg-[#2B2A26]"
+                            }`}
+                          >
+                            <span className="truncate flex-1">{session.title}</span>
+                            {deletingSessionId === session.id ? (
+                              <span className="flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
                                 <button
                                   type="button"
-                                  onClick={(e) => { e.stopPropagation(); setDeletingSessionId(session.id); }}
-                                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-slate-400 dark:text-[#9C9A91] hover:text-red-500 transition-opacity shrink-0"
-                                  title="Delete chat"
-                                  aria-label="Delete chat"
+                                  onClick={(e) => { e.stopPropagation(); deleteSession(session.id, e); setDeletingSessionId(null); }}
+                                  className="p-0.5 rounded text-emerald-500 hover:bg-emerald-500/10 transition-colors"
+                                  title="Confirm delete"
+                                  aria-label="Confirm delete"
                                 >
-                                  <X className="w-3 h-3" />
+                                  <Check className="w-3.5 h-3.5" />
                                 </button>
-                                )}
-                              </div>
-                            ))}
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setDeletingSessionId(null); }}
+                                  className="p-0.5 rounded text-slate-400 dark:text-[#9C9A91] hover:bg-slate-200/60 dark:hover:bg-[#34332E] transition-colors"
+                                  title="Cancel"
+                                  aria-label="Cancel delete"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setDeletingSessionId(session.id); }}
+                                className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-slate-400 dark:text-[#9C9A91] hover:text-red-500 transition-opacity shrink-0"
+                                title="Delete chat"
+                                aria-label="Delete chat"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
                           </div>
-                        )}
+                        ))}
                       </div>
                     )}
                   </div>
@@ -1285,39 +1261,6 @@ function ChatContent() {
             </button>
           )}
         </div>
-
-        {/* Active Workspace Context Banner (ChatGPT & Claude Style) */}
-        {activeProject && (
-          <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 text-xs animate-fadeIn">
-            <div className="flex items-center gap-2 truncate">
-              <FolderKanban className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-              <span className="font-bold text-amber-900 dark:text-amber-200">{t("projects.activeWorkspace") || "Active Workspace"}:</span>
-              <span className="font-semibold text-slate-800 dark:text-[#F5F4ED] truncate">{getWorkspaceName(activeProject, language)}</span>
-              <span className="hidden sm:inline px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[10px] font-bold">
-                {getWorkspaceScheme(activeProject.scheme, language)}
-              </span>
-              <span className="hidden md:inline text-[11px] text-slate-500 dark:text-[#9C9A91]">
-                ({activeProject.pinnedStandards.length} standards injected)
-              </span>
-            </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <Link
-                href={`/projects/${activeProject.id}`}
-                className="font-semibold text-amber-700 dark:text-amber-300 hover:underline flex items-center gap-1"
-              >
-                <span>{t("projects.workspaces") || "Workspace"}</span>
-                <ChevronRight className="w-3 h-3" />
-              </Link>
-              <button
-                onClick={() => setActiveProject(null)}
-                className="p-1 rounded hover:bg-amber-500/20 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white cursor-pointer"
-                title={t("projects.exitWorkspace") || "Exit workspace context"}
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Main Chatbot Message Thread */}
         <main ref={threadRef} className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
@@ -1668,7 +1611,12 @@ function ChatContent() {
                 <input
                   type="text"
                   className="composer-input"
-                  placeholder={t("chat.composerPlaceholder")}
+                  placeholder={
+                    activeProject
+                      ? (t("chat.composerWorkspacePlaceholder") || "Ask anything about {workspace}...")
+                          .replace("{workspace}", getWorkspaceName(activeProject, language))
+                      : t("chat.composerPlaceholder")
+                  }
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => {

@@ -405,6 +405,11 @@ export const translations: TranslationDictionary = {
     hi: "भारतीय मानकों, अनिवार्य QCO, योजनाओं या हॉलमार्किंग के बारे में पूछें...",
     ta: "இந்திய தரநிலைகள், கட்டாய QCO, திட்டங்கள் அல்லது ஹால்மார்க் பற்றி கேட்கவும்...",
   },
+  "chat.composerWorkspacePlaceholder": {
+    en: "Ask anything about {workspace}...",
+    hi: "{workspace} के बारे में कुछ भी पूछें...",
+    ta: "{workspace} பற்றி எதையும் கேட்கவும்...",
+  },
   "chat.suggestedFollowups": {
     en: "Suggested Follow-ups",
     hi: "सुझाए गए अनुवर्ती प्रश्न",
