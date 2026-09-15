@@ -26,7 +26,7 @@ class SarvamTranslator:
             return text
 
         # Map to Sarvam language codes
-        lang_map = {"en": "en-IN", "hi": "hi-IN"}
+        lang_map = {"en": "en-IN", "hi": "hi-IN", "ta": "ta-IN"}
         src = lang_map.get(source, source)
         tgt = lang_map.get(target, target)
 
@@ -52,32 +52,59 @@ class SarvamTranslator:
                     data = response.json()
                     return data.get("translated_text", text)
                 else:
-                    logger.warning(f"Sarvam translate error {response.status_code}, falling back to Gemini")
-                    return await self._translate_gemini(text, source, target)
+                    logger.warning(f"Sarvam translate error {response.status_code}, falling back to Groq/Gemini")
+                    return await self._translate_llm(text, source, target)
         except Exception as e:
-            logger.warning(f"Sarvam translate unavailable ({e}), falling back to Gemini")
-            return await self._translate_gemini(text, source, target)
+            logger.warning(f"Sarvam translate unavailable ({e}), falling back to Groq/Gemini")
+            return await self._translate_llm(text, source, target)
 
-    async def _translate_gemini(self, text: str, source: str, target: str) -> str:
-        """High-quality translation fallback using Gemini 2.5 Flash."""
-        try:
-            from google import genai
-            client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-            target_lang_name = "Hindi" if target == "hi" else "English"
-            prompt = (
-                f"Translate the following text into natural, professional {target_lang_name}.\n"
-                f"IMPORTANT: Preserve all markdown formatting, bullet points, and citation markers like [S1], [S2] exactly.\n"
-                f"Only return the translation, no extra commentary.\n\n"
-                f"Text:\n{text}\n\nTranslation:"
-            )
-            resp = await client.aio.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-            )
-            return resp.text.strip() if resp.text else text
-        except Exception as err:
-            logger.error(f"Gemini translation fallback failed: {err}")
-            return text
+    async def _translate_llm(self, text: str, source: str, target: str) -> str:
+        """High-quality translation fallback using Groq or Gemini."""
+        target_lang_name = "Tamil" if target == "ta" else ("Hindi" if target == "hi" else "English")
+        prompt = (
+            f"Translate the following text into natural, professional {target_lang_name}.\n"
+            f"IMPORTANT: Preserve all markdown formatting, IS numbers (e.g. IS 14543), bullet points, technical terms, and citation markers like [S1], [S2] exactly.\n"
+            f"Only return the translation, no extra commentary or intro.\n\n"
+            f"Text:\n{text}\n\nTranslation:"
+        )
+
+        # 1. Try Groq (Fast & highly available)
+        groq_key = os.getenv("GROQ_API_KEY")
+        if groq_key:
+            try:
+                from groq import AsyncGroq
+                client = AsyncGroq(api_key=groq_key, max_retries=1)
+                completion = await client.chat.completions.create(
+                    model="qwen/qwen3.8-27b",
+                    messages=[
+                        {"role": "system", "content": "You are a professional multilingual translator for official government standards."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.2,
+                    max_tokens=2048,
+                )
+                res = completion.choices[0].message.content
+                if res and res.strip():
+                    return res.strip()
+            except Exception as e:
+                logger.warning(f"Groq translation fallback failed: {e}, trying Gemini")
+
+        # 2. Try Gemini
+        gemini_key = os.getenv("GEMINI_API_KEY")
+        if gemini_key:
+            try:
+                from google import genai
+                client = genai.Client(api_key=gemini_key)
+                resp = await client.aio.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt,
+                )
+                if resp.text and resp.text.strip():
+                    return resp.text.strip()
+            except Exception as err:
+                logger.error(f"Gemini translation fallback failed: {err}")
+
+        return text
 
     async def detect_language(self, text: str) -> str:
         """Detect language using langdetect as primary, Sarvam as secondary."""

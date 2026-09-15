@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/context/LanguageContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -56,6 +57,7 @@ interface HallmarkViewProps {
 }
 
 export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
+  const { t } = useLanguage();
   const [huid, setHuid] = useState("");
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -110,7 +112,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
       setResult(data);
     } catch {
       setResult({
-        answer: "Photo OCR could not identify hallmark stamp. Please enter HUID manually.",
+        answer: "Photo analysis unavailable. Please check your connection or backend service.",
         abstained: true,
       });
     } finally {
@@ -124,14 +126,13 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
       <div className="space-y-3 max-w-3xl">
         <Badge variant="warning" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
           <Award className="w-3.5 h-3.5" />
-          <span>Precious Metals Authentication</span>
+          <span>{t("hallmark.badge")}</span>
         </Badge>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-          Gold &amp; Silver <span className="text-[#024DA1] dark:text-blue-400">Hallmark Authenticator</span>
+          {t("hallmark.heading")}
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-          Verify 6-character alphanumeric Hallmark Unique Identification (HUID) codes against Bureau
-          registries, or upload a photo of the jewellery hallmark stamp.
+          {t("hallmark.subheading")}
         </p>
       </div>
 

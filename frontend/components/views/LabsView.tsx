@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/context/LanguageContext";
 
 // Official Seeded BIS Recognized Laboratories
 export const BIS_LABORATORIES = [
@@ -149,6 +150,7 @@ interface LabsViewProps {
 }
 
 export function LabsView({ onAskMithra }: LabsViewProps) {
+  const { t } = useLanguage();
   const [labs] = useState(BIS_LABORATORIES);
   const [selectedState, setSelectedState] = useState("All States");
   const [category, setCategory] = useState("All Categories");
@@ -201,14 +203,13 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
       <div className="space-y-3 max-w-3xl">
         <Badge variant="blue" className="px-3 py-1 gap-1.5 font-bold shadow-2xs rounded-md">
           <FlaskConical className="w-3.5 h-3.5" />
-          <span>NABL &amp; BIS-Recognized Testing Network</span>
+          <span>{t("labs.badge")}</span>
         </Badge>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-          Testing &amp; Calibration <span className="text-[#005EB8] dark:text-blue-400">Laboratory Radar</span>
+          {t("labs.heading")}
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-          Locate authorized testing laboratories recognized under the Laboratory Recognition Scheme (LRS) for
-          mandatory QCO compliance, factory sample testing, and ISI conformity assessments.
+          {t("labs.subheading")}
         </p>
       </div>
 

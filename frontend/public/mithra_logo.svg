@@ -1,0 +1,73 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ml-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0E1D3E"/>
+      <stop offset="50%" stop-color="#081329"/>
+      <stop offset="100%" stop-color="#040915"/>
+    </linearGradient>
+    <linearGradient id="ml-border" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="ml-f1" x1="13" y1="15" x2="23" y2="49" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="ml-f2" x1="23" y1="15" x2="32" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#0369A1"/>
+    </linearGradient>
+    <linearGradient id="ml-f3" x1="41" y1="15" x2="32" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0369A1"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+    <linearGradient id="ml-f4" x1="51" y1="15" x2="41" y2="49" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <radialGradient id="ml-halo" cx="32" cy="19.5" r="15" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.6"/>
+      <stop offset="45%" stop-color="#0284C7" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ml-star" x1="32" y1="11" x2="32" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="40%" stop-color="#E0F2FE"/>
+      <stop offset="75%" stop-color="#7DD3FC"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Squircle Badge -->
+  <rect width="64" height="64" rx="16" fill="url(#ml-bg)"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" stroke="url(#ml-border)" stroke-width="1.5"/>
+
+  <!-- Radial Aura Glow -->
+  <circle cx="32" cy="18.5" r="14" fill="url(#ml-halo)"/>
+
+  <!-- Mithra Isometric Geometric "M" -->
+  <!-- Left Outer Wing -->
+  <path d="M 13 49 L 13 22 L 23 15 L 23 42 Z" fill="url(#ml-f1)"/>
+  <!-- Left Inner Slope -->
+  <path d="M 23 15 L 32 28 L 32 38 L 23 42 Z" fill="url(#ml-f2)"/>
+  <!-- Right Inner Slope -->
+  <path d="M 32 28 L 41 15 L 41 42 L 32 38 Z" fill="url(#ml-f3)"/>
+  <!-- Right Outer Wing -->
+  <path d="M 41 15 L 51 22 L 51 49 L 41 42 Z" fill="url(#ml-f4)"/>
+
+  <!-- Top Sharp Edge Highlight -->
+  <path d="M 13 22 L 23 15 L 32 28 L 41 15 L 51 22" stroke="#E0F2FE" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.95"/>
+  <!-- Bottom Base Shadow Definition -->
+  <path d="M 13 49 L 23 42 L 32 38 L 41 42 L 51 49" stroke="#07273D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Mithra AI Intelligence Spark Icon (Precision vector, cyan/white matching palette) -->
+  <path
+    d="M 32 11.5 C 32 16 34.5 18.5 39 18.5 C 34.5 18.5 32 21 32 25.5 C 32 21 29.5 18.5 25 18.5 C 29.5 18.5 32 16 32 11.5 Z"
+    fill="url(#ml-star)"
+    stroke="#FFFFFF"
+    stroke-width="0.5"
+    stroke-opacity="0.9"
+  />
+  <!-- Core Brilliant Spark Center -->
+  <circle cx="32" cy="18.5" r="1.1" fill="#FFFFFF"/>
+</svg>

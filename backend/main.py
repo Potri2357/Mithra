@@ -82,6 +82,7 @@ class ChatResponse(BaseModel):
     language: str
     abstained: bool = False
     follow_up: Optional[str] = None
+    follow_ups: Optional[list[str]] = []
 
 class LabSearchRequest(BaseModel):
     category: str
@@ -109,18 +110,18 @@ async def chat(req: ChatRequest):
         router: BISRouter = app.state.router
         translator: SarvamTranslator = app.state.translator
 
-        # Step 1: Translate to English pivot if Hindi
+        # Step 1: Translate to English pivot if Hindi or Tamil
         pivot_message = req.message
-        if req.language == "hi":
-            pivot_message = await translator.translate(req.message, source="hi", target="en")
+        if req.language in ("hi", "ta"):
+            pivot_message = await translator.translate(req.message, source=req.language, target="en")
 
         # Step 2: Route + agent call
         result = await router.route(pivot_message, session_id=req.session_id, context=req.context)
 
         # Step 3: Translate answer back
         answer = result["answer"]
-        if req.language == "hi" and not result.get("abstained"):
-            answer = await translator.translate(answer, source="en", target="hi")
+        if req.language in ("hi", "ta") and not result.get("abstained"):
+            answer = await translator.translate(answer, source="en", target=req.language)
 
         return ChatResponse(
             answer=answer,
@@ -129,6 +130,7 @@ async def chat(req: ChatRequest):
             language=req.language,
             abstained=result.get("abstained", False),
             follow_up=result.get("follow_up"),
+            follow_ups=result.get("follow_ups", []),
         )
     except Exception as e:
         logger.error(f"Chat error: {e}")

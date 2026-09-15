@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -35,12 +34,17 @@ import {
   ArrowRight,
   AlertTriangle,
   CheckCircle2,
-  MessageSquare,
+
   Upload,
   Hammer,
+  Calculator,
+  Scale,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BisLoadingIndicator } from "@/components/BisLoadingIndicator";
+import { MithraLogo } from "@/components/MithraLogo";
+import { useLanguage } from "@/context/LanguageContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -60,6 +64,7 @@ interface Message {
   abstained?: boolean;
   confidence?: "High" | "Medium" | "Unverified";
   follow_up?: string;
+  follow_ups?: string[];
   audioUrl?: string;
   isLoading?: boolean;
 }
@@ -99,11 +104,43 @@ const QUICK_START_CARDS = [
   },
 ];
 
-const RECENT_THREADS = [
-  "LED bulb certification",
-  "Gold hallmark HUID check",
-  "Packaged drinking water ISI",
-];
+// ─── Chat Session Types ──────────────────────────────────────────────────────
+interface ChatSession {
+  id: string;
+  title: string;       // first user message, truncated
+  createdAt: number;
+  messages: Message[];
+}
+
+const SESSIONS_KEY = "mithra-sessions";
+const MAX_SESSIONS = 20;
+
+function loadSessions(): ChatSession[] {
+  try {
+    const raw = localStorage.getItem(SESSIONS_KEY);
+    return raw ? (JSON.parse(raw) as ChatSession[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveSessions(sessions: ChatSession[]) {
+  try {
+    // Keep newest MAX_SESSIONS only
+    const trimmed = sessions.slice(0, MAX_SESSIONS);
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(trimmed));
+  } catch { /* storage full — ignore */ }
+}
+
+function upsertSession(sessions: ChatSession[], session: ChatSession): ChatSession[] {
+  const idx = sessions.findIndex((s) => s.id === session.id);
+  if (idx >= 0) {
+    const updated = [...sessions];
+    updated[idx] = session;
+    return updated;
+  }
+  return [session, ...sessions];
+}
 
 function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Medium" | "Unverified"; abstained?: boolean }) {
   if (abstained || confidence === "Unverified") {
@@ -174,8 +211,10 @@ function ChatContent() {
   }, [initialViewParam, router]);
 
   const [messages, setMessages] = useState<Message[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string>(() => crypto.randomUUID());
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [input, setInput] = useState(initialQuery);
-  const [currentLang, setCurrentLang] = useState<"EN" | "हिं" | "த">("EN");
+  const { language, cycleLanguage, langLabel, t } = useLanguage();
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window !== "undefined") {
       const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
@@ -188,6 +227,11 @@ function ChatContent() {
   const [speechTranscript, setSpeechTranscript] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Load sessions from localStorage on mount
+  useEffect(() => {
+    setSessions(loadSessions());
+  }, []);
 
   // Set initial sidebar state based on screen width on mount
   useEffect(() => {
@@ -223,12 +267,6 @@ function ChatContent() {
     else document.documentElement.classList.remove("dark");
   };
 
-  const cycleLang = () => {
-    const order: Array<"EN" | "हिं" | "த"> = ["EN", "हिं", "த"];
-    const next = order[(order.indexOf(currentLang) + 1) % order.length];
-    setCurrentLang(next);
-  };
-
   // Scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -259,7 +297,7 @@ function ChatContent() {
       setIsLoading(true);
 
       try {
-        const langCode = currentLang === "हिं" ? "hi" : currentLang === "த" ? "ta" : "en";
+        const langCode = language;
         const res = await fetch(`${API_URL}/api/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -274,10 +312,11 @@ function ChatContent() {
         const data = await res.json();
 
         // Determine confidence: if abstained -> Unverified, if citations >= 1 -> High, else Medium
-        const confidence = data.abstained ? "Unverified" : (data.citations && data.citations.length > 0) ? "High" : "Medium";
+        const confidence: "High" | "Medium" | "Unverified" = data.abstained ? "Unverified" : (data.citations && data.citations.length > 0) ? "High" : "Medium";
 
-        setMessages((prev) =>
-          prev.map((m) =>
+        // Auto-save session to localStorage
+        setMessages((prev) => {
+          const updated = prev.map((m) =>
             m.id === aiMsg.id
               ? {
                   ...m,
@@ -287,11 +326,27 @@ function ChatContent() {
                   abstained: data.abstained,
                   confidence,
                   follow_up: data.follow_up,
+                  follow_ups: data.follow_ups || (data.follow_up ? [data.follow_up] : []),
                   isLoading: false,
                 }
               : m
-          )
-        );
+          );
+          // Persist to localStorage
+          const firstUserMsg = updated.find((m) => m.role === "user");
+          if (firstUserMsg) {
+            const session: ChatSession = {
+              id: currentSessionId,
+              title: firstUserMsg.content.slice(0, 50),
+              createdAt: Date.now(),
+              messages: updated,
+            };
+            const existing = loadSessions();
+            const next = upsertSession(existing, session);
+            saveSessions(next);
+            setSessions(next);
+          }
+          return updated;
+        });
 
         // Auto-expand sources if citations exist
         if (data.citations && data.citations.length > 0) {
@@ -318,7 +373,7 @@ function ChatContent() {
         setIsLoading(false);
       }
     },
-    [input, currentLang, isLoading, messages]
+    [input, language, isLoading, messages]
   );
 
   // Auto-send initial query passed via URL
@@ -351,7 +406,7 @@ function ChatContent() {
       const rec = new SpeechRec();
       rec.continuous = false;
       rec.interimResults = true;
-      rec.lang = currentLang === "हिं" ? "hi-IN" : currentLang === "த" ? "ta-IN" : "en-IN";
+      rec.lang = language === "hi" ? "hi-IN" : language === "ta" ? "ta-IN" : "en-IN";
 
       rec.onstart = () => {
         setIsRecording(true);
@@ -402,7 +457,7 @@ function ChatContent() {
     try {
       const fd = new FormData();
       fd.append("image", file);
-      fd.append("language", currentLang === "हिं" ? "hi" : "en");
+      fd.append("language", language);
 
       const endpoint = mode === "hallmark" ? "/api/photo/hallmark" : "/api/photo/product";
       const res = await fetch(`${API_URL}${endpoint}`, { method: "POST", body: fd });
@@ -458,10 +513,64 @@ function ChatContent() {
   };
 
   const clearChat = () => {
-    if (window.confirm("Start a new consultation session? This will clear current conversation history.")) {
+    // Save current session before clearing (if it has messages)
+    if (messages.length > 0) {
+      const firstUserMsg = messages.find((m) => m.role === "user");
+      if (firstUserMsg) {
+        const session: ChatSession = {
+          id: currentSessionId,
+          title: firstUserMsg.content.slice(0, 50),
+          createdAt: Date.now(),
+          messages,
+        };
+        const existing = loadSessions();
+        const next = upsertSession(existing, session);
+        saveSessions(next);
+        setSessions(next);
+      }
+    }
+    // Start fresh session
+    setMessages([]);
+    setInput("");
+    setSpeechTranscript(null);
+    setCurrentSessionId(crypto.randomUUID());
+  };
+
+  const loadSession = (session: ChatSession) => {
+    // Save current session first
+    if (messages.length > 0) {
+      const firstUserMsg = messages.find((m) => m.role === "user");
+      if (firstUserMsg) {
+        const current: ChatSession = {
+          id: currentSessionId,
+          title: firstUserMsg.content.slice(0, 50),
+          createdAt: Date.now(),
+          messages,
+        };
+        const existing = loadSessions();
+        const next = upsertSession(existing, current);
+        saveSessions(next);
+        setSessions(next);
+      }
+    }
+    // Load the selected session
+    setMessages(session.messages);
+    setCurrentSessionId(session.id);
+    setInput("");
+    setSpeechTranscript(null);
+  };
+
+  const deleteSession = (sessionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const existing = loadSessions();
+    const next = existing.filter((s) => s.id !== sessionId);
+    saveSessions(next);
+    setSessions(next);
+    // If deleting the active session, clear the chat
+    if (sessionId === currentSessionId) {
       setMessages([]);
       setInput("");
-      setSpeechTranscript(null);
+      setCurrentSessionId(crypto.randomUUID());
     }
   };
 
@@ -549,9 +658,7 @@ function ChatContent() {
                 className="flex items-center gap-3 min-w-0 flex-1 text-left bg-transparent border-0 cursor-pointer p-0 group"
                 title="Mithra Home"
               >
-                <div className="brand-mark group-hover:border-blue-300 transition-colors">
-                  <Image src="/bis_logo.png" alt="BIS Logo" width={28} height={28} className="object-contain" />
-                </div>
+                <MithraLogo size={34} className="shadow-xs group-hover:scale-105 transition-transform" />
                 <div className="min-w-0 flex-1">
                   <span className="font-extrabold text-[16px] text-[var(--color-text-primary)] block leading-tight">
                     Mithra
@@ -575,24 +682,13 @@ function ChatContent() {
               className="new-chat-button"
             >
               <Plus className="w-4 h-4 text-[var(--blue-600)]" />
-              <span>New Chat</span>
+              <span>{t("chat.newChat")}</span>
             </button>
 
-            {/* Navigation links */}
+            {/* Navigation Portals */}
             <nav className="sidebar-nav">
               <span className="sidebar-section-label">
-                Assistant
-              </span>
-              <button
-                type="button"
-                className="sidebar-link w-full text-left cursor-pointer transition-colors font-bold text-[#005EB8] bg-blue-50/80 dark:bg-blue-950/50 dark:text-blue-300"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Mithra AI</span>
-              </button>
-
-              <span className="sidebar-section-label mt-3">
-                Portals &amp; Tools
+                {t("nav.portals")}
               </span>
 
               {/* Standards Directory */}
@@ -605,7 +701,7 @@ function ChatContent() {
               >
                 <div className="flex items-center gap-2.5 truncate">
                   <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                  <span className="truncate text-xs font-semibold">Standards Directory</span>
+                  <span className="truncate text-xs font-semibold">{t("nav.standards")}</span>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
               </a>
@@ -620,7 +716,7 @@ function ChatContent() {
               >
                 <div className="flex items-center gap-2.5 truncate">
                   <ShieldCheck className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                  <span className="truncate text-xs font-semibold">Certification Schemes</span>
+                  <span className="truncate text-xs font-semibold">{t("nav.schemes")}</span>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
               </a>
@@ -635,7 +731,7 @@ function ChatContent() {
               >
                 <div className="flex items-center gap-2.5 truncate">
                   <Award className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                  <span className="truncate text-xs font-semibold">Hallmark &amp; HUID</span>
+                  <span className="truncate text-xs font-semibold">{t("nav.hallmark")}</span>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
               </a>
@@ -650,7 +746,7 @@ function ChatContent() {
               >
                 <div className="flex items-center gap-2.5 truncate">
                   <FlaskConical className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                  <span className="truncate text-xs font-semibold">Accredited Labs</span>
+                  <span className="truncate text-xs font-semibold">{t("nav.labs")}</span>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
               </a>
@@ -665,26 +761,98 @@ function ChatContent() {
               >
                 <div className="flex items-center gap-2.5 truncate">
                   <ShieldAlert className="w-4 h-4 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                  <span className="truncate text-xs font-semibold">Consumer Redressal</span>
+                  <span className="truncate text-xs font-semibold">{t("nav.consumer")}</span>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors shrink-0" />
               </a>
             </nav>
 
+            {/* Interactive Tools */}
+            <nav className="sidebar-nav pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
+              <span className="sidebar-section-label flex items-center gap-1 text-[#0052CC] dark:text-blue-400">
+                <Sparkles className="w-3 h-3" />
+                <span>{t("nav.tools")}</span>
+              </span>
+
+              {/* Cost & Timeline Estimator */}
+              <a
+                href="/tools/cost-estimator"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open Cost & Timeline Estimator in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Calculator className="w-4 h-4 text-[#0052CC] dark:text-blue-400 shrink-0" />
+                  <span className="truncate text-xs font-semibold">{t("nav.estimator")}</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0052CC] transition-colors shrink-0" />
+              </a>
+
+              {/* Guided Complaint Drafter */}
+              <a
+                href="/tools/complaint-drafter"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open Guided Complaint Drafter in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Scale className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                  <span className="truncate text-xs font-semibold">{t("nav.complaintDrafter")}</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-600 transition-colors shrink-0" />
+              </a>
+
+              {/* WhatsApp Simulator */}
+              <a
+                href="/tools/whatsapp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link flex items-center justify-between group rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors px-3 py-2 cursor-pointer"
+                title="Open WhatsApp Assistant Simulator in new tab"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <MessageSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span className="truncate text-xs font-semibold">{t("nav.whatsapp")}</span>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors shrink-0" />
+              </a>
+            </nav>
+
             <div className="recent-block">
-              <span className="sidebar-section-label">Recent</span>
-              {RECENT_THREADS.map((thread) => (
-                <button
-                  key={thread}
-                  type="button"
-                  onClick={() => {
-                    sendMessage(thread);
-                  }}
-                  className="recent-link cursor-pointer text-left w-full"
-                >
-                  <span>{thread}</span>
-                </button>
-              ))}
+              <span className="sidebar-section-label">{t("chat.recent")}</span>
+              {sessions.length === 0 ? (
+                <p className="text-[11px] text-[var(--color-text-muted)] px-1 py-1 italic">
+                  {t("chat.noPreviousChats")}
+                </p>
+              ) : (
+                sessions.slice(0, 8).map((session) => (
+                  <button
+                    key={session.id}
+                    type="button"
+                    onClick={() => loadSession(session)}
+                    className={`recent-link cursor-pointer text-left w-full group flex items-center justify-between gap-1 ${
+                      session.id === currentSessionId
+                        ? "bg-blue-50 dark:bg-blue-950/40 text-[#005EB8] dark:text-blue-300 font-semibold"
+                        : ""
+                    }`}
+                  >
+                    <span className="truncate flex-1 text-[12px]">{session.title}</span>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => deleteSession(session.id, e as unknown as React.MouseEvent)}
+                      onKeyDown={(e) => e.key === "Enter" && deleteSession(session.id, e as unknown as React.MouseEvent)}
+                      className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/40 text-slate-400 hover:text-red-500 cursor-pointer"
+                      title="Delete this chat"
+                      aria-label="Delete chat"
+                    >
+                      <X className="w-3 h-3" />
+                    </div>
+                  </button>
+                ))
+              )}
             </div>
           </div>
 
@@ -730,10 +898,10 @@ function ChatContent() {
               <div className="flex items-center gap-2.5">
                 <Link
                   href="/"
-                  className="brand-mark cursor-pointer border-0 p-0 bg-transparent flex items-center"
+                  className="cursor-pointer border-0 p-0 bg-transparent flex items-center group"
                   title="Mithra Homepage"
                 >
-                  <Image src="/bis_logo.png" alt="BIS Logo" width={26} height={26} className="object-contain" />
+                  <MithraLogo size={30} className="shadow-xs group-hover:scale-105 transition-transform" />
                 </Link>
                 <div>
                   <h1 className="text-[var(--color-text-primary)] font-extrabold text-[15px] leading-tight flex items-center gap-2">
@@ -761,27 +929,27 @@ function ChatContent() {
               <button
                 onClick={clearChat}
                 className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#0052CC] bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300 transition-colors cursor-pointer"
-                title="Start New Chat"
+                title={t("chat.newChat")}
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>New Chat</span>
+                <span>{t("chat.newChat")}</span>
               </button>
             )}
 
             <button
-              onClick={cycleLang}
+              onClick={cycleLanguage}
               className="language-button"
-              aria-label="Switch Language"
+              aria-label={t("nav.switchLang")}
               title="Switch Language (EN / हिं / த)"
             >
-              <span className="text-xs font-semibold text-slate-500 hidden sm:inline">Language:</span>
-              <span className="active-lang">{currentLang}</span>
+              <span className="text-xs font-semibold text-slate-500 hidden sm:inline">{t("nav.switchLang")}:</span>
+              <span className="active-lang">{langLabel}</span>
             </button>
 
             <button
               onClick={toggleTheme}
               className="btn-icon w-8.5 h-8.5"
-              title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              title={theme === "light" ? t("nav.darkMode") : t("nav.lightMode")}
               aria-label="Toggle dark/light mode"
             >
               {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
@@ -812,19 +980,21 @@ function ChatContent() {
             <div className="empty-state">
               {/* Greeting */}
               <div className="empty-hero animate-fade-up">
-                <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-center mx-auto p-2.5">
-                  <Image src="/bis_logo.png" alt="BIS Logo" width={44} height={44} className="object-contain" />
+                <div className="flex items-center justify-center mx-auto mb-3">
+                  <MithraLogo size={68} className="shadow-lg shadow-sky-500/10 hover:scale-105 transition-transform" />
                 </div>
-                <div className="space-y-2">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-[#0052CC] dark:bg-blue-950/70 dark:border-blue-800 dark:text-blue-300">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Mithra AI · Official BIS Compliance Assistant</span>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-[#0052CC] dark:bg-blue-950/70 dark:border-blue-800 dark:text-blue-300">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>{t("chat.emptyHeroBadge")}</span>
+                    </div>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    How can I assist your compliance today?
+                    {t("chat.emptyHeroTitle")}
                   </h2>
                   <p className="text-sm text-slate-500 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
-                    Ask any question regarding 22,000+ Indian Standards (IS), mandatory QCOs, certification schemes, or gold hallmark verification.
+                    {t("chat.emptyHeroSubtitle")}
                   </p>
                 </div>
               </div>
@@ -868,9 +1038,7 @@ function ChatContent() {
                   {msg.role === "assistant" && (
                     <div className="assistant-meta">
                       <div className="flex items-center gap-2">
-                        <div className="assistant-mark">
-                          <Image src="/bis_logo.png" alt="BIS" width={18} height={18} className="object-contain" />
-                        </div>
+                        <MithraLogo size={22} className="shadow-2xs" />
                         <span className="font-bold text-xs text-[var(--color-text-primary)]">Mithra</span>
                       </div>
                       <ConfidenceBadge confidence={msg.confidence} abstained={msg.abstained} />
@@ -878,7 +1046,9 @@ function ChatContent() {
                   )}
 
                   {msg.isLoading ? (
-                    <BisLoadingIndicator size="md" />
+                    <div className="flex items-center justify-center py-6">
+                      <BisLoadingIndicator size="lg" />
+                    </div>
                   ) : (
                     <div className="prose-bis text-[var(--color-text-body)]">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
@@ -976,7 +1146,7 @@ function ChatContent() {
                                 .replace(/[#*_`]/g, "")
                                 .replace(/https?:\/\/\S+/g, "");
                               const utt = new SpeechSynthesisUtterance(clean);
-                              utt.lang = currentLang === "हिं" ? "hi-IN" : "en-IN";
+                              utt.lang = language === "hi" ? "hi-IN" : language === "ta" ? "ta-IN" : "en-IN";
                               utt.onstart = () => setIsSpeaking(true);
                               utt.onend = () => setIsSpeaking(false);
                               utt.onerror = () => setIsSpeaking(false);
@@ -986,18 +1156,34 @@ function ChatContent() {
                           className="flex items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
                         >
                           <Volume2 className="w-3.5 h-3.5" />
-                          <span>{isSpeaking ? "Speaking..." : "Listen"}</span>
+                          <span>{isSpeaking ? t("chat.speaking") : t("chat.listen")}</span>
                         </button>
                       </div>
 
-                      {msg.follow_up && (
-                        <button
-                          onClick={() => sendMessage(msg.follow_up)}
-                          className="text-[var(--blue-600)] hover:underline font-semibold flex items-center gap-1 text-left"
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>{msg.follow_up}</span>
-                        </button>
+                      {/* Suggested Follow-up Questions */}
+                      {((msg.follow_ups && msg.follow_ups.length > 0) || msg.follow_up) && (
+                        <div className="mt-3.5 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 space-y-2">
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            <Sparkles className="w-3 h-3 text-[#0052CC] dark:text-blue-400" />
+                            <span>{t("chat.suggestedFollowups")}</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(msg.follow_ups && msg.follow_ups.length > 0
+                              ? msg.follow_ups
+                              : [msg.follow_up!]
+                            ).map((q, qIdx) => (
+                              <button
+                                key={qIdx}
+                                type="button"
+                                onClick={() => sendMessage(q)}
+                                className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-50/80 hover:bg-blue-100/90 text-[#0052CC] dark:bg-blue-950/50 dark:hover:bg-blue-900/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 transition-all text-left font-medium cursor-pointer shadow-2xs hover:scale-[1.01]"
+                              >
+                                <span>{q}</span>
+                                <ArrowRight className="w-3 h-3 shrink-0 opacity-70" />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </div>
                   )}
@@ -1021,7 +1207,7 @@ function ChatContent() {
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <button onClick={() => sendMessage(input)} className="app-primary-button py-1 px-3 text-xs min-h-[28px] rounded-lg">
-                    Send
+                    {t("common.submit")}
                   </button>
                   <button onClick={() => { setSpeechTranscript(null); setInput(""); }} className="btn-icon w-7 h-7">
                     <X className="w-3.5 h-3.5" />
@@ -1036,7 +1222,7 @@ function ChatContent() {
                 <input
                   type="text"
                   className="composer-input"
-                  placeholder="Ask Mithra about standards, schemes, labs, or HUID verification..."
+                  placeholder={t("chat.composerPlaceholder")}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -1089,7 +1275,7 @@ function ChatContent() {
             </div>
 
             <p className="composer-disclaimer">
-              Grounded answers with citations where available. Verify critical compliance decisions with BIS.
+              {t("common.disclaimer")}
             </p>
           </div>
         </footer>

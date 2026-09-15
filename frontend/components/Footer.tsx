@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import { MithraLogo } from "@/components/MithraLogo";
 import {
   ShieldCheck,
   BookOpen,
@@ -9,82 +11,74 @@ import {
   MapPin,
   ExternalLink,
 } from "lucide-react";
-
-const modules = [
-  { href: "/standards", label: "Standards Catalogue" },
-  { href: "/schemes",   label: "Certification Schemes" },
-  { href: "/hallmark",  label: "Hallmark & HUID" },
-  { href: "/labs",      label: "Testing Labs Directory" },
-  { href: "/consumer",  label: "Consumer Grievances" },
-  { href: "/chat",      label: "AI Compliance Assistant" },
-];
-
-const certRoutes = [
-  { href: "/schemes", label: "ISI Mark (Scheme I)" },
-  { href: "/schemes", label: "CRS (Scheme II)" },
-  { href: "/schemes", label: "FMCS (Foreign Mfr)" },
-  { href: "/schemes", label: "MSME Concessions & Fees" },
-  { href: "/consumer", label: "Verify CM/L License" },
-];
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const portals = [
+    { href: "/standards", label: t("nav.standards") },
+    { href: "/schemes",   label: t("nav.schemes") },
+    { href: "/hallmark",  label: t("nav.hallmark") },
+    { href: "/labs",      label: t("nav.labs") },
+    { href: "/consumer",  label: t("nav.consumer") },
+  ];
+
+  const tools = [
+    { href: "/tools/cost-estimator", label: t("nav.estimator") },
+    { href: "/tools/complaint-drafter", label: t("nav.complaintDrafter") },
+    { href: "/tools/whatsapp", label: t("nav.whatsapp") },
+    { href: "/chat", label: t("nav.chatAssistant") },
+  ];
+
   return (
     <footer className="bg-white dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-400">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-9">
         {/* Top Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6">
           {/* Col 1 — Brand */}
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-md bg-white border border-slate-200 dark:border-slate-800 p-1 flex items-center justify-center shadow-2xs group-hover:border-[#005EB8] transition-colors">
-                <Image
-                  src="/bis_logo.png"
-                  alt="Bureau of Indian Standards"
-                  width={28}
-                  height={28}
-                  className="object-contain"
-                />
-              </div>
+          <div className="space-y-3">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <MithraLogo size={32} className="shadow-xs group-hover:scale-105 transition-transform" />
               <div>
-                <div className="font-bold text-base text-slate-900 dark:text-white group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors">
-                  Mithra
+                <div className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#005EB8] dark:group-hover:text-blue-400 transition-colors leading-tight">
+                  {t("brand.title")}
                 </div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                  Bureau of Indian Standards
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                  {t("brand.subtitle")}
                 </div>
               </div>
             </Link>
 
-            <p className="text-xs sm:text-sm text-[#64748B] dark:text-slate-400 leading-relaxed font-normal">
-              Official conversational standards intelligence platform for 22,000+ Indian Standards,
-              Quality Control Orders (QCOs), certification schemes, and accredited laboratories.
+            <p className="text-xs text-[#64748B] dark:text-slate-400 leading-relaxed font-normal">
+              {t("brand.tagline")}
             </p>
 
-            <div className="flex flex-wrap gap-2 pt-1">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex flex-wrap gap-1.5 pt-0.5">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-[10px] font-medium text-slate-700 dark:text-slate-300">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#005EB8] dark:text-blue-400" />
-                <span>BIS Act 2016 Grounded</span>
+                <span>BIS Act 2016</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-[10px] font-medium text-slate-700 dark:text-slate-300">
                 <BookOpen className="w-3.5 h-3.5 text-[#005EB8] dark:text-blue-400" />
                 <span>22,000+ Standards</span>
               </span>
             </div>
           </div>
 
-          {/* Col 2 — Core Portals */}
+          {/* Col 2 — Reference Portals */}
           <div>
-            <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider mb-4">
-              Compliance Portals
+            <h4 className="font-bold text-slate-900 dark:text-white text-[11px] uppercase tracking-wider mb-2.5">
+              {t("nav.portals")}
             </h4>
-            <ul className="space-y-2.5">
-              {modules.map((m) => (
-                <li key={m.label}>
+            <ul className="space-y-1.5">
+              {portals.map((m) => (
+                <li key={m.href + m.label}>
                   <Link
                     href={m.href}
-                    className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 group"
+                    className="text-xs text-slate-600 dark:text-slate-400 hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors flex items-center gap-1 group"
                   >
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                     <span>{m.label}</span>
                   </Link>
                 </li>
@@ -92,19 +86,19 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3 — Certification Schemes */}
+          {/* Col 3 — Interactive Tools */}
           <div>
-            <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider mb-4">
-              Certification Pathways
+            <h4 className="font-bold text-slate-900 dark:text-white text-[11px] uppercase tracking-wider mb-2.5 text-[#0052CC] dark:text-blue-400">
+              {t("nav.tools")}
             </h4>
-            <ul className="space-y-2.5">
-              {certRoutes.map((r) => (
+            <ul className="space-y-1.5">
+              {tools.map((r) => (
                 <li key={r.label}>
                   <Link
                     href={r.href}
-                    className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 group"
+                    className="text-xs text-slate-600 dark:text-slate-400 hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors flex items-center gap-1 group"
                   >
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                     <span>{r.label}</span>
                   </Link>
                 </li>
@@ -112,35 +106,36 @@ export default function Footer() {
             </ul>
           </div>
 
+
           {/* Col 4 — Consumer Support & Grievances */}
           <div>
-            <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider mb-4">
-              Consumer Support
+            <h4 className="font-bold text-slate-900 dark:text-white text-[11px] uppercase tracking-wider mb-2.5">
+              {t("footer.consumerSupport")}
             </h4>
-            <ul className="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              <li className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-[#024DA1] dark:text-blue-400 shrink-0" />
-                <span>Toll-Free: <strong className="text-slate-900 dark:text-white font-mono">1800-11-4000</strong></span>
+            <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+              <li className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-[#024DA1] dark:text-blue-400 shrink-0" />
+                <span>{t("footer.tollFree")} <strong className="text-slate-900 dark:text-white font-mono">1800-11-4000</strong></span>
               </li>
-              <li className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-[#024DA1] dark:text-blue-400 shrink-0" />
-                <a href="mailto:complaints@bis.gov.in" className="hover:text-[#024DA1] dark:hover:text-blue-400 hover:underline transition-colors">
+              <li className="flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5 text-[#024DA1] dark:text-blue-400 shrink-0" />
+                <a href="mailto:complaints@bis.gov.in" className="hover:text-[#024DA1] dark:hover:text-blue-400 hover:underline transition-colors truncate">
                   complaints@bis.gov.in
                 </a>
               </li>
-              <li className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-[#024DA1] dark:text-blue-400 shrink-0 mt-0.5" />
-                <span>Manak Bhavan, 9 B.S. Zafar Marg, New Delhi 110 002</span>
+              <li className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#024DA1] dark:text-blue-400 shrink-0 mt-0.5" />
+                <span className="line-clamp-2">{t("footer.address")}</span>
               </li>
-              <li className="pt-1">
+              <li className="pt-0.5">
                 <a
                   href="https://www.bis.gov.in"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#024DA1] dark:text-blue-400 hover:underline"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#024DA1] dark:text-blue-400 hover:underline"
                 >
-                  <span>Official BIS National Portal</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <span>{t("footer.officialPortal")}</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
                 </a>
               </li>
             </ul>
@@ -148,21 +143,21 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-slate-500 dark:text-slate-500 text-center sm:text-left">
-            © {new Date().getFullYear()} Bureau of Indian Standards (BIS). Mithra Intelligent Advisory Platform.
+        <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+          <p className="text-[11px] text-slate-500 dark:text-slate-500 text-center sm:text-left">
+            © {new Date().getFullYear()} {t("footer.rights")}
           </p>
-          <div className="flex items-center gap-5 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-4 text-[11px] text-slate-500 dark:text-slate-400">
             <Link href="/consumer" className="hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors">
-              Consumer Grievance
+              {t("footer.grievance")}
             </Link>
             <span className="text-slate-300 dark:text-slate-700">•</span>
             <Link href="/standards" className="hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors">
-              Standards Matrix
+              {t("footer.standardsMatrix")}
             </Link>
             <span className="text-slate-300 dark:text-slate-700">•</span>
             <Link href="/chat" className="hover:text-[#024DA1] dark:hover:text-blue-400 transition-colors font-semibold text-[#024DA1] dark:text-blue-400">
-              Ask Mithra
+              {t("common.askMithra")}
             </Link>
           </div>
         </div>

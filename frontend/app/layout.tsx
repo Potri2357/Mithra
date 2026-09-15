@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans, Noto_Sans_Devanagari, Noto_Sans_Tamil } from "next/font/google";
+import { LanguageProvider } from "@/context/LanguageContext";
 import "./globals.css";
 
 const notoSans = Noto_Sans({
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
   title: "Mithra — Bureau of Indian Standards Intelligence",
   description:
     "Official AI-driven standards and compliance intelligence platform for the Bureau of Indian Standards (BIS). Direct, citation-grounded guidance on 22,000+ Indian Standards (IS), mandatory QCOs, certification schemes, and hallmarking.",
+  icons: {
+    icon: "/mithra_logo.svg",
+    shortcut: "/mithra_logo.svg",
+    apple: "/mithra_logo.svg",
+  },
   keywords:
     "Mithra, BIS, Indian Standards, Bureau of Indian Standards, ISI Mark, CRS, FMCS, Hallmarking, HUID, BIS Certification, IS Standards, NABL Labs",
   openGraph: {
@@ -40,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <body className={`${notoSans.variable} ${notoSansDevanagari.variable} ${notoSansTamil.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900`}>
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

@@ -22,6 +22,8 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const SCHEMES = [
   {
@@ -111,6 +113,7 @@ interface SchemesViewProps {
 }
 
 export function SchemesView({ onAskMithra }: SchemesViewProps) {
+  const { t } = useLanguage();
   const [activeScheme, setActiveScheme] = useState(SCHEMES[0]);
   const [productType, setProductType] = useState("industrial");
   const [origin, setOrigin] = useState("domestic");
@@ -166,15 +169,38 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
       <div className="space-y-3 max-w-3xl">
         <Badge variant="success" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Licensing &amp; Conformity Assessment</span>
+          <span>{t("schemes.badge")}</span>
         </Badge>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-          BIS Certification <span className="text-[#024DA1] dark:text-blue-400">Schemes Navigator</span>
+          {t("schemes.heading")}
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-          Compare compliance routes: ISI Mark (Scheme I), Compulsory Registration (CRS), Foreign Manufacturers (FMCS),
-          and Hallmarking. Includes checklists, fee structures, and MSME concessions.
+          {t("schemes.subheading")}
         </p>
+      </div>
+
+      {/* Dedicated Interactive Tool Banner */}
+      <div className="rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-gradient-to-r from-blue-50/90 to-sky-50/50 dark:from-blue-950/40 dark:to-slate-900/40 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#0052CC] text-white uppercase tracking-wider">
+              INTERACTIVE TOOL
+            </span>
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              {t("calc.title")}
+            </h3>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-300 max-w-2xl">
+            Simulate statutory application fees, factory audit charges, lab test price ranges, and 20% MSME marking fee concessions.
+          </p>
+        </div>
+        <Link
+          href="/tools/cost-estimator"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0052CC] hover:bg-[#0047b3] text-white text-xs font-bold transition-all shrink-0 shadow-xs hover:scale-105 active:scale-95"
+        >
+          <span>Launch Fee Estimator</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* ── Interactive Scheme Wizard ── */}

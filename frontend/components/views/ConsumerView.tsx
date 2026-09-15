@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   ShieldAlert,
   ShieldCheck,
@@ -12,6 +13,7 @@ import {
   Sparkles,
   Scale,
   FileCheck,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,12 +24,14 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ConsumerViewProps {
   onAskMithra?: (query: string) => void;
 }
 
 export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"visual-guide" | "grievance-steps" | "penalties">("visual-guide");
 
   const handleAskComplaint = (customSubject?: string) => {
@@ -45,15 +49,38 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
       <div className="space-y-3">
         <Badge variant="danger" className="px-3 py-1 gap-1.5 font-bold shadow-2xs">
           <ShieldAlert className="w-3.5 h-3.5" />
-          <span>Citizen Protection &amp; Redressal</span>
+          <span>{t("consumer.badge")}</span>
         </Badge>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-          Consumer Protection <span className="text-rose-600 dark:text-rose-400">&amp; Grievance Center</span>
+          {t("consumer.heading")}
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal max-w-3xl leading-relaxed">
-          Verify ISI mark authenticity, report counterfeit certification stamps or substandard goods,
-          and understand your statutory rights under the Bureau of Indian Standards Act 2016.
+          {t("consumer.subheading")}
         </p>
+      </div>
+
+      {/* Dedicated Interactive Tool Banner */}
+      <div className="rounded-2xl border border-rose-200 dark:border-rose-900/60 bg-gradient-to-r from-rose-50/90 to-amber-50/50 dark:from-rose-950/40 dark:to-slate-900/40 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-600 text-white uppercase tracking-wider">
+              INTERACTIVE TOOL
+            </span>
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              {t("wizard.title")}
+            </h3>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-300 max-w-2xl">
+            Draft formal legal complaint letters with automatic jurisdictional BIS Branch Office routing, legal penalty citations, and checklist.
+          </p>
+        </div>
+        <Link
+          href="/tools/complaint-drafter"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shrink-0 shadow-xs hover:scale-105 active:scale-95"
+        >
+          <span>Launch Complaint Drafter</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* Emergency Action Helpline Bar */}
@@ -90,7 +117,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
             className="h-10 px-5 rounded-full text-xs font-semibold gap-2 shadow-2xs"
           >
             <Sparkles className="w-4 h-4 text-[#024DA1] dark:text-blue-400" />
-            <span>Draft Grievance with Mithra</span>
+            <span>{t("common.askMithra")}</span>
           </Button>
         </div>
       </Card>

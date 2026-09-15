@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/context/LanguageContext";
 
 // Official Seeded Indian Standards Catalogue
 export interface StandardItem {
@@ -205,14 +206,17 @@ export function StandardsBreadcrumb() {
 
 // ── 2. PAGE HEADER COMPONENT ──
 export function StandardsPageHeader() {
+  const { t } = useLanguage();
   return (
     <div className="space-y-2 border-b border-slate-200/80 dark:border-slate-800 pb-5">
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-[#0052CC] dark:bg-blue-950/70 dark:border-blue-800 dark:text-blue-300">
+        <span>{t("standards.badge")}</span>
+      </div>
       <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-extrabold text-[#0F172A] dark:text-white tracking-tight leading-tight">
-        Indian Standards (IS) Directory
+        {t("standards.heading")}
       </h1>
       <p className="text-sm sm:text-[15px] text-[#64748B] dark:text-slate-400 max-w-3xl leading-relaxed font-normal">
-        Search active Bureau of Indian Standards specifications, governing technical committees,
-        and mandatory Quality Control Order (QCO) gazette notifications.
+        {t("standards.subheading")}
       </p>
     </div>
   );
@@ -240,6 +244,7 @@ export function StandardsSearchToolbar({
   qcoOnly,
   onQcoOnlyToggle,
 }: StandardsSearchToolbarProps) {
+  const { t } = useLanguage();
   return (
     <div className="p-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 items-center">
@@ -249,7 +254,7 @@ export function StandardsSearchToolbar({
           <Input
             type="text"
             className="h-10 !pl-10 pr-8 bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-xs sm:text-sm placeholder:text-[#64748B] rounded-md"
-            placeholder="Search by IS number, keyword, or committee..."
+            placeholder={t("standards.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
