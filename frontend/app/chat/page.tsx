@@ -885,7 +885,7 @@ function ChatContent() {
                         <button
                           type="button"
                           onClick={() => clearChat(p.id)}
-                          className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[11px] font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-[#34332E] transition-colors text-left cursor-pointer"
+                          className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[11px] font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 dark:text-[#E6E4DD] dark:hover:text-white dark:hover:bg-[#34332E] transition-colors text-left cursor-pointer"
                         >
                           <Plus className="w-3 h-3 shrink-0" />
                           <span className="truncate">{t("projects.newChatInWorkspace") || "New chat in workspace"}</span>
@@ -1106,7 +1106,7 @@ function ChatContent() {
                 <button
                   type="button"
                   onClick={() => clearChat(null)}
-                  className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                  className="text-[10px] font-semibold text-blue-600 dark:text-[#D4D2C9] dark:hover:text-white hover:underline cursor-pointer"
                 >
                   + New General
                 </button>
@@ -1375,7 +1375,7 @@ function ChatContent() {
                           <card.icon className="w-5 h-5" />
                         </div>
                         <div className="min-w-0 flex-1 text-left">
-                          <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0052CC] dark:group-hover:text-blue-400 transition-colors">
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0052CC] dark:group-hover:text-white transition-colors">
                             {card.title}
                           </h3>
                           <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
@@ -1383,7 +1383,7 @@ function ChatContent() {
                           </p>
                         </div>
                         <ArrowRight
-                          className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0"
+                          className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 dark:text-[#9C9A91] dark:group-hover:text-white"
                         />
                       </button>
                     ))}
@@ -1426,7 +1426,7 @@ function ChatContent() {
                           <card.icon className="w-5 h-5" />
                         </div>
                         <div className="min-w-0 flex-1 text-left">
-                          <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0052CC] dark:group-hover:text-blue-400 transition-colors">
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0052CC] dark:group-hover:text-white transition-colors">
                             {card.title}
                           </h3>
                           <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
@@ -1434,7 +1434,7 @@ function ChatContent() {
                           </p>
                         </div>
                         <ArrowRight
-                          className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0"
+                          className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 dark:text-[#9C9A91] dark:group-hover:text-white"
                         />
                       </button>
                     ))}
