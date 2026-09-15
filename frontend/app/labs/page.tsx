@@ -11,7 +11,7 @@ export default function LabsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 font-sans">
       <Navbar />
-      <StandaloneBar title={t("nav.labs")} subtitle="NABL & BIS Accredited Testing Labs · BIS" />
+      <StandaloneBar title={t("nav.labs")} subtitle={t("nav.labsSubtitle")} />
       <main className="flex-1">
         <LabsView />
       </main>

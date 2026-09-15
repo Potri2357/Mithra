@@ -11,7 +11,7 @@ export default function HallmarkPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 font-sans">
       <Navbar />
-      <StandaloneBar title={t("nav.hallmark")} subtitle="Gold Hallmark & HUID Verification · BIS" />
+      <StandaloneBar title={t("nav.hallmark")} subtitle={t("nav.hallmarkSubtitle")} />
       <main className="flex-1">
         <HallmarkView />
       </main>

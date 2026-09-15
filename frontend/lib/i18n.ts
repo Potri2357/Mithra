@@ -677,6 +677,167 @@ export const translations: TranslationDictionary = {
     hi: "अनिवार्य नमूना परीक्षण और गुणवत्ता प्रमाणन के लिए मान्यता प्राप्त केंद्रीय, क्षेत्रीय और एनएबीएल-भागीदार प्रयोगशालाओं का पता लगाएं।",
     ta: "கட்டாய மாதிரி சோதனை மற்றும் தரச் சான்றிதழுக்காக அங்கீகரிக்கப்பட்ட மத்திய, பிராந்திய மற்றும் NABL ஆய்வகங்களைக் கண்டறியவும்.",
   },
+
+  // ─── Subtitles for Standalone Bar & Tool Headers ───
+  "nav.standardsSubtitle": {
+    en: "Indian Standards Directory · BIS",
+    hi: "भारतीय मानक निर्देशिका · बीआईएस",
+    ta: "இந்திய தரநிலைகள் கோப்பகம் · BIS",
+  },
+  "nav.schemesSubtitle": {
+    en: "Certification Pathways · BIS",
+    hi: "प्रमाणन योजनाएं एवं मार्ग · बीआईएस",
+    ta: "சான்றிதழ் வழிகள் & திட்டங்கள் · BIS",
+  },
+  "nav.hallmarkSubtitle": {
+    en: "Gold Hallmark & HUID Verification · BIS",
+    hi: "स्वर्ण हॉलमार्क और HUID सत्यापन · बीआईएस",
+    ta: "தங்க ஹால்மார்க் & HUID சரிபார்ப்பு · BIS",
+  },
+  "nav.labsSubtitle": {
+    en: "NABL & BIS Accredited Testing Labs · BIS",
+    hi: "एनएबीएल और बीआईएस मान्यता प्राप्त परीक्षण प्रयोगशालाएं",
+    ta: "NABL & BIS அங்கீகரிக்கப்பட்ட சோதனை ஆய்வகங்கள்",
+  },
+  "nav.consumerSubtitle": {
+    en: "Consumer Redressal & Rights · BIS",
+    hi: "उपभोक्ता अधिकार एवं शिकायत निवारण · बीआईएस",
+    ta: "நுகர்வோர் குறைதீர்ப்பு & உரிமைகள் · BIS",
+  },
+  "nav.whatsappTitle": {
+    en: "Mithra on WhatsApp",
+    hi: "व्हाट्सएप पर मित्रा",
+    ta: "வாட்ஸ்அப்பில் மித்ரா",
+  },
+  "nav.whatsappSubtitle": {
+    en: "Tier-2 Multi-Channel Distribution · Tools",
+    hi: "टियर-2 मल्टी-चैनल वितरण · टूल्स",
+    ta: "அடுக்கு-2 பல சேனல் விநியோகம் · கருவிகள்",
+  },
+  "nav.estimatorSubtitle": {
+    en: "BIS Certification Fee Calculator · Tools",
+    hi: "बीआईएस प्रमाणन शुल्क कैलकुलेटर · टूल्स",
+    ta: "BIS சான்றிதழ் கட்டண கணிப்பான் · கருவிகள்",
+  },
+  "nav.complaintDrafterSubtitle": {
+    en: "Statutory Legal Redressal Tool · BIS Act 2016",
+    hi: "वैधानिक कानूनी निवारण टूल · बीआईएस अधिनियम 2016",
+    ta: "சட்டப்பூர்வ குறைதீர்ப்பு கருவி · BIS சட்டம் 2016",
+  },
+
+  // ─── Standards Portal Internationalization ───
+  "standards.clearFilters": {
+    en: "Clear all filters",
+    hi: "सभी फ़िल्टर साफ़ करें",
+    ta: "அனைத்து வடிப்பான்களையும் அழிக்கவும்",
+  },
+  "standards.qcoOrderLabel": {
+    en: "Quality Control Order",
+    hi: "गुणवत्ता नियंत्रण आदेश",
+    ta: "தரக் கட்டுப்பாட்டு ஆணை",
+  },
+  "standards.askMithraButton": {
+    en: "Ask Mithra",
+    hi: "मित्रा से पूछें",
+    ta: "மித்ராவிடம் கேளுங்கள்",
+  },
+  "standards.reaffirmedLabel": {
+    en: "Reaffirmed",
+    hi: "पुनःपुष्ट",
+    ta: "மீண்டும் உறுதிப்படுத்தப்பட்டது",
+  },
+
+  // ─── WhatsApp Simulator Internationalization ───
+  "whatsapp.welcome": {
+    en: "Namaste! 🙏 Welcome to *Mithra* — the official AI Assistant for the Bureau of Indian Standards (BIS), Government of India.\n\nI can help you with:\n• Checking mandatory Quality Control Orders (*QCOs*)\n• Indian Standards (*IS specifications*)\n• ISI Mark, CRS & FMCS certification pathways\n• 6-digit Gold Hallmark *HUID* verification\n• Statutory fee estimates & complaint drafting\n\nHow can I help you today?",
+    hi: "नमस्ते! 🙏 *मित्रा* में आपका स्वागत है — भारतीय मानक ब्यूरो (BIS), भारत सरकार का आधिकारिक AI सहायक।\n\nमैं आपकी सहायता कर सकता हूँ:\n• अनिवार्य गुणवत्ता नियंत्रण आदेशों (*QCO*) की जांच\n• भारतीय मानक (*IS विनिर्देश*)\n• ISI मार्क, CRS और FMCS प्रमाणन योजनाएं\n• 6-अंकीय स्वर्ण हॉलमार्क *HUID* सत्यापन\n• वैधानिक शुल्क अनुमान और शिकायत ड्राफ्टिंग\n\nआज मैं आपकी क्या सहायता कर सकता हूँ?",
+    ta: "வணக்கம்! 🙏 *மித்ரா*விற்கு நல்வரவு — இந்திய தரநிலைகள் பணியகத்தின் (BIS) அதிகாரப்பூர்வ AI உதவியாளர்.\n\nநான் உங்களுக்கு உதவக்கூடியவை:\n• கட்டாய தரக் கட்டுப்பாட்டு ஆணைகள் (*QCO*) சரிபார்ப்பு\n• இந்திய தரநிலைகள் (*IS விவரக்குறிப்புகள்*)\n• ISI மார்க், CRS & FMCS சான்றிதழ் வழிகள்\n• 6-இலக்க தங்க ஹால்மார்க் *HUID* சரிபார்ப்பு\n• சட்டப்பூர்வ கட்டண மதிப்பீடு & புகார் வரைவு\n\nஇன்று நான் உங்களுக்கு எவ்வாறு உதவட்டும்?",
+  },
+  "whatsapp.qr1": {
+    en: "Check IS 14543 (Water)",
+    hi: "IS 14543 (पानी) की जांच करें",
+    ta: "IS 14543 (தண்ணீர்) சரிபார்க்கவும்",
+  },
+  "whatsapp.qr2": {
+    en: "Verify Gold HUID: AA123456",
+    hi: "स्वर्ण HUID सत्यापित करें: AA123456",
+    ta: "தங்க HUID சரிபார்க்கவும்: AA123456",
+  },
+  "whatsapp.qr3": {
+    en: "Is ISI mark mandatory for toys?",
+    hi: "क्या खिलौनों पर ISI मार्क अनिवार्य है?",
+    ta: "பொம்மைகளுக்கு ISI முத்திரை கட்டாயமா?",
+  },
+  "whatsapp.qr4": {
+    en: "Calculate MSME certification fee",
+    hi: "MSME प्रमाणन शुल्क की गणना करें",
+    ta: "MSME சான்றிதழ் கட்டணத்தை கணக்கிடுங்கள்",
+  },
+  "whatsapp.placeholder": {
+    en: "Type a message (e.g. Check IS 14543 or verify Gold HUID)...",
+    hi: "संदेश टाइप करें (उदा. IS 14543 जांचें या HUID सत्यापित करें)...",
+    ta: "செய்தியை தட்டச்சு செய்க (எ.கா. IS 14543 அல்லது தங்க HUID)...",
+  },
+  "whatsapp.officialAccount": {
+    en: "Official Business Account · Online",
+    hi: "आधिकारिक व्यावसायिक खाता · ऑनलाइन",
+    ta: "அதிகாரப்பூர்வ வணிக கணக்கு · ஆன்லைன்",
+  },
+  "whatsapp.encryptionNotice": {
+    en: "🔒 Messages are grounded in authoritative BIS regulations and Quality Control Orders.",
+    hi: "🔒 संदेश आधिकारिक बीआईएस विनियमों और गुणवत्ता नियंत्रण आदेशों पर आधारित हैं।",
+    ta: "🔒 செய்திகள் அதிகாரப்பூர்வ BIS விதிமுறைகள் மற்றும் தரக் கட்டுப்பாட்டு உத்தரவுகளின் அடிப்படையில் அமைந்தவை.",
+  },
+  "whatsapp.sources": {
+    en: "Authoritative BIS Sources:",
+    hi: "आधिकारिक बीआईएस स्रोत:",
+    ta: "அதிகாரப்பூர்வ BIS ஆதாரங்கள்:",
+  },
+  "whatsapp.copyTranscript": {
+    en: "Copy transcript",
+    hi: "प्रतिलिपि कॉपी करें",
+    ta: "உரையாடலை நகலெடுக்கவும்",
+  },
+  "whatsapp.clearConversation": {
+    en: "Clear conversation",
+    hi: "वार्तालाप साफ़ करें",
+    ta: "உரையாடலை அழிக்கவும்",
+  },
+  "whatsapp.officialPortal": {
+    en: "BIS Official Portal",
+    hi: "बीआईएस आधिकारिक पोर्टल",
+    ta: "BIS அதிகாரப்பூர்வ போர்டல்",
+  },
+  "whatsapp.callHelpline": {
+    en: "Call Helpline (1800-11-4000)",
+    hi: "हेल्पलाइन पर कॉल करें (1800-11-4000)",
+    ta: "உதவி மையத்தை அழைக்கவும் (1800-11-4000)",
+  },
+  "whatsapp.typing": {
+    en: "Mithra is typing...",
+    hi: "मित्रा टाइप कर रहा है...",
+    ta: "மித்ரா தட்டச்சு செய்கிறது...",
+  },
+  "whatsapp.simulateAttachment": {
+    en: "Simulate Document / Photo Attachment",
+    hi: "दस्तावेज़ / फ़ोटो अटैचमेंट का अनुकरण करें",
+    ta: "ஆவணம் / புகைப்பட இணைப்பை உருவகப்படுத்துங்கள்",
+  },
+  "whatsapp.close": {
+    en: "Close",
+    hi: "बंद करें",
+    ta: "மூடு",
+  },
+  "whatsapp.copy": {
+    en: "Copy message",
+    hi: "संदेश कॉपी करें",
+    ta: "செய்தியை நகலெடு",
+  },
+  "whatsapp.transcriptCopied": {
+    en: "Chat transcript copied to clipboard!",
+    hi: "चैट प्रतिलिपि क्लिपबोर्ड पर कॉपी की गई!",
+    ta: "உரையாடல் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது!",
+  },
 };
 
 export function getTranslation(key: string, lang: SupportedLanguage): string {

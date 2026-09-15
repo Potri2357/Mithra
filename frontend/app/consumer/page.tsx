@@ -11,7 +11,7 @@ export default function ConsumerPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 font-sans">
       <Navbar />
-      <StandaloneBar title={t("nav.consumer")} subtitle="Consumer Redressal & Rights · BIS" />
+      <StandaloneBar title={t("nav.consumer")} subtitle={t("nav.consumerSubtitle")} />
       <main className="flex-1">
         <ConsumerView />
       </main>

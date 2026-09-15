@@ -254,7 +254,24 @@ interface WhatsAppSimulatorProps {
 export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps) {
   const { t, language } = useLanguage();
   const isDark = useDarkMode();
-  const [messages, setMessages] = useState<WhatsAppMessage[]>(INITIAL_MESSAGES);
+
+  const getInitialMessages = (): WhatsAppMessage[] => [
+    {
+      id: "1",
+      sender: "bot",
+      text: t("whatsapp.welcome"),
+      time: "10:00 AM",
+      status: "read",
+      quickReplies: [
+        t("whatsapp.qr1"),
+        t("whatsapp.qr2"),
+        t("whatsapp.qr3"),
+        t("whatsapp.qr4"),
+      ],
+    },
+  ];
+
+  const [messages, setMessages] = useState<WhatsAppMessage[]>(getInitialMessages);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -262,6 +279,16 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
   const [showAttachments, setShowAttachments] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Sync welcome message when language changes if only the initial message is in chat
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === "1") {
+        return getInitialMessages();
+      }
+      return prev;
+    });
+  }, [language]);
 
   // Autofocus input on mount and keep it focused
   useEffect(() => {
@@ -354,7 +381,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
   };
 
   const clearChat = () => {
-    setMessages(INITIAL_MESSAGES);
+    setMessages(getInitialMessages());
     setShowMenu(false);
     setTimeout(() => inputRef.current?.focus(), 100);
   };
@@ -365,7 +392,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
       .join("\n\n");
     navigator.clipboard.writeText(transcript);
     setShowMenu(false);
-    alert("Chat transcript copied to clipboard!");
+    alert(t("whatsapp.transcriptCopied"));
   };
 
   const sampleAttachments = [
@@ -428,7 +455,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
               </span>
             </div>
             <p className="text-[11px] text-emerald-100 dark:text-[#8696A0] truncate">
-              Official Business Account · Online
+              {t("whatsapp.officialAccount")}
             </p>
           </div>
         </div>
@@ -438,13 +465,13 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
             href="/tools/cost-estimator?standalone=1"
             className="hidden sm:inline-flex text-xs bg-emerald-700/70 dark:bg-slate-700/70 hover:bg-emerald-600/90 px-2.5 py-1 rounded-full text-white font-medium items-center gap-1 transition-colors"
           >
-            <span>Fee Estimator</span>
+            <span>{t("nav.estimator")}</span>
           </Link>
           <Link
             href="/tools/complaint-drafter?standalone=1"
             className="hidden sm:inline-flex text-xs bg-emerald-700/70 dark:bg-slate-700/70 hover:bg-emerald-600/90 px-2.5 py-1 rounded-full text-white font-medium items-center gap-1 transition-colors"
           >
-            <span>Complaint Tool</span>
+            <span>{t("nav.complaintDrafter")}</span>
           </Link>
 
           <div className="relative">
@@ -467,7 +494,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
                   className="w-full px-3.5 py-2 hover:bg-slate-100 dark:hover:bg-[#182229] flex items-center gap-2.5 text-left transition-colors cursor-pointer"
                 >
                   <Copy className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                  <span>Copy transcript</span>
+                  <span>{t("whatsapp.copyTranscript")}</span>
                 </button>
                 <button
                   type="button"
@@ -475,7 +502,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
                   className="w-full px-3.5 py-2 hover:bg-slate-100 dark:hover:bg-[#182229] text-red-600 dark:text-red-400 flex items-center gap-2.5 text-left transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
-                  <span>Clear conversation</span>
+                  <span>{t("whatsapp.clearConversation")}</span>
                 </button>
                 <div className="h-px bg-slate-200 dark:bg-slate-700 my-1" />
                 <a
@@ -485,14 +512,14 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
                   className="w-full px-3.5 py-2 hover:bg-slate-100 dark:hover:bg-[#182229] flex items-center gap-2.5 text-left transition-colors"
                 >
                   <ExternalLink className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                  <span>BIS Official Portal</span>
+                  <span>{t("whatsapp.officialPortal")}</span>
                 </a>
                 <a
                   href="tel:1800114000"
                   className="w-full px-3.5 py-2 hover:bg-slate-100 dark:hover:bg-[#182229] flex items-center gap-2.5 text-left transition-colors"
                 >
                   <Phone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span>Call Helpline (1800-11-4000)</span>
+                  <span>{t("whatsapp.callHelpline")}</span>
                 </a>
               </div>
             )}
@@ -511,7 +538,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
         {/* Encryption notice banner */}
         <div className="flex justify-center my-1">
           <span className="text-[11px] bg-[#FFEECD] dark:bg-[#182229] text-[#54656F] dark:text-[#8696A0] px-3.5 py-1.5 rounded-lg shadow-2xs text-center max-w-md font-sans leading-relaxed border border-[#E9D8A6]/70 dark:border-slate-800 flex items-center gap-1.5">
-            <span>🔒 Messages are grounded in authoritative BIS regulations and Quality Control Orders.</span>
+            <span>{t("whatsapp.encryptionNotice")}</span>
           </span>
         </div>
 
@@ -534,8 +561,8 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
                 type="button"
                 onClick={() => copyText(msg.id, msg.text)}
                 className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1 rounded-md bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-slate-500 dark:text-slate-300 transition-opacity cursor-pointer"
-                title="Copy message"
-                aria-label="Copy message"
+                title={t("whatsapp.copy")}
+                aria-label={t("whatsapp.copy")}
               >
                 {copiedId === msg.id ? (
                   <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -552,7 +579,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
                 <div className="mt-2.5 pt-2 border-t border-slate-200/80 dark:border-slate-700/60 space-y-1">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#075E54] dark:text-emerald-400 flex items-center gap-1">
                     <ShieldCheck className="w-3 h-3" />
-                    <span>Authoritative BIS Sources:</span>
+                    <span>{t("whatsapp.sources")}</span>
                   </div>
                   {msg.citations.map((c, i) => (
                     <div
@@ -599,7 +626,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" />
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.2s]" />
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.4s]" />
-            <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">Mithra is typing...</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">{t("whatsapp.typing")}</span>
           </div>
         )}
 
@@ -611,14 +638,14 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
         <div className="bg-white dark:bg-[#202c33] border-t border-slate-200 dark:border-slate-800 p-3 sm:p-4 animate-slideDown shadow-lg z-30">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-              Simulate Document / Photo Attachment
+              {t("whatsapp.simulateAttachment")}
             </span>
             <button
               type="button"
               onClick={() => setShowAttachments(false)}
               className="text-slate-400 hover:text-slate-600 text-xs cursor-pointer"
             >
-              Close
+              {t("whatsapp.close")}
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -687,7 +714,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
             autoFocus
             type="text"
             className="w-full h-10 px-4 rounded-xl bg-white dark:bg-[#2a3942] text-slate-900 dark:text-slate-100 text-xs sm:text-sm placeholder:text-slate-400 dark:placeholder:text-[#8696A0] outline-none border border-slate-200/80 dark:border-transparent focus:border-emerald-500 shadow-2xs"
-            placeholder="Type a message (e.g. Check IS 14543 or verify Gold HUID)..."
+            placeholder={t("whatsapp.placeholder")}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading}

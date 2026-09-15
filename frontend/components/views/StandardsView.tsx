@@ -316,7 +316,7 @@ export function StandardsSearchToolbar({
             title="Filter by mandatory Quality Control Orders"
           >
             <Filter className="w-3.5 h-3.5" />
-            <span className="whitespace-nowrap">QCO Mandatory</span>
+            <span className="whitespace-nowrap">{t("standards.mandatoryQCO")}</span>
           </button>
         </div>
       </div>
@@ -352,6 +352,7 @@ export function ResultsSummaryAndFilters({
   onClearQco,
   onResetAll,
 }: ActiveFiltersProps) {
+  const { t } = useLanguage();
   const hasActiveFilters =
     Boolean(searchTerm) ||
     selectedSector !== "All Sectors" ||
@@ -411,7 +412,7 @@ export function ResultsSummaryAndFilters({
 
             {qcoOnly && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900/60 text-[11px] font-semibold text-[#DC2626] dark:text-red-300">
-                QCO Mandatory
+                {t("standards.mandatoryQCO")}
                 <button
                   type="button"
                   onClick={onClearQco}
@@ -433,7 +434,7 @@ export function ResultsSummaryAndFilters({
           className="text-xs font-semibold text-[#005EB8] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
         >
           <RotateCcw className="w-3 h-3" />
-          <span>Clear all filters</span>
+          <span>{t("standards.clearFilters")}</span>
         </button>
       )}
     </div>
@@ -447,6 +448,7 @@ interface StandardCardProps {
 }
 
 export function StandardCard({ item, onAskMithra }: StandardCardProps) {
+  const { t } = useLanguage();
   const handleAsk = () => {
     const q = `Explain applicability, required testing parameters, and BIS certification pathway for ${item.is_number} (${item.title})`;
     if (onAskMithra) {
@@ -477,7 +479,7 @@ export function StandardCard({ item, onAskMithra }: StandardCardProps) {
           </Badge>
           {item.mandatory && (
             <Badge variant="danger" className="text-[11px] font-semibold rounded-md px-2 py-0.5">
-              QCO Mandatory
+              {t("standards.mandatoryQCO")}
             </Badge>
           )}
         </div>
@@ -500,7 +502,7 @@ export function StandardCard({ item, onAskMithra }: StandardCardProps) {
           </div>
           <div className="flex items-center gap-1.5">
             <CalendarDays className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span>Reaffirmed {item.year}</span>
+            <span>{t("standards.reaffirmedLabel")} {item.year}</span>
           </div>
         </div>
 
@@ -508,7 +510,7 @@ export function StandardCard({ item, onAskMithra }: StandardCardProps) {
         {item.qco_order && (
           <div className="px-3 py-2 rounded-r-md bg-slate-50 dark:bg-slate-800/60 border-l-[3px] border-[#005EB8] text-xs space-y-0.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] dark:text-slate-400 block">
-              Quality Control Order
+              {t("standards.qcoOrderLabel")}
             </span>
             <span className="font-medium text-[#0F172A] dark:text-slate-200 leading-relaxed block">
               {item.qco_order}
@@ -524,7 +526,7 @@ export function StandardCard({ item, onAskMithra }: StandardCardProps) {
           className="h-9 bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-semibold rounded-md px-4 gap-1.5 shadow-xs shrink-0"
         >
           <Sparkles className="w-3.5 h-3.5 text-blue-200 shrink-0" />
-          <span>Ask Mithra Compliance AI</span>
+          <span>{t("standards.askMithraButton")}</span>
         </Button>
 
         <a
@@ -544,6 +546,7 @@ export function StandardCard({ item, onAskMithra }: StandardCardProps) {
 
 // ── 6. EMPTY STATE COMPONENT ──
 export function StandardsEmptyState({ onClear }: { onClear: () => void }) {
+  const { t } = useLanguage();
   return (
     <div className="p-10 sm:p-12 text-center rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3.5">
       <div className="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
@@ -563,7 +566,7 @@ export function StandardsEmptyState({ onClear }: { onClear: () => void }) {
         onClick={onClear}
         className="rounded-md text-xs font-semibold"
       >
-        Clear filters
+        {t("standards.clearFilters")}
       </Button>
     </div>
   );

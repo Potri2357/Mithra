@@ -11,7 +11,7 @@ export default function SchemesPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 font-sans">
       <Navbar />
-      <StandaloneBar title={t("nav.schemes")} subtitle="Certification Pathways · BIS" />
+      <StandaloneBar title={t("nav.schemes")} subtitle={t("nav.schemesSubtitle")} />
       <main className="flex-1">
         <SchemesView />
       </main>

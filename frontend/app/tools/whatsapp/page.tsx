@@ -25,7 +25,7 @@ export default function WhatsAppToolPage() {
     <div className={`min-h-screen flex flex-col bg-slate-100 dark:bg-[#111B21] text-slate-900 dark:text-slate-100 ${isStandalone ? "h-screen overflow-hidden" : ""}`}>
       {/* Navbar for standard mode, StandaloneBar for standalone tab */}
       <Navbar />
-      <StandaloneBar title="Mithra on WhatsApp" subtitle="Tier-2 Multi-Channel Distribution · Tools" />
+      <StandaloneBar title={t("nav.whatsappTitle")} subtitle={t("nav.whatsappSubtitle")} />
 
       {isStandalone ? (
         /* Standalone View: Full-window immersive simulator with zero clutter */

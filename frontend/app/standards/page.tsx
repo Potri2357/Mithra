@@ -11,7 +11,7 @@ export default function StandardsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 font-sans">
       <Navbar />
-      <StandaloneBar title={t("nav.standards")} subtitle="Indian Standards Directory · BIS" />
+      <StandaloneBar title={t("nav.standards")} subtitle={t("nav.standardsSubtitle")} />
       <main className="flex-1">
         <StandardsView />
       </main>
