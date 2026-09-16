@@ -46,6 +46,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { BisLoadingIndicator } from "@/components/BisLoadingIndicator";
 import { MithraLogo } from "@/components/MithraLogo";
+import { EliteCitationPill, prepareContentWithCitations } from "@/components/EliteCitationPill";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLanguage } from "@/context/LanguageContext";
 import { useProjects } from "@/context/ProjectContext";
@@ -289,7 +290,6 @@ function ChatContent() {
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [photoMode, setPhotoMode] = useState<"product" | "hallmark">("product");
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
   const [confirmClearChat, setConfirmClearChat] = useState(false);
@@ -449,11 +449,6 @@ function ChatContent() {
           }
           return updated;
         });
-
-        // Auto-expand sources if citations exist
-        if (data.citations && data.citations.length > 0) {
-          setExpandedSources((prev) => ({ ...prev, [aiMsg.id]: true }));
-        }
       } catch {
         setMessages((prev) =>
           prev.map((m) =>
@@ -1422,11 +1417,67 @@ function ChatContent() {
                     <div className="flex items-center justify-center py-6">
                       <BisLoadingIndicator size="lg" />
                     </div>
-                  ) : (
-                    <div className="prose-bis text-[var(--color-text-body)]">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
-                    </div>
-                  )}
+                  ) : (() => {
+                    const { processedContent, renderedIds } = prepareContentWithCitations(
+                      msg.content,
+                      msg.citations
+                    );
+                    const unrenderedCitations = (msg.citations || []).filter((c, idx) => {
+                      const rawId = c.id || `S${idx + 1}`;
+                      const cleanId = rawId.replace(/^S/i, "");
+                      return (
+                        !renderedIds.has(rawId) &&
+                        !renderedIds.has(cleanId) &&
+                        !renderedIds.has(`S${cleanId}`)
+                      );
+                    });
+
+                    return (
+                      <div className="prose-bis text-[var(--color-text-body)]">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: ({ href, children, ...props }) => {
+                              if (href && href.startsWith("citation:")) {
+                                const rawIds = href
+                                  .replace("citation:", "")
+                                  .split(",")
+                                  .map((s) => s.trim())
+                                  .filter(Boolean);
+                                return <EliteCitationPill ids={rawIds} citations={msg.citations} />;
+                              }
+                              return (
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[var(--blue-600)] dark:text-blue-400 hover:underline inline-flex items-center gap-0.5"
+                                  {...props}
+                                >
+                                  {children}
+                                </a>
+                              );
+                            },
+                          }}
+                        >
+                          {processedContent}
+                        </ReactMarkdown>
+
+                        {/* Unplaced grounded citations rendered cleanly as inline pills at end */}
+                        {unrenderedCitations.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-2">
+                            {unrenderedCitations.map((c, i) => (
+                              <EliteCitationPill
+                                key={i}
+                                ids={[c.id || `S${i + 1}`]}
+                                citations={msg.citations}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   {/* Abstention human contact notice (Section 3.3) */}
                   {msg.abstained && !msg.isLoading && (
@@ -1439,53 +1490,6 @@ function ChatContent() {
                         <span>BIS Portal</span>
                         <ExternalLink className="w-3.5 h-3.5" />
                       </a>
-                    </div>
-                  )}
-
-                  {/* Sources Strip: Collapsible panel under message (Section 3.3 & 4) */}
-                  {msg.citations && msg.citations.length > 0 && !msg.isLoading && (
-                    <div className="sources-strip">
-                      <button
-                        onClick={() =>
-                          setExpandedSources((prev) => ({ ...prev, [msg.id]: !prev[msg.id] }))
-                        }
-                        className="w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold text-[var(--blue-700)] dark:text-[#F5F4ED] bg-[var(--blue-50)] dark:bg-[#252420] hover:bg-[var(--blue-100)] dark:hover:bg-[#2B2A26] transition-colors"
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <BookOpen className="w-4 h-4 text-[var(--blue-600)] dark:text-[var(--blue-400)]" />
-                          <span>Grounded Sources ({msg.citations.length} Verified Citations)</span>
-                        </div>
-                        {expandedSources[msg.id] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                      </button>
-
-                      {expandedSources[msg.id] && (
-                        <div>
-                          {msg.citations.map((c, i) => (
-                            <div key={i} className="sources-strip-row">
-                              <div className="flex items-start gap-2 max-w-[85%]">
-                                <span className="citation-chip">{i + 1}</span>
-                                <div>
-                                  <div className="font-semibold text-xs text-[var(--color-text-primary)]">
-                                    {c.source || "Official BIS Record"}
-                                  </div>
-                                  <div className="text-[11px] text-[var(--color-text-muted)] mt-0.5">
-                                    {c.text}
-                                  </div>
-                                </div>
-                              </div>
-                              <a
-                                href="https://www.bis.gov.in"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[var(--blue-600)] hover:underline flex-shrink-0 p-1"
-                                title="Open official reference"
-                              >
-                                <ExternalLink className="w-3.5 h-3.5" />
-                              </a>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   )}
 

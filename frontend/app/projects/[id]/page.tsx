@@ -34,12 +34,15 @@ import {
   getWorkspaceScheme,
   getWorkspaceCategory,
 } from "@/lib/workspaceHelpers";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { EliteCitationPill, prepareContentWithCitations, CitationItem } from "@/components/EliteCitationPill";
 
 interface ProjectMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
-  citations?: Array<{ source: string; text: string; standard?: string }>;
+  citations?: CitationItem[];
   follow_ups?: string[];
   timestamp: string;
 }
@@ -529,26 +532,69 @@ export default function ProjectWorkspacePage() {
                       : "bg-slate-50 dark:bg-[#181816] border border-slate-100 dark:border-[#34332E] text-slate-800 dark:text-[#F5F4ED] rounded-tl-sm"
                   }`}
                 >
-                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                  {msg.role === "user" ? (
+                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                  ) : (() => {
+                    const { processedContent, renderedIds } = prepareContentWithCitations(
+                      msg.content,
+                      msg.citations
+                    );
+                    const unrenderedCitations = (msg.citations || []).filter((c, idx) => {
+                      const rawId = c.id || `S${idx + 1}`;
+                      const cleanId = rawId.replace(/^S/i, "");
+                      return (
+                        !renderedIds.has(rawId) &&
+                        !renderedIds.has(cleanId) &&
+                        !renderedIds.has(`S${cleanId}`)
+                      );
+                    });
 
-                  {/* Citations */}
-                  {msg.citations && msg.citations.length > 0 && (
-                    <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-[#34332E]">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-[#9C9A91] block mb-1">
-                        Citations & References
-                      </span>
-                      <div className="flex flex-wrap gap-1">
-                        {msg.citations.map((c, i) => (
-                          <span
-                            key={i}
-                            className="text-[10px] px-2 py-0.5 rounded bg-white dark:bg-[#2B2A26] border border-slate-200 dark:border-[#3D3B35] text-slate-700 dark:text-[#D4D2C9]"
-                          >
-                            [S{i + 1}] {c.source}
-                          </span>
-                        ))}
+                    return (
+                      <div className="prose-bis text-[var(--color-text-body)]">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: ({ href, children, ...props }) => {
+                              if (href && href.startsWith("citation:")) {
+                                const rawIds = href
+                                  .replace("citation:", "")
+                                  .split(",")
+                                  .map((s) => s.trim())
+                                  .filter(Boolean);
+                                return <EliteCitationPill ids={rawIds} citations={msg.citations} />;
+                              }
+                              return (
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[var(--blue-600)] dark:text-blue-400 hover:underline inline-flex items-center gap-0.5"
+                                  {...props}
+                                >
+                                  {children}
+                                </a>
+                              );
+                            },
+                          }}
+                        >
+                          {processedContent}
+                        </ReactMarkdown>
+
+                        {/* Unplaced citations shown cleanly as inline pills */}
+                        {unrenderedCitations.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-1.5">
+                            {unrenderedCitations.map((c, i) => (
+                              <EliteCitationPill
+                                key={i}
+                                ids={[c.id || `S${i + 1}`]}
+                                citations={msg.citations}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* Follow-up suggestions */}
                   {msg.follow_ups && msg.follow_ups.length > 0 && (

@@ -30,14 +30,15 @@ import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { MithraLogo } from "@/components/MithraLogo";
 import { useDarkMode } from "@/hooks/useDarkMode";
+import { EliteCitationPill, CitationItem } from "@/components/EliteCitationPill";
 
 interface WhatsAppMessage {
   id: string;
-  sender: "user" | "bot";
+  sender: "user" | "bot" | "assistant";
   text: string;
   time: string;
-  status?: "sent" | "delivered" | "read";
-  citations?: Array<{ id: string; text: string; source: string }>;
+  status: "sent" | "delivered" | "read";
+  citations?: CitationItem[];
   quickReplies?: string[];
 }
 
@@ -46,7 +47,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const INITIAL_MESSAGES: WhatsAppMessage[] = [
   {
     id: "1",
-    sender: "bot",
+    sender: "assistant",
     text: "Namaste! 🙏 Welcome to *Mithra* — the official AI Assistant for the Bureau of Indian Standards (BIS), Government of India.\n\nI can help you with:\n• Checking mandatory Quality Control Orders (*QCOs*)\n• Indian Standards (*IS specifications*)\n• ISI Mark, CRS & FMCS certification pathways\n• 6-digit Gold Hallmark *HUID* verification\n• Statutory fee estimates & complaint drafting\n\nHow can I help you today?",
     time: "10:00 AM",
     status: "read",
@@ -59,8 +60,12 @@ const INITIAL_MESSAGES: WhatsAppMessage[] = [
   },
 ];
 
-// Helper to format inline elements: bold, italic, code, URLs, phone numbers, IS codes
-function formatInlineText(text: string): React.ReactNode[] {
+// Helper to format inline elements: bold, italic, code, URLs, phone numbers, IS codes, citations
+function formatInlineText(
+  text: string,
+  citations?: CitationItem[],
+  renderedIds?: Set<string>
+): React.ReactNode[] {
   // Regex to match special tokens:
   // 1: URLs
   // 2: Helpline phone numbers (1800-11-4000 etc.)
@@ -69,7 +74,8 @@ function formatInlineText(text: string): React.ReactNode[] {
   // 5: Underscores for italic (_italic_)
   // 6: Strikethrough (~strikethrough~)
   // 7: Inline code (`code`)
-  const regex = /(https?:\/\/[^\s)]+)|(\b1800[-\s]?\d{2,3}[-\s]?\d{4}\b|\b1915\b)|(\bIS\s*(?:\d{3,5}(?:\s*\(Part\s*\d+\))?|ISO\s*\d{4,5})\b)|(\*\*[^*]+\*\*|\*[^*\n]+\*)|(_[^_\n]+_)|(~[^~\n]+~)|(`[^`\n]+`)/g;
+  // 8: Inline citations ([S1], [1], [S1, S2], etc.)
+  const regex = /(https?:\/\/[^\s)]+)|(\b1800[-\s]?\d{2,3}[-\s]?\d{4}\b|\b1915\b)|(\bIS\s*(?:\d{3,5}(?:\s*\(Part\s*\d+\))?|ISO\s*\d{4,5})\b)|(\*\*[^*]+\*\*|\*[^*\n]+\*)|(_[^_\n]+_)|(~[^~\n]+~)|(`[^`\n]+`)|((?:\[S?\d+\](?:\s*\[S?\d+\])*|\[S?\d+(?:\s*,\s*S?\d+)+\])(?!\())/g;
 
   const nodes: React.ReactNode[] = [];
   let lastIndex = 0;
@@ -157,6 +163,20 @@ function formatInlineText(text: string): React.ReactNode[] {
           {inner}
         </code>
       );
+    } else if (match[8]) {
+      // Citation token: [S1], [1], [S1, S2], etc.
+      const rawIds = matchedStr.match(/S?\d+/g) || [];
+      if (renderedIds) {
+        rawIds.forEach((id) => {
+          renderedIds.add(id);
+          const clean = id.replace(/^S/i, "");
+          renderedIds.add(clean);
+          renderedIds.add(`S${clean}`);
+        });
+      }
+      nodes.push(
+        <EliteCitationPill key={key} ids={rawIds} citations={citations} />
+      );
     }
 
     lastIndex = regex.lastIndex;
@@ -170,78 +190,111 @@ function formatInlineText(text: string): React.ReactNode[] {
 }
 
 // Full message block renderer for WhatsApp
-function FormattedWhatsAppMessage({ text }: { text: string }) {
+function FormattedWhatsAppMessage({
+  text,
+  citations,
+}: {
+  text: string;
+  citations?: CitationItem[];
+}) {
   const lines = text.split("\n");
+  const renderedIds = new Set<string>();
+
+  const renderedLines = lines.map((line, idx) => {
+    const trimmed = line.trim();
+
+    // Empty line spacer
+    if (!trimmed) {
+      return <div key={idx} className="h-1.5" />;
+    }
+
+    // Section header (### or ## or #)
+    if (trimmed.startsWith("### ")) {
+      return (
+        <div
+          key={idx}
+          className="font-bold text-xs sm:text-sm text-[#075E54] dark:text-emerald-400 mt-2 mb-1"
+        >
+          {formatInlineText(trimmed.replace(/^###\s+/, ""), citations, renderedIds)}
+        </div>
+      );
+    }
+    if (trimmed.startsWith("## ") || trimmed.startsWith("# ")) {
+      return (
+        <div
+          key={idx}
+          className="font-extrabold text-sm text-[#075E54] dark:text-emerald-400 mt-2.5 mb-1 pb-0.5 border-b border-emerald-500/20"
+        >
+          {formatInlineText(trimmed.replace(/^#{1,2}\s+/, ""), citations, renderedIds)}
+        </div>
+      );
+    }
+
+    // Bullet list (•, -, *, +)
+    const bulletMatch = trimmed.match(/^([•\-\*\+])\s+(.+)$/);
+    if (bulletMatch) {
+      return (
+        <div key={idx} className="flex items-start gap-2 pl-1 my-0.5">
+          <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0 select-none text-[12px] leading-tight">
+            •
+          </span>
+          <span className="flex-1">
+            {formatInlineText(bulletMatch[2], citations, renderedIds)}
+          </span>
+        </div>
+      );
+    }
+
+    // Numbered list (1. 2. 3.)
+    const numMatch = trimmed.match(/^(\d+)\.\s+(.+)$/);
+    if (numMatch) {
+      return (
+        <div key={idx} className="flex items-start gap-2 pl-1 my-0.5">
+          <span className="text-[#075E54] dark:text-emerald-400 font-bold shrink-0 select-none text-[11px] min-w-[14px]">
+            {numMatch[1]}.
+          </span>
+          <span className="flex-1">
+            {formatInlineText(numMatch[2], citations, renderedIds)}
+          </span>
+        </div>
+      );
+    }
+
+    // Standard paragraph line
+    return (
+      <div key={idx} className="leading-relaxed">
+        {formatInlineText(line, citations, renderedIds)}
+      </div>
+    );
+  });
+
+  // Citations not placed inline
+  const unrenderedCitations = (citations || []).filter((c, idx) => {
+    const rawId = c.id || `S${idx + 1}`;
+    const cleanId = rawId.replace(/^S/i, "");
+    return (
+      !renderedIds.has(rawId) &&
+      !renderedIds.has(cleanId) &&
+      !renderedIds.has(`S${cleanId}`)
+    );
+  });
 
   return (
     <div className="space-y-1 font-sans text-xs sm:text-[13px] leading-relaxed text-slate-800 dark:text-slate-100 break-words">
-      {lines.map((line, idx) => {
-        const trimmed = line.trim();
+      {renderedLines}
 
-        // Empty line spacer
-        if (!trimmed) {
-          return <div key={idx} className="h-1.5" />;
-        }
-
-        // Section header (### or ## or #)
-        if (trimmed.startsWith("### ")) {
-          return (
-            <div
-              key={idx}
-              className="font-bold text-xs sm:text-sm text-[#075E54] dark:text-emerald-400 mt-2 mb-1"
-            >
-              {formatInlineText(trimmed.replace(/^###\s+/, ""))}
-            </div>
-          );
-        }
-        if (trimmed.startsWith("## ") || trimmed.startsWith("# ")) {
-          return (
-            <div
-              key={idx}
-              className="font-extrabold text-sm text-[#075E54] dark:text-emerald-400 mt-2.5 mb-1 pb-0.5 border-b border-emerald-500/20"
-            >
-              {formatInlineText(trimmed.replace(/^#{1,2}\s+/, ""))}
-            </div>
-          );
-        }
-
-        // Bullet list (•, -, *, +)
-        const bulletMatch = trimmed.match(/^([•\-\*\+])\s+(.+)$/);
-        if (bulletMatch) {
-          return (
-            <div key={idx} className="flex items-start gap-2 pl-1 my-0.5">
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0 select-none text-[12px] leading-tight">
-                •
-              </span>
-              <span className="flex-1">
-                {formatInlineText(bulletMatch[2])}
-              </span>
-            </div>
-          );
-        }
-
-        // Numbered list (1. 2. 3.)
-        const numMatch = trimmed.match(/^(\d+)\.\s+(.+)$/);
-        if (numMatch) {
-          return (
-            <div key={idx} className="flex items-start gap-2 pl-1 my-0.5">
-              <span className="text-[#075E54] dark:text-emerald-400 font-bold shrink-0 select-none text-[11px] min-w-[14px]">
-                {numMatch[1]}.
-              </span>
-              <span className="flex-1">
-                {formatInlineText(numMatch[2])}
-              </span>
-            </div>
-          );
-        }
-
-        // Standard paragraph line
-        return (
-          <p key={idx} className="m-0">
-            {formatInlineText(line)}
-          </p>
-        );
-      })}
+      {/* Unrendered citations shown cleanly as inline pills */}
+      {unrenderedCitations.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1 mt-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/50">
+          {unrenderedCitations.map((c, i) => (
+            <EliteCitationPill
+              key={i}
+              ids={[c.id || `S${i + 1}`]}
+              citations={citations}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -571,26 +624,8 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
                 )}
               </button>
 
-              {/* Formatted Message Body */}
-              <FormattedWhatsAppMessage text={msg.text} />
-
-              {/* Citations block if any */}
-              {msg.citations && msg.citations.length > 0 && (
-                <div className="mt-2.5 pt-2 border-t border-slate-200/80 dark:border-slate-700/60 space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#075E54] dark:text-emerald-400 flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3" />
-                    <span>{t("whatsapp.sources")}</span>
-                  </div>
-                  {msg.citations.map((c, i) => (
-                    <div
-                      key={i}
-                      className="text-[11px] text-slate-600 dark:text-slate-300 italic pl-1 border-l-2 border-emerald-500/40"
-                    >
-                      <span className="font-semibold text-slate-700 dark:text-slate-200">[{c.id}]</span> {c.source}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* Formatted Message Body with inline citations */}
+              <FormattedWhatsAppMessage text={msg.text} citations={msg.citations} />
 
               {/* Timestamp & checkmark */}
               <div className="flex items-center justify-end gap-1 mt-1.5 text-[10px] text-slate-500 dark:text-[#8696A0]">
