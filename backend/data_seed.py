@@ -4,11 +4,21 @@ Data seed module — exposes seeded BIS data for fallback search.
 import json
 from pathlib import Path
 
-_DATA_DIR = Path(__file__).parent.parent / "data"
-# Also try project root (for when running from backend/)
 import os
-if not (_DATA_DIR / 'standards_catalogue.json').exists():
-    _DATA_DIR = Path(__file__).parent.parent.parent / "data"
+def _find_data_dir() -> Path:
+    data_env = os.getenv("DATA_DIR")
+    candidates = [
+        Path(data_env) if data_env else None,
+        Path(__file__).parent.parent.parent / "data",
+        Path(__file__).parent.parent / "data",
+        Path.cwd() / "data",
+    ]
+    for candidate in candidates:
+        if candidate and (candidate / "standards_catalogue.json").exists():
+            return candidate
+    return Path(__file__).parent.parent.parent / "data"
+
+_DATA_DIR = _find_data_dir()
 
 def _load(fname: str) -> list:
     try:

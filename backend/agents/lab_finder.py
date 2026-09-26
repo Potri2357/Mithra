@@ -19,9 +19,18 @@ class LabFinderAgent:
 
     def _load_labs(self) -> list[dict]:
         try:
-            labs_path = Path(__file__).parent.parent.parent / "data" / "labs_directory.json"
-            with open(labs_path) as f:
-                return json.load(f)
+            data_env = os.getenv("DATA_DIR")
+            candidates = [
+                Path(data_env) if data_env else None,
+                Path(__file__).parent.parent.parent / "data",
+                Path(__file__).parent.parent / "data",
+                Path.cwd() / "data",
+            ]
+            for candidate in candidates:
+                if candidate and (candidate / "labs_directory.json").exists():
+                    with open(candidate / "labs_directory.json") as f:
+                        return json.load(f)
+            return []
         except Exception as e:
             logger.warning(f"Could not load labs file: {e}")
             return []

@@ -6,6 +6,7 @@ pydantic-settings==2.5.2
 
 # LLM
 google-generativeai==0.8.3
+google-genai>=0.1.1
 groq==0.11.0
 
 # RAG / Vector

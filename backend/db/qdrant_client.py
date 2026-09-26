@@ -30,7 +30,14 @@ class QdrantStore:
 
     def _load_seed_data(self):
         """Load seeded JSON data for fallback search."""
-        data_dir = Path(__file__).parent.parent.parent / "data"
+        data_env = os.getenv("DATA_DIR")
+        candidates = [
+            Path(data_env) if data_env else None,
+            Path(__file__).parent.parent.parent / "data",
+            Path(__file__).parent.parent / "data",
+            Path.cwd() / "data",
+        ]
+        data_dir = next((c for c in candidates if c and (c / "standards_catalogue.json").exists()), Path(__file__).parent.parent.parent / "data")
         try:
             with open(data_dir / "standards_catalogue.json") as f:
                 QdrantStore._seed_data["standards"] = json.load(f)
