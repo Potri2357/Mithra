@@ -23,6 +23,12 @@ import {
   CheckCircle2,
   ChevronRight,
   AlertCircle,
+  Volume2,
+  VolumeX,
+  ThumbsUp,
+  ThumbsDown,
+  RotateCcw,
+  Share2,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -34,9 +40,9 @@ import {
   getWorkspaceScheme,
   getWorkspaceCategory,
 } from "@/lib/workspaceHelpers";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { EliteCitationPill, prepareContentWithCitations, CitationItem } from "@/components/EliteCitationPill";
+import { EliteCitationPill, prepareContentWithCitations, SourcesPanel, CitationItem } from "@/components/EliteCitationPill";
 
 interface ProjectMessage {
   id: string;
@@ -553,15 +559,42 @@ export default function ProjectWorkspacePage() {
                       <div className="prose-bis text-[var(--color-text-body)]">
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
+                          urlTransform={(url) =>
+                            url.startsWith("citation:") || url.startsWith("#citation-")
+                              ? url
+                              : defaultUrlTransform(url)
+                          }
                           components={{
                             a: ({ href, children, ...props }) => {
-                              if (href && href.startsWith("citation:")) {
-                                const rawIds = href
-                                  .replace("citation:", "")
+                              const isCitation =
+                                (href &&
+                                  (href.startsWith("citation:") ||
+                                    href.startsWith("#citation-") ||
+                                    href.startsWith("#cite-"))) ||
+                                (typeof children === "string" &&
+                                  /^cite(ation)?:\s*S?\d+/i.test(children.trim()));
+
+                              if (isCitation) {
+                                let idStr = "";
+                                if (href && href.startsWith("citation:")) {
+                                  idStr = href.replace("citation:", "");
+                                } else if (href && href.startsWith("#citation-")) {
+                                  idStr = href.replace("#citation-", "");
+                                } else if (href && href.startsWith("#cite-")) {
+                                  idStr = href.replace("#cite-", "");
+                                } else if (typeof children === "string") {
+                                  idStr = children.trim().replace(/^cite(ation)?:\s*/i, "");
+                                }
+                                const rawIds = idStr
                                   .split(",")
                                   .map((s) => s.trim())
                                   .filter(Boolean);
-                                return <EliteCitationPill ids={rawIds} citations={msg.citations} />;
+                                return (
+                                  <EliteCitationPill
+                                    ids={rawIds.length > 0 ? rawIds : ["1"]}
+                                    citations={msg.citations}
+                                  />
+                                );
                               }
                               return (
                                 <a
@@ -592,6 +625,9 @@ export default function ProjectWorkspacePage() {
                             ))}
                           </div>
                         )}
+
+                        {/* Grounded Sources Panel */}
+                        <SourcesPanel citations={msg.citations} />
                       </div>
                     );
                   })()}

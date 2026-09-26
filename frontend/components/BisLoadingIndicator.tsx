@@ -17,8 +17,6 @@ interface BisLoadingIndicatorProps {
 const TRI =
   "M 50,10 L 92,62 C 90,66 85,70 78,70 L 58,70 L 58,58 L 72,58 " +
   "L 50,28 L 28,58 L 42,58 L 42,70 L 22,70 C 15,70 10,66 8,62 Z";
-// Lower curved base / underline
-const ARC = "M 16,78 Q 50,88 84,78 L 81,84 Q 50,94 19,84 Z";
 // Central circular element: cx=50 cy=47 r=7.5
 
 export function BisLoadingIndicator({
@@ -81,11 +79,10 @@ export function BisLoadingIndicator({
             />
           </linearGradient>
 
-          {/* ── 3. Clip path — exact BIS logo silhouette ── */}
+          {/* ── 3. Clip path — exact BIS logo silhouette (without bottom layer arc) ── */}
           <clipPath id="bis-logo-clip">
             <path d={TRI} />
             <circle cx="50" cy="47" r="7.5" />
-            <path d={ARC} />
           </clipPath>
 
           {/* ── 4. Gaussian blur for soft luminous glow layer ── */}
@@ -108,7 +105,6 @@ export function BisLoadingIndicator({
         <g opacity="0.22">
           <path d={TRI}                    fill="url(#bis-wm-grey)" />
           <circle cx="50" cy="47" r="7.5" fill="url(#bis-wm-grey)" />
-          <path d={ARC}                    fill="url(#bis-wm-grey)" />
         </g>
 
         {/* ════════════════════════════════════════════════════

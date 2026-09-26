@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
   BookOpen,
@@ -34,7 +34,10 @@ import {
   ArrowRight,
   AlertTriangle,
   CheckCircle2,
-
+  ThumbsUp,
+  ThumbsDown,
+  RotateCcw,
+  Share2,
   Upload,
   Hammer,
   Calculator,
@@ -46,10 +49,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { BisLoadingIndicator } from "@/components/BisLoadingIndicator";
 import { MithraLogo } from "@/components/MithraLogo";
-import { EliteCitationPill, prepareContentWithCitations } from "@/components/EliteCitationPill";
+import { EliteCitationPill, prepareContentWithCitations, SourcesPanel } from "@/components/EliteCitationPill";
+import { replaceEmojisWithIcons } from "@/components/EmojiToIcon";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLanguage } from "@/context/LanguageContext";
-import { useProjects } from "@/context/ProjectContext";
+import { useProjects, type Project } from "@/context/ProjectContext";
 import {
   getWorkspaceName,
   getWorkspaceDesc,
@@ -80,6 +84,7 @@ interface Message {
   follow_ups?: string[];
   audioUrl?: string;
   isLoading?: boolean;
+  language?: string;
 }
 
 const QUICK_START_CARDS = [
@@ -216,9 +221,10 @@ function ChatContent() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [input, setInput] = useState(initialQuery);
   const { language, cycleLanguage, langLabel, t } = useLanguage();
-  const { projects, activeProject, activeProjectId, setActiveProject, createProject } = useProjects();
+  const { projects, activeProject, activeProjectId, setActiveProject, createProject, deleteProject } = useProjects();
   const isDark = useDarkMode();
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectCategory, setNewProjectCategory] = useState("Electrical & Electronics");
   const [newProjectScheme, setNewProjectScheme] = useState("Scheme I (ISI Mark)");
@@ -292,7 +298,6 @@ function ChatContent() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
-  const [confirmClearChat, setConfirmClearChat] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
@@ -428,6 +433,7 @@ function ChatContent() {
                   confidence,
                   follow_up: safeFollowUps[0] ?? data.follow_up,
                   follow_ups: safeFollowUps,
+                  language: data.language || langCode,
                   isLoading: false,
                 }
               : m
@@ -603,13 +609,59 @@ function ChatContent() {
     }
   };
 
+  const [messageFeedback, setMessageFeedback] = useState<Record<string, "like" | "dislike">>({});
+  const [sharedId, setSharedId] = useState<string | null>(null);
+
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const handleFeedback = (id: string, type: "like" | "dislike") => {
+    setMessageFeedback((prev) => {
+      const next = { ...prev };
+      if (next[id] === type) {
+        delete next[id];
+      } else {
+        next[id] = type;
+      }
+      return next;
+    });
+  };
+
+  const handleShareMessage = (text: string, id: string) => {
+    if (typeof window !== "undefined") {
+      const clean = text
+        .replace(/\[(?:cite:)?S?\d+\](?:\([^\)]+\))?/gi, "")
+        .replace(/\[cite:[^\]]+\]\([^\)]+\)/gi, "");
+      const shareText = `${clean.trim()}\n\n— Verified via Mithra BIS AI Assistant (https://www.bis.gov.in)`;
+      navigator.clipboard.writeText(shareText);
+      setSharedId(id);
+      setTimeout(() => setSharedId(null), 2500);
+    }
+  };
+
+  const handleRegenerate = (msgIndex: number) => {
+    if (isLoading) return;
+    for (let i = msgIndex - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        const queryText = messages[i].content;
+        setMessages((prev) => prev.slice(0, i));
+        sendMessage(queryText);
+        return;
+      }
+    }
+  };
+
   const clearChat = (targetProjectId?: string | null) => {
+    // Stop any ongoing speech playback
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    audioRef.current?.pause();
+    setIsSpeaking(false);
+
     // Save current session before clearing (if it has messages)
     if (messages.length > 0) {
       const firstUserMsg = messages.find((m) => m.role === "user");
@@ -678,21 +730,52 @@ function ChatContent() {
   };
 
   const exportTranscript = () => {
-    const txt = messages
-      .map(
-        (m) =>
-          `[${m.role === "user" ? "USER" : "MITHRA"}]\n${m.content}\n${
-            m.citations?.length ? `Sources: ${m.citations.map((c) => c.source).join(", ")}\n` : ""
-          }\n`
-      )
-      .join("\n---\n\n");
-    const blob = new Blob([txt], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Mithra-Consultation-${Date.now()}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (messages.length === 0) {
+      return;
+    }
+
+    try {
+      const timestamp = new Date().toLocaleString();
+      const workspaceInfo = activeProject
+        ? `Workspace: ${activeProject.name} (${activeProject.scheme})\nPinned Standards: ${activeProject.pinnedStandards.join(", ") || "None"}\n`
+        : `Mode: General BIS Regulatory Consultation\n`;
+
+      const header = `# Mithra — Bureau of Indian Standards AI Consultation Report\n\nDate: ${timestamp}\n${workspaceInfo}\n---\n\n`;
+
+      const conversation = messages
+        .map((m, idx) => {
+          const role = m.role === "user" ? "### 👤 User Query" : "### 🏛️ Mithra AI Guidance";
+          let sources = "";
+          if (m.citations && m.citations.length > 0) {
+            sources = `\n\n**Regulatory Sources & Indian Standards Cited:**\n` +
+              m.citations.map((c) => `- **[${c.id}]** ${c.source}: ${c.text}`).join("\n");
+          }
+          return `${role} (Exchange ${idx + 1})\n\n${m.content}${sources}\n`;
+        })
+        .join("\n---\n\n");
+
+      const footer = `\n\n---\n*Disclaimer: This consultation is for informational regulatory guidance only. Official certification decisions must be confirmed with the Bureau of Indian Standards (www.bis.gov.in).*`;
+
+      const fullDoc = header + conversation + footer;
+      const blob = new Blob([fullDoc], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = `Mithra-Compliance-Report-${new Date().toISOString().slice(0, 10)}.md`;
+      document.body.appendChild(a);
+      a.click();
+
+      // Defer removal and revoke to ensure browser completes the download stream
+      setTimeout(() => {
+        if (document.body.contains(a)) {
+          document.body.removeChild(a);
+        }
+        URL.revokeObjectURL(url);
+      }, 500);
+    } catch (err) {
+      console.error("Export failed:", err);
+    }
   };
 
   return (
@@ -859,11 +942,23 @@ function ChatContent() {
                             e.stopPropagation();
                             clearChat(p.id);
                           }}
-                          className="p-1 rounded text-slate-400 hover:text-amber-700 dark:hover:text-[#F5F4ED] hover:bg-amber-500/20 dark:hover:bg-[#34332E] transition-colors"
+                          className="p-1 rounded text-slate-400 hover:text-amber-700 dark:hover:text-[#F5F4ED] hover:bg-amber-500/20 dark:hover:bg-[#34332E] transition-colors cursor-pointer"
                           title={t("projects.newChatInWorkspace") || "New chat"}
                           aria-label="New chat in project"
                         >
                           <Plus className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setProjectToDelete(p);
+                          }}
+                          className="p-1 rounded text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 dark:hover:bg-rose-500/10 transition-colors cursor-pointer"
+                          title={`Remove workspace "${localizedName}"`}
+                          aria-label={`Remove workspace ${localizedName}`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -1149,46 +1244,6 @@ function ChatContent() {
             )}
           </div>
         </div>
-
-        {/* Pinned Bottom Tools */}
-        <div className="sidebar-tools shrink-0 p-3 border-t border-slate-200/80 dark:border-[#34332E] bg-white/95 dark:bg-[#181816]/95 flex items-center gap-2">
-          <button
-            onClick={exportTranscript}
-            disabled={messages.length === 0}
-            className="sidebar-tool-button flex-1"
-          >
-            <Download className="w-4 h-4 text-slate-500 dark:text-[#9C9A91]" />
-            <span>Export</span>
-          </button>
-          {confirmClearChat ? (
-            <span className="flex-1 flex items-center justify-center gap-1">
-              <button
-                onClick={() => { clearChat(); setConfirmClearChat(false); }}
-                className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-800/30 transition-colors"
-                title="Confirm clear"
-              >
-                <Check className="w-3.5 h-3.5" />
-                <span>Confirm</span>
-              </button>
-              <button
-                onClick={() => setConfirmClearChat(false)}
-                className="w-8 py-1.5 flex items-center justify-center rounded-md text-slate-400 dark:text-[#9C9A91] hover:bg-slate-100 dark:hover:bg-[#2B2A26] transition-colors"
-                title="Cancel"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </span>
-          ) : (
-          <button
-            onClick={() => setConfirmClearChat(true)}
-            disabled={messages.length === 0}
-            className="sidebar-tool-button danger flex-1"
-          >
-            <Trash2 className="w-4 h-4 text-rose-600 dark:text-[#9C9A91]" />
-            <span>Clear</span>
-          </button>
-          )}
-        </div>
       </aside>
 
       {/* ── Main Chat Area (Clean canvas without header bar) ── */}
@@ -1231,9 +1286,10 @@ function ChatContent() {
 
           {messages.length > 0 && (
             <button
+              type="button"
               onClick={exportTranscript}
-              className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-white/80 dark:bg-[#21201C]/90 border border-slate-200 dark:border-[#34332E] text-xs font-semibold text-slate-700 dark:text-[#9C9A91] hover:bg-slate-100 dark:hover:bg-[#2B2A26] transition-colors cursor-pointer shadow-xs"
-              title="Export Consultation"
+              className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-white/80 dark:bg-[#21201C]/90 border border-slate-200 dark:border-[#34332E] text-xs font-semibold text-slate-700 dark:text-[#9C9A91] hover:text-slate-900 dark:hover:text-[#F5F4ED] hover:bg-slate-100 dark:hover:bg-[#2B2A26] transition-colors cursor-pointer shadow-xs"
+              title="Export Consultation Report (.md)"
             >
               <Download className="w-3.5 h-3.5 text-slate-500 dark:text-[#9C9A91]" />
               <span className="hidden sm:inline">Export</span>
@@ -1272,7 +1328,7 @@ function ChatContent() {
                       </div>
                     </div>
                     <div className="space-y-2.5">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex flex-wrap items-center justify-center gap-2">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 border border-amber-500/30 text-amber-900 dark:text-amber-200">
                           <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                           <span>{t("projects.workspaceGem") || "WORKSPACE GEM"}</span>
@@ -1280,6 +1336,24 @@ function ChatContent() {
                         <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-[#2B2A26] text-slate-700 dark:text-[#E6E4DD]">
                           {getWorkspaceScheme(activeProject.scheme, language)}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => setProjectToDelete(activeProject)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200/60 dark:border-rose-900/40 transition-colors cursor-pointer"
+                          title="Remove this workspace"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Remove Workspace</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => clearChat(null)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium text-slate-600 dark:text-[#9C9A91] bg-slate-100 hover:bg-slate-200 dark:bg-[#2B2A26] dark:hover:bg-[#34332E] transition-colors cursor-pointer"
+                          title="Switch to General Chat without workspace filter"
+                        >
+                          <X className="w-3 h-3" />
+                          <span>General Chat</span>
+                        </button>
                       </div>
                       <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                         {getWorkspaceName(activeProject, language)}
@@ -1381,7 +1455,7 @@ function ChatContent() {
               )}
             </div>
           ) : (
-            messages.map((msg) => (
+            messages.map((msg, idx) => (
               <div
                 key={msg.id}
                 className={`message-row ${msg.role === "user" ? "message-row-user" : "message-row-assistant"} bubble-enter`}
@@ -1422,8 +1496,8 @@ function ChatContent() {
                       msg.content,
                       msg.citations
                     );
-                    const unrenderedCitations = (msg.citations || []).filter((c, idx) => {
-                      const rawId = c.id || `S${idx + 1}`;
+                    const unrenderedCitations = (msg.citations || []).filter((c, cIdx) => {
+                      const rawId = c.id || `S${cIdx + 1}`;
                       const cleanId = rawId.replace(/^S/i, "");
                       return (
                         !renderedIds.has(rawId) &&
@@ -1436,15 +1510,56 @@ function ChatContent() {
                       <div className="prose-bis text-[var(--color-text-body)]">
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
+                          urlTransform={(url) =>
+                            url.startsWith("citation:") || url.startsWith("#citation-")
+                              ? url
+                              : defaultUrlTransform(url)
+                          }
                           components={{
+                            p: ({ children, ...props }) => <p {...props}>{replaceEmojisWithIcons(children)}</p>,
+                            li: ({ children, ...props }) => <li {...props}>{replaceEmojisWithIcons(children)}</li>,
+                            h1: ({ children, ...props }) => <h1 {...props}>{replaceEmojisWithIcons(children)}</h1>,
+                            h2: ({ children, ...props }) => <h2 {...props}>{replaceEmojisWithIcons(children)}</h2>,
+                            h3: ({ children, ...props }) => <h3 {...props}>{replaceEmojisWithIcons(children)}</h3>,
+                            h4: ({ children, ...props }) => <h4 {...props}>{replaceEmojisWithIcons(children)}</h4>,
+                            h5: ({ children, ...props }) => <h5 {...props}>{replaceEmojisWithIcons(children)}</h5>,
+                            h6: ({ children, ...props }) => <h6 {...props}>{replaceEmojisWithIcons(children)}</h6>,
+                            strong: ({ children, ...props }) => <strong {...props}>{replaceEmojisWithIcons(children)}</strong>,
+                            em: ({ children, ...props }) => <em {...props}>{replaceEmojisWithIcons(children)}</em>,
+                            td: ({ children, ...props }) => <td {...props}>{replaceEmojisWithIcons(children)}</td>,
+                            th: ({ children, ...props }) => <th {...props}>{replaceEmojisWithIcons(children)}</th>,
+                            blockquote: ({ children, ...props }) => <blockquote {...props}>{replaceEmojisWithIcons(children)}</blockquote>,
+                            span: ({ children, ...props }) => <span {...props}>{replaceEmojisWithIcons(children)}</span>,
                             a: ({ href, children, ...props }) => {
-                              if (href && href.startsWith("citation:")) {
-                                const rawIds = href
-                                  .replace("citation:", "")
+                              const isCitation =
+                                (href &&
+                                  (href.startsWith("citation:") ||
+                                    href.startsWith("#citation-") ||
+                                    href.startsWith("#cite-"))) ||
+                                (typeof children === "string" &&
+                                  /^cite(ation)?:\s*S?\d+/i.test(children.trim()));
+
+                              if (isCitation) {
+                                let idStr = "";
+                                if (href && href.startsWith("citation:")) {
+                                  idStr = href.replace("citation:", "");
+                                } else if (href && href.startsWith("#citation-")) {
+                                  idStr = href.replace("#citation-", "");
+                                } else if (href && href.startsWith("#cite-")) {
+                                  idStr = href.replace("#cite-", "");
+                                } else if (typeof children === "string") {
+                                  idStr = children.trim().replace(/^cite(ation)?:\s*/i, "");
+                                }
+                                const rawIds = idStr
                                   .split(",")
                                   .map((s) => s.trim())
                                   .filter(Boolean);
-                                return <EliteCitationPill ids={rawIds} citations={msg.citations} />;
+                                return (
+                                  <EliteCitationPill
+                                    ids={rawIds.length > 0 ? rawIds : ["1"]}
+                                    citations={msg.citations}
+                                  />
+                                );
                               }
                               return (
                                 <a
@@ -1454,7 +1569,7 @@ function ChatContent() {
                                   className="text-[var(--blue-600)] dark:text-blue-400 hover:underline inline-flex items-center gap-0.5"
                                   {...props}
                                 >
-                                  {children}
+                                  {replaceEmojisWithIcons(children)}
                                 </a>
                               );
                             },
@@ -1475,6 +1590,9 @@ function ChatContent() {
                             ))}
                           </div>
                         )}
+
+                        {/* Interactive Grounded Sources Panel (Perplexity & ChatGPT Search style) */}
+                        <SourcesPanel citations={msg.citations} />
                       </div>
                     );
                   })()}
@@ -1493,49 +1611,167 @@ function ChatContent() {
                     </div>
                   )}
 
-                  {/* Actions & Follow-up Row */}
+                  {/* Interactive ChatGPT-Style Message Action Toolbar */}
                   {msg.role === "assistant" && !msg.isLoading && (
-                    <div className="message-actions">
-                      <div className="flex items-center gap-3">
+                    <div className="message-actions mt-3 pt-2.5 flex items-center justify-between border-t border-slate-100 dark:border-white/5">
+                      <div className="flex items-center gap-1 sm:gap-1.5 text-slate-500 dark:text-slate-400">
+                        {/* Copy button */}
                         <button
+                          type="button"
                           onClick={() => copyToClipboard(msg.content, msg.id)}
-                          className="flex items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                          className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer group relative"
+                          title="Copy response"
+                          aria-label="Copy response"
                         >
                           {copiedId === msg.id ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-[var(--color-success)]" />
-                              <span className="text-[var(--color-success)] font-medium">Copied</span>
-                            </>
+                            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                           ) : (
-                            <>
-                              <Copy className="w-3.5 h-3.5" />
-                              <span>Copy</span>
-                            </>
+                            <Copy className="w-4 h-4 group-hover:scale-105 transition-transform" />
                           )}
                         </button>
 
+                        {/* Listen / TTS Button */}
                         <button
+                          type="button"
                           onClick={() => {
                             if (typeof window !== "undefined" && "speechSynthesis" in window) {
+                              if (isSpeaking) {
+                                window.speechSynthesis.cancel();
+                                setIsSpeaking(false);
+                                return;
+                              }
                               window.speechSynthesis.cancel();
                               const clean = msg.content
-                                .replace(/\[S\d+\]/g, "")
+                                .replace(/\[(?:cite:)?S?\d+\](?:\([^\)]+\))?/gi, "")
+                                .replace(/\[cite:[^\]]+\]\([^\)]+\)/gi, "")
                                 .replace(/[#*_`]/g, "")
                                 .replace(/https?:\/\/\S+/g, "");
                               const utt = new SpeechSynthesisUtterance(clean);
-                              utt.lang = language === "hi" ? "hi-IN" : language === "ta" ? "ta-IN" : "en-IN";
+                              const msgLang = msg.language || language;
+                              const ttsLangMap: Record<string, string> = {
+                                hi: "hi-IN",
+                                ta: "ta-IN",
+                                te: "te-IN",
+                                kn: "kn-IN",
+                                ml: "ml-IN",
+                                bn: "bn-IN",
+                                gu: "gu-IN",
+                                mr: "mr-IN",
+                                pa: "pa-IN",
+                                ur: "ur-IN",
+                                fr: "fr-FR",
+                                es: "es-ES",
+                                de: "de-DE",
+                                it: "it-IT",
+                                pt: "pt-BR",
+                                ru: "ru-RU",
+                                ar: "ar-SA",
+                                en: "en-IN",
+                              };
+                              utt.lang = ttsLangMap[msgLang] || "en-IN";
                               utt.onstart = () => setIsSpeaking(true);
                               utt.onend = () => setIsSpeaking(false);
                               utt.onerror = () => setIsSpeaking(false);
                               window.speechSynthesis.speak(utt);
                             }
                           }}
-                          className="flex items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                          className={`p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer group ${
+                            isSpeaking
+                              ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40"
+                              : "hover:text-slate-900 dark:hover:text-white"
+                          }`}
+                          title={isSpeaking ? "Stop listening" : "Read aloud"}
+                          aria-label="Read aloud"
                         >
-                          <Volume2 className="w-3.5 h-3.5" />
-                          <span>{isSpeaking ? t("chat.speaking") : t("chat.listen")}</span>
+                          {isSpeaking ? (
+                            <VolumeX className="w-4 h-4 animate-pulse text-blue-600 dark:text-blue-400" />
+                          ) : (
+                            <Volume2 className="w-4 h-4 group-hover:scale-105 transition-transform" />
+                          )}
+                        </button>
+
+                        {/* Good response / Thumbs Up */}
+                        <button
+                          type="button"
+                          onClick={() => handleFeedback(msg.id, "like")}
+                          className={`p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer group ${
+                            messageFeedback[msg.id] === "like"
+                              ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40"
+                              : "hover:text-slate-900 dark:hover:text-white"
+                          }`}
+                          title="Good response"
+                          aria-label="Good response"
+                        >
+                          <ThumbsUp
+                            className={`w-4 h-4 transition-transform group-hover:scale-105 ${
+                              messageFeedback[msg.id] === "like" ? "fill-current" : ""
+                            }`}
+                          />
+                        </button>
+
+                        {/* Bad response / Thumbs Down */}
+                        <button
+                          type="button"
+                          onClick={() => handleFeedback(msg.id, "dislike")}
+                          className={`p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer group ${
+                            messageFeedback[msg.id] === "dislike"
+                              ? "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40"
+                              : "hover:text-slate-900 dark:hover:text-white"
+                          }`}
+                          title="Bad response"
+                          aria-label="Bad response"
+                        >
+                          <ThumbsDown
+                            className={`w-4 h-4 transition-transform group-hover:scale-105 ${
+                              messageFeedback[msg.id] === "dislike" ? "fill-current" : ""
+                            }`}
+                          />
+                        </button>
+
+                        {/* Regenerate / Retry response */}
+                        <button
+                          type="button"
+                          onClick={() => handleRegenerate(idx)}
+                          className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer group"
+                          title="Regenerate response"
+                          aria-label="Regenerate response"
+                        >
+                          <RotateCcw className="w-4 h-4 group-hover:-rotate-45 transition-transform" />
+                        </button>
+
+                        {/* Share response */}
+                        <button
+                          type="button"
+                          onClick={() => handleShareMessage(msg.content, msg.id)}
+                          className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer group"
+                          title="Share response"
+                          aria-label="Share response"
+                        >
+                          {sharedId === msg.id ? (
+                            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          ) : (
+                            <Share2 className="w-4 h-4 group-hover:scale-105 transition-transform" />
+                          )}
                         </button>
                       </div>
+
+                      {/* Micro feedback toast status */}
+                      <div className="text-[11px] font-medium pr-1">
+                        {sharedId === msg.id && (
+                          <span className="text-emerald-600 dark:text-emerald-400 animate-in fade-in">
+                            Copied to share!
+                          </span>
+                        )}
+                        {messageFeedback[msg.id] && sharedId !== msg.id && (
+                          <span className="text-slate-400 animate-in fade-in">
+                            {messageFeedback[msg.id] === "like"
+                              ? "Thanks for your feedback!"
+                              : "Feedback recorded"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                       {/* Suggested Follow-up Questions */}
                       {(() => {
@@ -1560,7 +1796,7 @@ function ChatContent() {
                                   onClick={() => sendMessage(q)}
                                   className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-50/80 hover:bg-blue-100/90 text-[#0052CC] dark:bg-[#2B2A26] dark:hover:bg-[#34332E] dark:text-[#F5F4ED] border border-blue-200/60 dark:border-[#3D3B35] transition-all text-left font-medium cursor-pointer shadow-2xs hover:scale-[1.01]"
                                 >
-                                  <span>{q}</span>
+                                  <span>{replaceEmojisWithIcons(q)}</span>
                                   <ArrowRight className="w-3 h-3 shrink-0 opacity-70" />
                                 </button>
                               ))}
@@ -1568,9 +1804,6 @@ function ChatContent() {
                           </div>
                         );
                       })()}
-
-                    </div>
-                  )}
                 </div>
 
                 {/* User Avatar */}
@@ -1885,6 +2118,61 @@ function ChatContent() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Remove Project / Workspace Confirmation Modal Window ── */}
+      {projectToDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn"
+          onClick={() => setProjectToDelete(null)}
+        >
+          <div
+            className="w-full max-w-md bg-white dark:bg-[#21201C] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#34332E] overflow-hidden p-5 sm:p-6 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-project-modal-title"
+          >
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-200/60 dark:border-rose-900/40">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <h3 id="delete-project-modal-title" className="text-base font-bold text-slate-900 dark:text-white">
+                  Remove Workspace?
+                </h3>
+                <p className="mt-1 text-xs text-slate-500 dark:text-[#9C9A91] leading-relaxed">
+                  Are you sure you want to remove <strong className="text-slate-800 dark:text-slate-200">&quot;{getWorkspaceName(projectToDelete, language)}&quot;</strong>? Custom instructions and pinned standards for this project will be removed. Your saved chat history will remain accessible.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-[#34332E]">
+              <button
+                type="button"
+                onClick={() => setProjectToDelete(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-[#9C9A91] hover:bg-slate-100 dark:hover:bg-[#2B2A26] dark:hover:text-[#F5F4ED] transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const idToRemove = projectToDelete.id;
+                  deleteProject(idToRemove);
+                  if (activeProjectId === idToRemove) {
+                    clearChat(null);
+                  }
+                  setProjectToDelete(null);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 active:scale-95 text-white shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Remove Workspace</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

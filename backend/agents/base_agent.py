@@ -14,6 +14,7 @@ load_dotenv()
 from groq import AsyncGroq
 from google import genai
 from google.genai import types as genai_types
+from circuit_breaker import groq_breaker, gemini_breaker, retrieval_cache
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ CRITICAL RULES:
 4. If retrieved context is completely empty and the query is outside BIS scope, set abstain=true.
 5. Follow-up Questions: ALWAYS suggest 2 to 3 high-value, logical follow-up questions that the user might want to ask next (e.g., fee structure, application steps, lab testing, MSME concessions).
 6. Provide a subtle compliance disclaimer: "Informational guidance only. Refer to official BIS guidelines for certification decisions."
+7. Clean Professional Styling: Do NOT use raw cartoon or unicode emojis (such as 📌, 💡, 🔍, 🚀). Maintain clean, authoritative government compliance formatting with markdown headings, bold terms, and lists.
 
 Output Format (strict JSON):
 {
@@ -59,7 +61,7 @@ class BaseAgent:
         
         gemini_key = os.getenv("GEMINI_API_KEY")
         self.gemini_client = genai.Client(api_key=gemini_key) if gemini_key else None
-        self.gemini_model = "gemini-2.5-flash"
+        self.gemini_model = "gemini-3.5-flash-lite"
 
         logger.info(f"✅ Agent '{name}' initialized (Groq: {'yes' if self.groq_client else 'no'}, Gemini: {'yes' if self.gemini_client else 'no'})")
 
@@ -68,53 +70,73 @@ class BaseAgent:
         return []
 
     async def _generate_with_groq(self, prompt: str) -> Optional[dict]:
-        """Fast primary generation with Groq."""
+        """Fast primary generation with Groq guarded by Circuit Breaker."""
         if not self.groq_client:
             return None
-        
-        models_to_try = ["qwen/qwen3.8-27b", "groq/compound-mini"]
+
+        # Check circuit breaker before wasting network roundtrips
+        if not await groq_breaker.can_execute():
+            logger.info(f"⚡ Circuit breaker 'groq' is OPEN. Fast-failing to Gemini (0ms).")
+            return None
+
+        models_to_try = ["qwen/qwen3.8-27b"]
         for model in models_to_try:
             try:
-                response = await self.groq_client.chat.completions.create(
-                    model=model,
-                    messages=[
-                        {"role": "system", "content": GENERATION_SYSTEM},
-                        {"role": "user", "content": prompt},
-                    ],
-                    response_format={"type": "json_object"},
-                    temperature=0.1,
-                    max_tokens=2048,
+                import asyncio
+                response = await asyncio.wait_for(
+                    self.groq_client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": GENERATION_SYSTEM},
+                            {"role": "user", "content": prompt},
+                        ],
+                        response_format={"type": "json_object"},
+                        temperature=0.1,
+                        max_tokens=1500,
+                    ),
+                    timeout=3.8,
                 )
                 text = response.choices[0].message.content
                 parsed = self._parse_response(text)
                 if parsed.get("answer"):
+                    await groq_breaker.record_success()
                     return parsed
             except Exception as e:
                 logger.warning(f"Groq model {model} failed in '{self.name}': {e}")
+                await groq_breaker.record_failure(e)
         return None
 
     async def _generate_with_gemini(self, prompt: str) -> Optional[dict]:
-        """Secondary fallback generation with Gemini."""
+        """Secondary fallback generation with Gemini guarded by Circuit Breaker."""
         if not self.gemini_client:
             return None
-        
-        try:
-            config = genai_types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.1,
-                max_output_tokens=2048,
-                system_instruction=GENERATION_SYSTEM,
-            )
-            response = await self.gemini_client.aio.models.generate_content(
-                model=self.gemini_model,
-                contents=prompt,
-                config=config,
-            )
-            parsed = self._parse_response(response.text)
-            if parsed.get("answer"):
-                return parsed
-        except Exception as e:
-            logger.warning(f"Gemini generation failed in '{self.name}': {e}")
+
+        # Check circuit breaker before wasting network roundtrips
+        if not await gemini_breaker.can_execute():
+            logger.info(f"⚡ Circuit breaker 'gemini' is OPEN. Fast-failing to rule-based fallback (0ms).")
+            return None
+
+        models_to_try = [self.gemini_model, "gemini-3.5-flash", "gemini-2.0-flash"]
+        for model_name in models_to_try:
+            try:
+                config = genai_types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.1,
+                    max_output_tokens=1500,
+                    system_instruction=GENERATION_SYSTEM,
+                )
+                response = await self.gemini_client.aio.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=config,
+                )
+                parsed = self._parse_response(response.text)
+                if parsed.get("answer"):
+                    await gemini_breaker.record_success()
+                    return parsed
+            except Exception as e:
+                logger.warning(f"Gemini {model_name} generation failed in '{self.name}': {e}")
+                await gemini_breaker.record_failure(e)
         return None
 
     def _generate_fallback_from_passages(self, query: str, passages: list[dict]) -> dict:
@@ -165,10 +187,17 @@ class BaseAgent:
         context: Optional[list] = None,
         project_context: Optional[dict] = None,
     ) -> dict:
-        """Main agent pipeline: retrieve → generate → validate citations."""
+        """Main agent pipeline: fast-retrieval cache → multi-LLM circuit breaker generation → validate citations."""
         try:
-            # Step 1: Retrieve relevant passages
-            passages = await self.retrieve_context(query, limit=8)
+            # Step 1: Retrieve relevant passages (guarded by Fast Retrieval Cache)
+            cache_key = f"{self.name}:{query}"
+            cached_passages = await retrieval_cache.get(cache_key)
+            if cached_passages is not None:
+                passages = cached_passages
+                logger.debug(f"⚡ Fast retrieval cache HIT for '{query}'")
+            else:
+                passages = await self.retrieve_context(query, limit=8)
+                await retrieval_cache.set(cache_key, passages, ttl=600.0)
 
             # Step 2: Build prompt with retrieved context + conversation history + project context
             context_text = self._format_passages(passages)
@@ -344,6 +373,9 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
 
         answer = answer.replace("[ABSTAIN]", "").strip()
 
+        # Normalize any bare or bracketed cite:S1 or citation:S1 tokens to standard [S1]
+        answer = re.sub(r"(?:\[(?:cite|citation):\s*S?|\b(?:cite|citation):\s*S)(\d+)\]?", r"[S\1]", answer, flags=re.IGNORECASE)
+
         # Find all markers in answer
         markers_in_answer = set(re.findall(r"\[S(\d+)\]", answer))
         valid_passage_ids = set(str(i) for i in range(1, len(passages) + 1))
@@ -358,6 +390,31 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
             cid = str(c.get("id", "")).replace("S", "")
             if cid in valid_passage_ids:
                 valid_citations.append(c)
+
+        # Synthesize citations from passages if citations array was empty or missed any cited markers
+        existing_cids = {str(c.get("id", "")).replace("S", "") for c in valid_citations}
+        for marker_id in (markers_in_answer & valid_passage_ids):
+            if marker_id not in existing_cids:
+                idx = int(marker_id) - 1
+                if 0 <= idx < len(passages):
+                    p = passages[idx]
+                    src = p.get("source", "BIS Official Guideline")
+                    valid_citations.append({
+                        "id": f"S{marker_id}",
+                        "source": src,
+                        "text": p.get("text", "")[:350],
+                        "page": p.get("page")
+                    })
+                    existing_cids.add(marker_id)
+
+        # If valid_citations is still empty but passages exist, provide primary retrieved passage as S1
+        if not valid_citations and passages:
+            valid_citations.append({
+                "id": "S1",
+                "source": passages[0].get("source", "BIS Standard / Catalogue"),
+                "text": passages[0].get("text", "")[:350],
+                "page": passages[0].get("page")
+            })
 
         if not answer.strip():
             return {

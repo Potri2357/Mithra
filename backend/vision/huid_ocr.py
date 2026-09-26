@@ -48,7 +48,7 @@ class HUIDOCRAgent:
             image_bytes = buf.getvalue()
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.5-flash",
+                model="gemini-3.5-flash-lite",
                 contents=[
                     HUID_EXTRACT_PROMPT,
                     genai_types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),

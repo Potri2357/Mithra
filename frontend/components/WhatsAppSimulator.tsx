@@ -31,6 +31,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { MithraLogo } from "@/components/MithraLogo";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { EliteCitationPill, CitationItem } from "@/components/EliteCitationPill";
+import { replaceEmojisInNodeList } from "@/components/EmojiToIcon";
 
 interface WhatsAppMessage {
   id: string;
@@ -74,8 +75,8 @@ function formatInlineText(
   // 5: Underscores for italic (_italic_)
   // 6: Strikethrough (~strikethrough~)
   // 7: Inline code (`code`)
-  // 8: Inline citations ([S1], [1], [S1, S2], etc.)
-  const regex = /(https?:\/\/[^\s)]+)|(\b1800[-\s]?\d{2,3}[-\s]?\d{4}\b|\b1915\b)|(\bIS\s*(?:\d{3,5}(?:\s*\(Part\s*\d+\))?|ISO\s*\d{4,5})\b)|(\*\*[^*]+\*\*|\*[^*\n]+\*)|(_[^_\n]+_)|(~[^~\n]+~)|(`[^`\n]+`)|((?:\[S?\d+\](?:\s*\[S?\d+\])*|\[S?\d+(?:\s*,\s*S?\d+)+\])(?!\())/g;
+  // 8: Inline citations ([S1], [1], [S1, S2], cite:S1, [cite:S1], etc.)
+  const regex = /(https?:\/\/[^\s)]+)|(\b1800[-\s]?\d{2,3}[-\s]?\d{4}\b|\b1915\b)|(\bIS\s*(?:\d{3,5}(?:\s*\(Part\s*\d+\))?|ISO\s*\d{4,5})\b)|(\*\*[^*]+\*\*|\*[^*\n]+\*)|(_[^_\n]+_)|(~[^~\n]+~)|(`[^`\n]+`)|((?:\[(?:cite|citation):\s*[S?\d,\s]+\]|\((?:cite|citation):\s*[S?\d,\s]+\)|\b(?:cite|citation):\s*S?\d+\b|\[S?\d+\](?:\s*\[S?\d+\])*|\[S?\d+(?:\s*,\s*S?\d+)+\])(?!\())/gi;
 
   const nodes: React.ReactNode[] = [];
   let lastIndex = 0;
@@ -186,7 +187,7 @@ function formatInlineText(
     nodes.push(text.substring(lastIndex));
   }
 
-  return nodes;
+  return replaceEmojisInNodeList(nodes);
 }
 
 // Full message block renderer for WhatsApp

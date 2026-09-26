@@ -11,6 +11,7 @@ from typing import Optional, TypedDict, Annotated
 from enum import Enum
 
 from groq import AsyncGroq
+from circuit_breaker import groq_breaker
 
 from agents.standard_lookup import StandardLookupAgent
 from agents.recommend_standard import RecommendStandardAgent
@@ -56,25 +57,64 @@ class BISRouter:
         }
         logger.info("✅ BIS Intent Router initialized with 6 agents")
 
+    def _fast_match(self, message: str) -> Optional[tuple[str, float]]:
+        import re
+        msg = message.lower().strip()
+        # Explicit IS numbers like "IS 1293", "IS 14543", "IS 16102"
+        if re.search(r'\bis\s*\d+', msg):
+            return "standard_lookup", 0.95
+        # Hallmark / HUID queries
+        if re.search(r'\b(huid|hallmark|hallmarking|gold|silver|carat|karat|jewel|jeweller|ahc)\b', msg):
+            return "hallmark_verify", 0.95
+        # Lab finder
+        if re.search(r'\b(lab|labs|laboratory|laboratories|testing\s+facility|testing\s+center|testing\s+centre|accreditation)\b', msg):
+            return "lab_finder", 0.95
+        # Recommend standard
+        if re.search(r'\b(recommend|which standard|what standard|standard for|applicable standard|standards for|i make|i manufacture|i produce|selling)\b', msg):
+            return "recommend_standard", 0.95
+        # Consumer query / complaint
+        if re.search(r'\b(complaint|complain|grievance|fake|fraud|counterfeit|consumer rights|cheat|substandard|helpline)\b', msg):
+            return "consumer_query", 0.95
+        # Scheme guide
+        if re.search(r'\b(scheme|isi mark|crs|fmcs|tatkal|apply for isi|how to get|how to apply|certification fee|certification cost|license fee|licence)\b', msg):
+            return "scheme_guide", 0.95
+        # Greetings or short generic queries
+        if re.search(r'^(hi|hello|hey|namaste|vanakkam|good\s+(morning|afternoon|evening))\b', msg):
+            return "consumer_query", 0.90
+        return None
+
     async def classify_intent(self, message: str) -> tuple[str, float]:
-        """Use Groq (fast) to classify intent. Falls back to keyword matching."""
+        """Use fast pattern matching first, then Groq with circuit breaker and tight timeout, then fallback."""
+        fast = self._fast_match(message)
+        if fast:
+            return fast
+
+        if not await groq_breaker.can_execute():
+            return self._keyword_fallback(message)
+
         try:
-            response = await self.groq_client.chat.completions.create(
-                model="qwen/qwen3.8-27b",
-                messages=[
-                    {"role": "system", "content": INTENT_SYSTEM_PROMPT},
-                    {"role": "user", "content": message},
-                ],
-                response_format={"type": "json_object"},
-                max_tokens=100,
-                temperature=0.0,
+            import asyncio
+            response = await asyncio.wait_for(
+                self.groq_client.chat.completions.create(
+                    model="qwen/qwen3.8-27b",
+                    messages=[
+                        {"role": "system", "content": INTENT_SYSTEM_PROMPT},
+                        {"role": "user", "content": message},
+                    ],
+                    response_format={"type": "json_object"},
+                    max_tokens=100,
+                    temperature=0.0,
+                ),
+                timeout=1.8,
             )
             result = json.loads(response.choices[0].message.content)
             intent = result.get("intent", "standard_lookup")
             confidence = float(result.get("confidence", 0.7))
+            await groq_breaker.record_success()
             return intent, confidence
         except Exception as e:
-            logger.warning(f"Groq classification failed, using keyword fallback: {e}")
+            logger.warning(f"Groq classification timed out or failed, using keyword fallback: {e}")
+            await groq_breaker.record_failure(e)
             return self._keyword_fallback(message)
 
     def _keyword_fallback(self, message: str) -> tuple[str, float]:

@@ -23,6 +23,14 @@ from vision.product_classifier import ProductClassifier
 from vision.huid_ocr import HUIDOCRAgent
 from db.qdrant_client import QdrantStore
 from db.supabase_client import SupabaseClient
+from circuit_breaker import (
+    groq_breaker,
+    gemini_breaker,
+    sarvam_breaker,
+    retrieval_cache,
+    translation_cache,
+    response_cache,
+)
 
 from pydantic import BaseModel
 from typing import Optional
@@ -101,6 +109,23 @@ async def health():
     return {"status": "ok", "service": "Mithra — BIS AI Assistant", "version": "1.0.0"}
 
 
+@app.get("/api/circuits")
+async def get_circuits_status():
+    """Diagnostic endpoint to monitor Circuit Breakers and Caches."""
+    return {
+        "circuits": {
+            "groq": groq_breaker.get_status(),
+            "gemini": gemini_breaker.get_status(),
+            "sarvam": sarvam_breaker.get_status(),
+        },
+        "caches": {
+            "retrieval_cache": {"size": retrieval_cache.size(), "max_size": retrieval_cache.max_size},
+            "translation_cache": {"size": translation_cache.size(), "max_size": translation_cache.max_size},
+            "response_cache": {"size": response_cache.size(), "max_size": response_cache.max_size},
+        }
+    }
+
+
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     """
@@ -112,12 +137,35 @@ async def chat(req: ChatRequest):
         router: BISRouter = app.state.router
         translator: SarvamTranslator = app.state.translator
 
-        # Step 1: Translate to English pivot if Hindi or Tamil
-        pivot_message = req.message
-        if req.language in ("hi", "ta"):
-            pivot_message = await translator.translate(req.message, source=req.language, target="en")
+        # Step 1: Detect user's input language and determine target response language
+        # If user explicitly selected a non-English language in UI, or if the message itself is in another language:
+        detected_lang = await translator.detect_language(req.message)
 
-        # Step 2: Route + agent call
+        # Target language priority:
+        # 1. If message itself is written in a non-English language (e.g. Hindi, Tamil, Telugu, etc.), target is that language!
+        # 2. Otherwise if the user requested a specific non-English language in req.language, target is req.language.
+        # 3. Otherwise "en".
+        if detected_lang and detected_lang != "en":
+            target_language = detected_lang
+        elif req.language and req.language != "en":
+            target_language = req.language
+        else:
+            target_language = "en"
+
+        # ⚡ Fast Response Cache: Instant <1ms answer for standalone repeated inquiries
+        response_cache_key = f"{target_language}:{req.message.strip().lower()}"
+        if not req.context and not req.project_context:
+            cached_resp = await response_cache.get(response_cache_key)
+            if cached_resp:
+                logger.info(f"⚡ Fast response cache HIT for '{req.message[:40]}...'")
+                return cached_resp
+
+        # Step 2: Translate to English pivot if query is non-English
+        pivot_message = req.message
+        if target_language != "en":
+            pivot_message = await translator.translate(req.message, source=target_language, target="en")
+
+        # Step 3: Route + agent call
         result = await router.route(
             pivot_message,
             session_id=req.session_id,
@@ -125,33 +173,34 @@ async def chat(req: ChatRequest):
             project_context=req.project_context,
         )
 
-        # Step 3: Translate answer and follow-ups back
+        # Step 4: Translate answer and follow-ups back to target language
         answer = result.get("answer", "")
         follow_up = result.get("follow_up")
         follow_ups = result.get("follow_ups", [])
 
-        if req.language in ("hi", "ta"):
-            if answer:
-                answer = await translator.translate(answer, source="en", target=req.language)
-            if follow_up:
-                follow_up = await translator.translate(follow_up, source="en", target=req.language)
-            if follow_ups:
-                translated_fups = []
-                for f in follow_ups:
-                    if f and isinstance(f, str) and f.strip():
-                        tr = await translator.translate(f, source="en", target=req.language)
-                        translated_fups.append(tr)
-                follow_ups = translated_fups
+        if target_language != "en":
+            answer, follow_up, follow_ups = await translator.translate_response_bundle(
+                answer=answer,
+                follow_up=follow_up,
+                follow_ups=follow_ups,
+                target_language=target_language,
+            )
 
-        return ChatResponse(
+        chat_response = ChatResponse(
             answer=answer,
             citations=result.get("citations", []),
             intent=result.get("intent", "unknown"),
-            language=req.language,
+            language=target_language,
             abstained=result.get("abstained", False),
             follow_up=follow_up,
             follow_ups=follow_ups,
         )
+
+        # Save to fast response cache (3 minute TTL)
+        if not req.context and not req.project_context:
+            await response_cache.set(response_cache_key, chat_response, ttl=180.0)
+
+        return chat_response
     except Exception as e:
         logger.error(f"Chat error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -179,17 +228,17 @@ async def voice_chat(
         transcript, detected_lang = await stt.transcribe(audio_bytes, language_hint=language)
         lang = detected_lang or language
 
-        # Translate if Hindi
+        # Translate if non-English
         pivot = transcript
-        if lang == "hi":
-            pivot = await translator.translate(transcript, source="hi", target="en")
+        if lang and lang != "en":
+            pivot = await translator.translate(transcript, source=lang, target="en")
 
         # Chat
         result = await router.route(pivot, session_id=session_id, context=[])
         answer = result["answer"]
 
-        if lang == "hi" and not result.get("abstained"):
-            answer = await translator.translate(answer, source="en", target="hi")
+        if lang and lang != "en" and not result.get("abstained"):
+            answer = await translator.translate(answer, source="en", target=lang)
 
         # TTS
         audio_out = await tts.synthesize(answer, language=lang)
@@ -242,7 +291,7 @@ async def photo_product(
         )
 
         answer = result["answer"]
-        if language in ("hi", "ta"):
+        if language and language != "en":
             answer = await translator.translate(answer, source="en", target=language)
 
         return JSONResponse({
@@ -288,7 +337,7 @@ async def photo_hallmark(
         )
 
         answer = result["answer"]
-        if language in ("hi", "ta"):
+        if language and language != "en":
             answer = await translator.translate(answer, source="en", target=language)
 
         return JSONResponse({
