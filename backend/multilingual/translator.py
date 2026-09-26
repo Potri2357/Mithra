@@ -7,6 +7,7 @@ and global languages (Spanish, French, German, etc.).
 import os
 import re
 import logging
+from typing import Optional
 import httpx
 from circuit_breaker import groq_breaker, gemini_breaker, sarvam_breaker, translation_cache
 
