@@ -338,7 +338,7 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
               className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-full px-4 gap-1.5 shrink-0 shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5 text-blue-200" />
-              <span>Ask Mithra Compliance</span>
+              <span>Ask Mithraa Compliance</span>
             </Button>
           </div>
 

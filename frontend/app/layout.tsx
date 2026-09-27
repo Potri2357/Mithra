@@ -24,7 +24,7 @@ const notoSansTamil = Noto_Sans_Tamil({
 });
 
 export const metadata: Metadata = {
-  title: "Mithra — Bureau of Indian Standards Intelligence",
+  title: "Mithraa — Bureau of Indian Standards Intelligence",
   description:
     "Official AI-driven standards and compliance intelligence platform for the Bureau of Indian Standards (BIS). Direct, citation-grounded guidance on 22,000+ Indian Standards (IS), mandatory QCOs, certification schemes, and hallmarking.",
   icons: {
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     apple: "/mithra_logo.svg",
   },
   keywords:
-    "Mithra, BIS, Indian Standards, Bureau of Indian Standards, ISI Mark, CRS, FMCS, Hallmarking, HUID, BIS Certification, IS Standards, NABL Labs",
+    "Mithraa, BIS, Indian Standards, Bureau of Indian Standards, ISI Mark, CRS, FMCS, Hallmarking, HUID, BIS Certification, IS Standards, NABL Labs",
   openGraph: {
-    title: "Mithra — Bureau of Indian Standards Intelligence",
+    title: "Mithraa — Bureau of Indian Standards Intelligence",
     description:
       "Direct, citation-grounded advisory on 22,000+ Indian Standards (IS), mandatory QCOs, certification schemes, gold HUID verification, and accredited laboratories.",
     type: "website",
@@ -52,7 +52,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                var s = localStorage.getItem('mithra-theme') || localStorage.getItem('maanak-theme');
+                var s = localStorage.getItem('mithraa-theme') || localStorage.getItem('mithra-theme') || localStorage.getItem('maanak-theme');
                 if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.documentElement.setAttribute('data-theme', 'dark');
                   document.documentElement.classList.add('dark');

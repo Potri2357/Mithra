@@ -182,12 +182,18 @@ class SarvamTranslator:
                                 temperature=0.1,
                             ),
                         )
-                        parsed = json.loads(resp.text)
+                        resp_clean = re.sub(r"<think>.*?</think>", "", resp.text, flags=re.DOTALL | re.IGNORECASE).strip()
+                        # Strip code fence if present
+                        fence_match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", resp_clean)
+                        json_str = fence_match.group(1).strip() if fence_match else resp_clean
+                        parsed = json.loads(json_str)
                         tr_answer = parsed.get("answer", answer)
+                        if isinstance(tr_answer, dict):
+                            tr_answer = tr_answer.get("text") or tr_answer.get("answer") or answer
                         tr_fups = parsed.get("follow_ups", all_fups)
                         tr_primary = tr_fups[0] if tr_fups else follow_up
                         await gemini_breaker.record_success()
-                        return tr_answer, tr_primary, tr_fups
+                        return str(tr_answer).strip(), tr_primary, tr_fups
                     except Exception as e:
                         logger.warning(f"Bundled Gemini translation with {model_name} failed: {e}")
                         await gemini_breaker.record_failure(e)
@@ -271,8 +277,19 @@ class SarvamTranslator:
                     )
                     res = completion.choices[0].message.content
                     if res and res.strip():
+                        # Strip thinking tags
+                        cleaned_res = re.sub(r"<think>.*?</think>", "", res, flags=re.DOTALL | re.IGNORECASE).strip()
+                        # If wrapped in code block
+                        m = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", cleaned_res)
+                        if m:
+                            try:
+                                d = json.loads(m.group(1).strip())
+                                if isinstance(d, dict) and "translation" in d:
+                                    cleaned_res = str(d["translation"]).strip()
+                            except Exception:
+                                pass
                         await groq_breaker.record_success()
-                        return res.strip()
+                        return cleaned_res
                 except Exception as inner_e:
                     logger.debug(f"Groq {model_name} translation error: {inner_e}")
                     await groq_breaker.record_failure(inner_e)

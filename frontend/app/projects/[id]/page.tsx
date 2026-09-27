@@ -43,6 +43,9 @@ import {
 import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { EliteCitationPill, prepareContentWithCitations, SourcesPanel, CitationItem } from "@/components/EliteCitationPill";
+import { unwrapCleanAnswer } from "@/lib/utils";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 interface ProjectMessage {
   id: string;
@@ -209,7 +212,7 @@ export default function ProjectWorkspacePage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/chat", {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -227,13 +230,14 @@ export default function ProjectWorkspacePage() {
 
       if (!res.ok) throw new Error("Chat request failed");
       const data = await res.json();
+      const unwrapped = unwrapCleanAnswer(data);
 
       const assistantMsg: ProjectMessage = {
         id: "msg-asst-" + Date.now(),
         role: "assistant",
-        content: data.answer,
-        citations: data.citations,
-        follow_ups: data.follow_ups,
+        content: unwrapped.answer,
+        citations: unwrapped.citations?.length ? unwrapped.citations : data.citations,
+        follow_ups: unwrapped.follow_ups?.length ? unwrapped.follow_ups : data.follow_ups,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
 

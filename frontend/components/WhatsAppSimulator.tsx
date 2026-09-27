@@ -32,6 +32,7 @@ import { MithraLogo } from "@/components/MithraLogo";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { EliteCitationPill, CitationItem } from "@/components/EliteCitationPill";
 import { replaceEmojisInNodeList } from "@/components/EmojiToIcon";
+import { unwrapCleanAnswer } from "@/lib/utils";
 
 interface WhatsAppMessage {
   id: string;
@@ -49,7 +50,7 @@ const INITIAL_MESSAGES: WhatsAppMessage[] = [
   {
     id: "1",
     sender: "assistant",
-    text: "Namaste! 🙏 Welcome to *Mithra* — the official AI Assistant for the Bureau of Indian Standards (BIS), Government of India.\n\nI can help you with:\n• Checking mandatory Quality Control Orders (*QCOs*)\n• Indian Standards (*IS specifications*)\n• ISI Mark, CRS & FMCS certification pathways\n• 6-digit Gold Hallmark *HUID* verification\n• Statutory fee estimates & complaint drafting\n\nHow can I help you today?",
+    text: "Namaste! 🙏 Welcome to *Mithraa* — the official AI Assistant for the Bureau of Indian Standards (BIS), Government of India.\n\nI can help you with:\n• Checking mandatory Quality Control Orders (*QCOs*)\n• Indian Standards (*IS specifications*)\n• ISI Mark, CRS & FMCS certification pathways\n• 6-digit Gold Hallmark *HUID* verification\n• Statutory fee estimates & complaint drafting\n\nHow can I help you today?",
     time: "10:00 AM",
     status: "read",
     quickReplies: [
@@ -395,8 +396,12 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
 
       if (!res.ok) throw new Error("API request failed");
       const data = await res.json();
+      const unwrapped = unwrapCleanAnswer(data);
 
-      const botReplyText = data.answer || "I received your query. Let me look up the BIS database.";
+      const botReplyText = unwrapped.answer || "I received your query. Let me look up the BIS database.";
+      const quickReplies = (unwrapped.follow_ups && unwrapped.follow_ups.length > 0)
+        ? unwrapped.follow_ups
+        : (data.follow_ups && data.follow_ups.length > 0 ? data.follow_ups : undefined);
 
       const botMsg: WhatsAppMessage = {
         id: (Date.now() + 1).toString(),
@@ -404,8 +409,8 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
         text: botReplyText,
         time: getTimeString(),
         status: "read",
-        citations: data.citations,
-        quickReplies: data.follow_ups && data.follow_ups.length > 0 ? data.follow_ups : undefined,
+        citations: unwrapped.citations?.length ? unwrapped.citations : data.citations,
+        quickReplies: quickReplies,
       };
 
       setMessages((prev) => [...prev, botMsg]);
@@ -442,7 +447,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
 
   const copyTranscript = () => {
     const transcript = messages
-      .map((m) => `[${m.time}] ${m.sender === "user" ? "You" : "Mithra"}: ${m.text}`)
+      .map((m) => `[${m.time}] ${m.sender === "user" ? "You" : "Mithraa"}: ${m.text}`)
       .join("\n\n");
     navigator.clipboard.writeText(transcript);
     setShowMenu(false);
@@ -499,7 +504,7 @@ export function WhatsAppSimulator({ fullHeight = false }: WhatsAppSimulatorProps
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 truncate">
               <h2 className="font-bold text-sm sm:text-base leading-tight truncate">
-                Mithra BIS Assistant
+                Mithraa BIS Assistant
               </h2>
               <span
                 className="w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[9px] font-extrabold shrink-0"

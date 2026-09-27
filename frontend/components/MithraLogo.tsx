@@ -26,7 +26,7 @@ export function MithraLogo({
   size = 28,
   className = "",
   variant = "squircle",
-  title = "Mithra AI Logo",
+  title = "Mithraa AI Logo",
   darkMode = false,
 }: MithraLogoProps) {
   const rawId = useId();
@@ -287,4 +287,6 @@ export function MithraLogo({
   );
 }
 
+export const MithraaLogo = MithraLogo;
+export type MithraaLogoProps = MithraLogoProps;
 export default MithraLogo;

@@ -52,10 +52,10 @@ export default function WhatsAppToolPage() {
                 <span>Tier-2 Multi-Channel Distribution</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-                Mithra on <span className="text-emerald-600 dark:text-emerald-400">WhatsApp</span>
+                Mithraa on <span className="text-emerald-600 dark:text-emerald-400">WhatsApp</span>
               </h1>
               <p className="text-sm text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-                Experience Mithra directly within a WhatsApp conversational channel. Check QCOs, verify gold HUID stamps,
+                Experience Mithraa directly within a WhatsApp conversational channel. Check QCOs, verify gold HUID stamps,
                 and get instant compliance assistance with live backend responses.
               </p>
             </div>

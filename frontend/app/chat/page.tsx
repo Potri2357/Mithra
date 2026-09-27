@@ -50,6 +50,7 @@ import { Button } from "@/components/ui/button";
 import { BisLoadingIndicator } from "@/components/BisLoadingIndicator";
 import { MithraLogo } from "@/components/MithraLogo";
 import { EliteCitationPill, prepareContentWithCitations, SourcesPanel } from "@/components/EliteCitationPill";
+import { unwrapCleanAnswer } from "@/lib/utils";
 import { replaceEmojisWithIcons } from "@/components/EmojiToIcon";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLanguage } from "@/context/LanguageContext";
@@ -389,23 +390,13 @@ function ChatContent() {
         const data = await res.json();
 
         // ── Guard: detect raw JSON leaking as the answer ──────────────────────
-        let safeAnswer: string = data.answer || "";
-        const trimmed = safeAnswer.trim();
-        if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
-          try {
-            const parsed = JSON.parse(trimmed);
-            if (parsed.answer && typeof parsed.answer === "string") {
-              // The model wrapped its answer in a JSON envelope — unwrap it
-              safeAnswer = parsed.answer;
-              if (!data.citations?.length && parsed.citations) data.citations = parsed.citations;
-              if (!data.follow_ups?.length && parsed.follow_ups) data.follow_ups = parsed.follow_ups;
-              if (!data.follow_up && parsed.follow_up) data.follow_up = parsed.follow_up;
-            } else {
-              safeAnswer = "I encountered an internal formatting error. Please try again.";
-            }
-          } catch {
-            safeAnswer = "I encountered an internal formatting error. Please try again.";
-          }
+        const unwrapped = unwrapCleanAnswer(data);
+        const safeAnswer: string = unwrapped.answer;
+        if (unwrapped.citations?.length && (!data.citations || data.citations.length === 0)) {
+          data.citations = unwrapped.citations;
+        }
+        if (unwrapped.follow_ups?.length && (!data.follow_ups || data.follow_ups.length === 0)) {
+          data.follow_ups = unwrapped.follow_ups;
         }
         // ─────────────────────────────────────────────────────────────────────
 
@@ -462,7 +453,7 @@ function ChatContent() {
               ? {
                   ...m,
                   content:
-                    "Mithra could not reach the backend service. Please check that the server is active on `" +
+                    "Mithraa could not reach the backend service. Please check that the server is active on `" +
                     API_URL +
                     "`.",
                   isLoading: false,
@@ -635,7 +626,7 @@ function ChatContent() {
       const clean = text
         .replace(/\[(?:cite:)?S?\d+\](?:\([^\)]+\))?/gi, "")
         .replace(/\[cite:[^\]]+\]\([^\)]+\)/gi, "");
-      const shareText = `${clean.trim()}\n\n— Verified via Mithra BIS AI Assistant (https://www.bis.gov.in)`;
+      const shareText = `${clean.trim()}\n\n— Verified via Mithraa BIS AI Assistant (https://www.bis.gov.in)`;
       navigator.clipboard.writeText(shareText);
       setSharedId(id);
       setTimeout(() => setSharedId(null), 2500);
@@ -740,11 +731,11 @@ function ChatContent() {
         ? `Workspace: ${activeProject.name} (${activeProject.scheme})\nPinned Standards: ${activeProject.pinnedStandards.join(", ") || "None"}\n`
         : `Mode: General BIS Regulatory Consultation\n`;
 
-      const header = `# Mithra — Bureau of Indian Standards AI Consultation Report\n\nDate: ${timestamp}\n${workspaceInfo}\n---\n\n`;
+      const header = `# Mithraa — Bureau of Indian Standards AI Consultation Report\n\nDate: ${timestamp}\n${workspaceInfo}\n---\n\n`;
 
       const conversation = messages
         .map((m, idx) => {
-          const role = m.role === "user" ? "### 👤 User Query" : "### 🏛️ Mithra AI Guidance";
+          const role = m.role === "user" ? "### 👤 User Query" : "### 🏛️ Mithraa AI Guidance";
           let sources = "";
           if (m.citations && m.citations.length > 0) {
             sources = `\n\n**Regulatory Sources & Indian Standards Cited:**\n` +
@@ -762,7 +753,7 @@ function ChatContent() {
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = `Mithra-Compliance-Report-${new Date().toISOString().slice(0, 10)}.md`;
+      a.download = `Mithraa-Compliance-Report-${new Date().toISOString().slice(0, 10)}.md`;
       document.body.appendChild(a);
       a.click();
 
@@ -813,7 +804,7 @@ function ChatContent() {
       {isDraggingFile && (
         <div className="absolute inset-0 z-50 bg-[#024DA1]/90 border-2 border-dashed border-blue-200 flex flex-col items-center justify-center pointer-events-none text-white">
           <Upload className="w-12 h-12 text-white mb-3" />
-          <h2 className="text-xl font-bold">Drop image for Mithra analysis</h2>
+          <h2 className="text-xl font-bold">Drop image for Mithraa analysis</h2>
           <p className="text-xs text-blue-100 mt-1">Product photos and hallmark stamps are supported</p>
         </div>
       )}
@@ -841,12 +832,12 @@ function ChatContent() {
             type="button"
             onClick={() => clearChat()}
             className="flex items-center gap-2.5 min-w-0 flex-1 text-left bg-transparent border-0 cursor-pointer p-0 group"
-            title="Mithra Home"
+            title="Mithraa Home"
           >
             <MithraLogo size={32} darkMode={isDark} className="shadow-xs group-hover:scale-105 transition-transform shrink-0" />
             <div className="min-w-0 flex-1">
               <span className="font-extrabold text-[15px] text-[var(--color-text-primary)] block leading-tight">
-                Mithra
+                Mithraa
               </span>
               <span className="text-[10px] text-[var(--color-text-muted)] font-semibold truncate block">Bureau of Indian Standards</span>
             </div>
@@ -1462,7 +1453,7 @@ function ChatContent() {
               >
                 {/* Assistant Avatar */}
                 {msg.role === "assistant" && (
-                  <div className="assistant-avatar select-none" title="Mithra AI Assistant">
+                  <div className="assistant-avatar select-none" title="Mithraa AI Assistant">
                     <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#2B2A26] border border-blue-200/80 dark:border-[#3D3B35] shadow-xs flex items-center justify-center">
                       <MithraLogo size={20} darkMode={isDark} />
                     </div>
@@ -1475,7 +1466,7 @@ function ChatContent() {
                     <div className="assistant-meta">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-xs text-[var(--color-text-primary)]">
-                          {activeProject ? getWorkspaceName(activeProject, language) : (t("brand.title") || "Mithra")}
+                          {activeProject ? getWorkspaceName(activeProject, language) : (t("brand.title") || "Mithraa")}
                         </span>
                         {activeProject && (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-[#342F24] dark:text-amber-300 font-medium">
@@ -2090,7 +2081,7 @@ function ChatContent() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-[#D4D2C9] uppercase tracking-wider mb-1.5">
-                  Custom Instructions for Mithra AI (Optional)
+                  Custom Instructions for Mithraa AI (Optional)
                 </label>
                 <textarea
                   rows={3}

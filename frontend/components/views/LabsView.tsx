@@ -348,7 +348,7 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
             className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-semibold rounded-md px-5 gap-2 shadow-xs"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Ask Mithra For Testing Guidance</span>
+            <span>Ask Mithraa For Testing Guidance</span>
           </Button>
         </Card>
       ) : viewMode === "grid" ? (

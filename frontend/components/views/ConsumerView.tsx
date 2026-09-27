@@ -364,7 +364,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
           </div>
           <div>
             <h4 className="text-xs font-bold text-slate-900 dark:text-white">Need help drafting an official complaint letter?</h4>
-            <p className="text-[11px] text-slate-600 dark:text-slate-400">Mithra AI can generate a formatted complaint letter referencing relevant BIS clauses.</p>
+            <p className="text-[11px] text-slate-600 dark:text-slate-400">Mithraa AI can generate a formatted complaint letter referencing relevant BIS clauses.</p>
           </div>
         </div>
 
@@ -374,7 +374,7 @@ export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
           className="bg-[#024DA1] hover:bg-[#023A79] text-white text-xs font-semibold rounded-xl px-4 gap-2 shrink-0 shadow-xs"
         >
           <Sparkles className="w-4 h-4 text-blue-200" />
-          <span>Draft with Mithra AI</span>
+          <span>Draft with Mithraa AI</span>
         </Button>
       </Card>
     </div>

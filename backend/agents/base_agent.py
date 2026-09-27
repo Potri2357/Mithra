@@ -23,7 +23,7 @@ BIS_ABSTENTION_MSG = (
     "Please visit the official BIS portal at https://www.bis.gov.in or contact the national helpline at 1800-11-4000 for authoritative guidance."
 )
 
-GENERATION_SYSTEM = """You are Mithra, the authoritative AI compliance and standards intelligence assistant for the Bureau of Indian Standards (BIS), Government of India.
+GENERATION_SYSTEM = """You are Mithraa, the authoritative AI compliance and standards intelligence assistant for the Bureau of Indian Standards (BIS), Government of India.
 
 You help MSMEs, domestic and foreign manufacturers, startups, testing laboratories, and Indian consumers understand:
 - Indian Standards (IS numbers) and their exact technical scopes
@@ -258,7 +258,7 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
         recent = context[-4:]
         lines = ["\nConversation History:"]
         for turn in recent:
-            role = "User" if turn.get("role") == "user" else "Mithra"
+            role = "User" if turn.get("role") == "user" else "Mithraa"
             content = str(turn.get("content", ""))[:300]
             lines.append(f"{role}: {content}")
         return "\n".join(lines) + "\n"
@@ -273,59 +273,156 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
 
     def _strip_thinking_tags(self, text: str) -> str:
         """Remove <think>...</think> blocks produced by Qwen and similar thinking models."""
-        # Remove <think>...</think> blocks (possibly multiline)
         text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
         return text.strip()
 
-    def _looks_like_raw_json(self, text: str) -> bool:
-        """Detect if the answer field is actually a raw JSON dump rather than markdown prose."""
-        stripped = text.strip()
-        return stripped.startswith("{") and stripped.endswith("}")
+    @staticmethod
+    def _format_dict_or_list_to_markdown(val) -> str:
+        """Intelligently converts raw structured dicts or lists into clean, readable Markdown."""
+        if isinstance(val, dict):
+            lines = []
+            for k, v in val.items():
+                k_title = str(k).replace("_", " ").title()
+                if isinstance(v, (dict, list)):
+                    sub = BaseAgent._format_dict_or_list_to_markdown(v)
+                    lines.append(f"### {k_title}\n{sub}")
+                else:
+                    lines.append(f"- **{k_title}:** {v}")
+            return "\n".join(lines)
+        elif isinstance(val, list):
+            lines = []
+            for item in val:
+                if isinstance(item, (dict, list)):
+                    lines.append(BaseAgent._format_dict_or_list_to_markdown(item))
+                else:
+                    lines.append(f"- {item}")
+            return "\n".join(lines)
+        return str(val) if val is not None else ""
 
-    def _parse_response(self, text: str) -> dict:
-        # Step 1: Strip thinking model <think> blocks
+    def _unwrap_clean_markdown_answer(self, raw_val) -> str:
+        """
+        Recursively unwraps and extracts clean Markdown prose from raw JSON, code blocks,
+        nested objects, or stringified envelopes. Ensures no raw JSON leaks to the user.
+        """
+        if raw_val is None:
+            return ""
+
+        # Case 1: Dict or List passed directly
+        if isinstance(raw_val, (dict, list)):
+            if isinstance(raw_val, dict):
+                for k in ["answer", "response", "result", "content", "text", "message", "explanation", "summary", "recommendation", "recommendations", "output", "details"]:
+                    if k in raw_val and raw_val[k]:
+                        return self._unwrap_clean_markdown_answer(raw_val[k])
+            return self._format_dict_or_list_to_markdown(raw_val)
+
+        # Case 2: String
+        text = str(raw_val).strip()
         text = self._strip_thinking_tags(text)
 
-        # Step 2: Try direct JSON parse
+        # Remove markdown code block wrapping around JSON if present
+        fence_match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", text)
+        candidate_json_str = fence_match.group(1).strip() if fence_match else text
+
+        def try_json_loads(s: str):
+            try:
+                return json.loads(s)
+            except Exception:
+                fixed = re.sub(r",\s*([\]}])", r"\1", s)
+                try:
+                    return json.loads(fixed)
+                except Exception:
+                    return None
+
+        parsed_data = try_json_loads(candidate_json_str)
+        if parsed_data is None and fence_match:
+            parsed_data = try_json_loads(text)
+
+        if parsed_data is None:
+            brace_match = re.search(r"(\{[\s\S]*\})", text)
+            if brace_match:
+                parsed_data = try_json_loads(brace_match.group(1).strip())
+
+        if parsed_data is not None:
+            # If parsed_data is a string containing stringified JSON, unwrap again
+            if isinstance(parsed_data, str) and (parsed_data.strip().startswith("{") or parsed_data.strip().startswith("[")):
+                inner = try_json_loads(parsed_data.strip())
+                if inner is not None:
+                    parsed_data = inner
+
+            if isinstance(parsed_data, dict):
+                for k in ["answer", "response", "result", "content", "text", "message", "explanation", "summary", "recommendation", "recommendations", "output", "details"]:
+                    if k in parsed_data and parsed_data[k]:
+                        inner_answer = self._unwrap_clean_markdown_answer(parsed_data[k])
+                        if inner_answer.strip():
+                            return inner_answer.strip()
+                return self._format_dict_or_list_to_markdown(parsed_data)
+            elif isinstance(parsed_data, list):
+                return self._format_dict_or_list_to_markdown(parsed_data)
+
+        # Regex fallback for slightly broken JSON containing key: "value"
+        key_pattern = re.search(r"\"(?:answer|response|content|message|text|summary|explanation)\"\s*:\s*\"((?:\\.|[^\"\\])*)\"", text)
+        if key_pattern:
+            raw_field = key_pattern.group(1)
+            # Only accept if not just opening punctuation like { or [
+            if len(raw_field.strip()) > 1:
+                try:
+                    unquoted = json.loads(f'"{raw_field}"')
+                    if unquoted.strip():
+                        return self._unwrap_clean_markdown_answer(unquoted.strip())
+                except Exception:
+                    cleaned = raw_field.replace('\\n', '\n').replace('\\"', '"').replace('\\\\', '\\')
+                    if cleaned.strip():
+                        return self._unwrap_clean_markdown_answer(cleaned.strip())
+
+        # If text begins with ``` or ```json without proper json, strip the backticks
+        if text.startswith("```"):
+            text = re.sub(r"^```(?:json)?\s*", "", text)
+            text = re.sub(r"\s*```$", "", text)
+
+        return text.strip()
+
+    def _parse_response(self, text: str) -> dict:
+        text = self._strip_thinking_tags(text)
+
+        # Step 1: Direct JSON parse
         try:
             data = json.loads(text)
             return self._extract_parsed_fields(data, text)
         except Exception:
             pass
 
-        # Step 3: Try JSON from markdown code blocks
-        match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
+        # Step 2: Try JSON from markdown code blocks
+        match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", text)
         if match:
             try:
-                data = json.loads(match.group(1))
+                data = json.loads(match.group(1).strip())
                 return self._extract_parsed_fields(data, text)
             except Exception:
-                pass
+                fixed = re.sub(r",\s*([\]}])", r"\1", match.group(1).strip())
+                try:
+                    data = json.loads(fixed)
+                    return self._extract_parsed_fields(data, text)
+                except Exception:
+                    pass
 
-        # Step 4: Try extracting the first JSON object from anywhere in the text
-        match = re.search(r"(\{.*\})", text, re.DOTALL)
+        # Step 3: Try extracting first JSON object anywhere
+        match = re.search(r"(\{[\s\S]*\})", text)
         if match:
             try:
-                data = json.loads(match.group(1))
-                if data.get("answer"):
-                    return self._extract_parsed_fields(data, text)
+                data = json.loads(match.group(1).strip())
+                return self._extract_parsed_fields(data, text)
             except Exception:
-                pass
+                fixed = re.sub(r",\s*([\]}])", r"\1", match.group(1).strip())
+                try:
+                    data = json.loads(fixed)
+                    return self._extract_parsed_fields(data, text)
+                except Exception:
+                    pass
 
-        # Step 5: Last resort — the text itself is the answer, but guard against raw JSON leak
-        if self._looks_like_raw_json(text):
-            # The model returned raw JSON but we couldn't parse it properly; abstain safely
-            logger.warning(f"[{self.name}] Model returned unparseable JSON blob; abstaining.")
-            return {
-                "answer": "",
-                "citations": [],
-                "abstained": True,
-                "follow_up": None,
-                "follow_ups": [],
-            }
-
+        # Step 4: Robust unwrapper fallback
+        clean_text = self._unwrap_clean_markdown_answer(text)
         return {
-            "answer": text,
+            "answer": clean_text,
             "citations": [],
             "abstained": False,
             "follow_up": None,
@@ -333,19 +430,47 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
         }
 
     def _extract_parsed_fields(self, data: dict, raw_text: str) -> dict:
-        follow_ups = data.get("follow_ups") or []
-        if isinstance(follow_ups, str):
-            follow_ups = [follow_ups]
-        follow_up = data.get("follow_up") or (follow_ups[0] if follow_ups else None)
-        if follow_up and not follow_ups:
-            follow_ups = [follow_up]
+        if not isinstance(data, dict):
+            return {
+                "answer": self._unwrap_clean_markdown_answer(data or raw_text),
+                "citations": [],
+                "abstained": False,
+                "follow_up": None,
+                "follow_ups": [],
+            }
+
+        # Follow-ups extraction from any variation
+        raw_fups = data.get("follow_ups") or data.get("followup") or data.get("questions") or data.get("suggested_questions") or []
+        if isinstance(raw_fups, str):
+            raw_fups = [raw_fups]
+        follow_up = data.get("follow_up") or (raw_fups[0] if raw_fups else None)
+        if follow_up and not raw_fups:
+            raw_fups = [follow_up]
+
+        # Citations extraction from any variation
+        citations = data.get("citations") or data.get("sources") or data.get("references") or []
+        if not isinstance(citations, list):
+            citations = []
+
+        # Find answer from candidate keys
+        extracted_answer = None
+        for k in ["answer", "response", "result", "content", "text", "message", "explanation", "summary", "recommendation", "recommendations", "output", "details"]:
+            if k in data and data[k]:
+                extracted_answer = data[k]
+                break
+
+        if extracted_answer is None:
+            extracted_answer = self._format_dict_or_list_to_markdown(data)
+
+        clean_answer = self._unwrap_clean_markdown_answer(extracted_answer)
+        abstained = bool(data.get("abstain") or data.get("abstained", False))
 
         return {
-            "answer": data.get("answer", raw_text),
-            "citations": data.get("citations", []),
-            "abstained": data.get("abstain", False),
+            "answer": clean_answer,
+            "citations": citations,
+            "abstained": abstained,
             "follow_up": follow_up,
-            "follow_ups": follow_ups,
+            "follow_ups": raw_fups,
         }
 
     def _validate_citations(self, result: dict, passages: list[dict]) -> dict:
@@ -353,7 +478,7 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
         Strip any [Sn] markers in the answer that don't have corresponding passages.
         Preserve legitimate answers and avoid false abstentions.
         """
-        answer = result.get("answer", "")
+        answer = self._unwrap_clean_markdown_answer(result.get("answer", ""))
         citations = result.get("citations", [])
         abstained = result.get("abstained", False)
         follow_up = result.get("follow_up")
@@ -426,7 +551,7 @@ Only set abstain=true if the query cannot be answered from the context or BIS do
             }
 
         return {
-            "answer": answer.strip(),
+            "answer": self._unwrap_clean_markdown_answer(answer).strip(),
             "citations": valid_citations,
             "abstained": False,
             "follow_up": follow_up,

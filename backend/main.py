@@ -61,7 +61,7 @@ async def lifespan(app: FastAPI):
 
 # ─── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="Mithra — BIS AI Assistant API",
+    title="Mithraa — BIS AI Assistant API",
     description="AI-Powered Intelligent Assistant for Indian Standards & BIS Services",
     version="1.0.0",
     lifespan=lifespan,
@@ -75,6 +75,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def clean_api_answer(val: Any) -> str:
+    """Guarantee that the returned answer is always clean Markdown prose and never raw JSON."""
+    if val is None:
+        return ""
+    from agents.base_agent import BaseAgent
+    if isinstance(val, (dict, list)):
+        return BaseAgent._format_dict_or_list_to_markdown(val)
+    text = str(val).strip()
+    if text.startswith("{") or "```json" in text or (text.startswith("```") and "}" in text):
+        dummy = BaseAgent("sanitizer")
+        return dummy._unwrap_clean_markdown_answer(text)
+    return text
 
 # ─── Request/Response Models ───────────────────────────────────────────────────
 class ChatRequest(BaseModel):
@@ -106,7 +119,7 @@ class HallmarkVerifyRequest(BaseModel):
 
 @app.api_route("/api/health", methods=["GET", "HEAD"])
 async def health():
-    return {"status": "ok", "service": "Mithra — BIS AI Assistant", "version": "1.0.0"}
+    return {"status": "ok", "service": "Mithraa — BIS AI Assistant", "version": "1.0.0"}
 
 
 @app.get("/api/circuits")
@@ -186,8 +199,9 @@ async def chat(req: ChatRequest):
                 target_language=target_language,
             )
 
+        safe_answer = clean_api_answer(answer)
         chat_response = ChatResponse(
-            answer=answer,
+            answer=safe_answer,
             citations=result.get("citations", []),
             intent=result.get("intent", "unknown"),
             language=target_language,
@@ -240,13 +254,15 @@ async def voice_chat(
         if lang and lang != "en" and not result.get("abstained"):
             answer = await translator.translate(answer, source="en", target=lang)
 
+        safe_answer = clean_api_answer(answer)
+
         # TTS
-        audio_out = await tts.synthesize(answer, language=lang)
+        audio_out = await tts.synthesize(safe_answer, language=lang)
         audio_b64 = base64.b64encode(audio_out).decode("utf-8") if audio_out else None
 
         return JSONResponse({
             "transcript": transcript,
-            "answer": answer,
+            "answer": safe_answer,
             "citations": result.get("citations", []),
             "intent": result.get("intent", "unknown"),
             "language": lang,

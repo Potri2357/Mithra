@@ -39,7 +39,7 @@ export default function Navbar() {
     if (typeof window !== "undefined" && window.location.search.includes("standalone=1")) {
       setIsStandalone(true);
     }
-    const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
+    const saved = (localStorage.getItem("mithraa-theme") || localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
     if (saved && (saved === "light" || saved === "dark")) {
       setTheme(saved);
       document.documentElement.setAttribute("data-theme", saved);
@@ -65,6 +65,7 @@ export default function Navbar() {
   const toggleTheme = () => {
     const next = theme === "light" ? "dark" : "light";
     setTheme(next);
+    localStorage.setItem("mithraa-theme", next);
     localStorage.setItem("mithra-theme", next);
     document.documentElement.setAttribute("data-theme", next);
     if (next === "dark") document.documentElement.classList.add("dark");

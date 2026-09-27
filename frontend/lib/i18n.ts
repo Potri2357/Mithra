@@ -11,7 +11,7 @@ export interface TranslationDictionary {
 export const translations: TranslationDictionary = {
   // ─── Brand & Common ───
   "brand.title": {
-    en: "Mithra",
+    en: "Mithraa",
     hi: "मित्रा",
     ta: "மித்ரா",
   },
@@ -87,7 +87,7 @@ export const translations: TranslationDictionary = {
     ta: "விவரங்களை காண்க",
   },
   "common.askMithra": {
-    en: "Ask Mithra",
+    en: "Ask Mithraa",
     hi: "मित्रा से पूछें",
     ta: "மித்ராவிடம் கேளுங்கள்",
   },
@@ -349,7 +349,7 @@ export const translations: TranslationDictionary = {
     ta: "அதிகாரப்பூர்வ BIS தேசிய தளம்",
   },
   "footer.rights": {
-    en: "Bureau of Indian Standards (BIS). Mithra Platform.",
+    en: "Bureau of Indian Standards (BIS). Mithraa Platform.",
     hi: "भारतीय मानक ब्यूरो (BIS)। मित्रा प्लेटफॉर्म।",
     ta: "இந்திய தரநிலைகள் பணியகம் (BIS). மித்ரா தளம்.",
   },
@@ -396,7 +396,7 @@ export const translations: TranslationDictionary = {
     ta: "22,000+ இந்திய தரநிலைகள் (IS), கட்டாய QCO-க்கள், சான்றிதழ் திட்டங்கள் அல்லது தங்க ஹால்மார்க் சரிபார்ப்பு பற்றிய எந்தவொரு கேள்வியையும் கேளுங்கள்.",
   },
   "chat.emptyHeroBadge": {
-    en: "Mithra AI · Official BIS Compliance Assistant",
+    en: "Mithraa AI · Official BIS Compliance Assistant",
     hi: "मित्रा एआई · आधिकारिक बीआईएस अनुपालन सहायक",
     ta: "மித்ரா AI · அதிகாரப்பூர்வ BIS இணக்க உதவியாளர்",
   },
@@ -705,7 +705,7 @@ export const translations: TranslationDictionary = {
     ta: "நுகர்வோர் குறைதீர்ப்பு & உரிமைகள் · BIS",
   },
   "nav.whatsappTitle": {
-    en: "Mithra on WhatsApp",
+    en: "Mithraa on WhatsApp",
     hi: "व्हाट्सएप पर मित्रा",
     ta: "வாட்ஸ்அப்பில் மித்ரா",
   },
@@ -737,7 +737,7 @@ export const translations: TranslationDictionary = {
     ta: "தரக் கட்டுப்பாட்டு ஆணை",
   },
   "standards.askMithraButton": {
-    en: "Ask Mithra",
+    en: "Ask Mithraa",
     hi: "मित्रा से पूछें",
     ta: "மித்ராவிடம் கேளுங்கள்",
   },
@@ -749,7 +749,7 @@ export const translations: TranslationDictionary = {
 
   // ─── WhatsApp Simulator Internationalization ───
   "whatsapp.welcome": {
-    en: "Namaste! 🙏 Welcome to *Mithra* — the official AI Assistant for the Bureau of Indian Standards (BIS), Government of India.\n\nI can help you with:\n• Checking mandatory Quality Control Orders (*QCOs*)\n• Indian Standards (*IS specifications*)\n• ISI Mark, CRS & FMCS certification pathways\n• 6-digit Gold Hallmark *HUID* verification\n• Statutory fee estimates & complaint drafting\n\nHow can I help you today?",
+    en: "Namaste! 🙏 Welcome to *Mithraa* — the official AI Assistant for the Bureau of Indian Standards (BIS), Government of India.\n\nI can help you with:\n• Checking mandatory Quality Control Orders (*QCOs*)\n• Indian Standards (*IS specifications*)\n• ISI Mark, CRS & FMCS certification pathways\n• 6-digit Gold Hallmark *HUID* verification\n• Statutory fee estimates & complaint drafting\n\nHow can I help you today?",
     hi: "नमस्ते! 🙏 *मित्रा* में आपका स्वागत है — भारतीय मानक ब्यूरो (BIS), भारत सरकार का आधिकारिक AI सहायक।\n\nमैं आपकी सहायता कर सकता हूँ:\n• अनिवार्य गुणवत्ता नियंत्रण आदेशों (*QCO*) की जांच\n• भारतीय मानक (*IS विनिर्देश*)\n• ISI मार्क, CRS और FMCS प्रमाणन योजनाएं\n• 6-अंकीय स्वर्ण हॉलमार्क *HUID* सत्यापन\n• वैधानिक शुल्क अनुमान और शिकायत ड्राफ्टिंग\n\nआज मैं आपकी क्या सहायता कर सकता हूँ?",
     ta: "வணக்கம்! 🙏 *மித்ரா*விற்கு நல்வரவு — இந்திய தரநிலைகள் பணியகத்தின் (BIS) அதிகாரப்பூர்வ AI உதவியாளர்.\n\nநான் உங்களுக்கு உதவக்கூடியவை:\n• கட்டாய தரக் கட்டுப்பாட்டு ஆணைகள் (*QCO*) சரிபார்ப்பு\n• இந்திய தரநிலைகள் (*IS விவரக்குறிப்புகள்*)\n• ISI மார்க், CRS & FMCS சான்றிதழ் வழிகள்\n• 6-இலக்க தங்க ஹால்மார்க் *HUID* சரிபார்ப்பு\n• சட்டப்பூர்வ கட்டண மதிப்பீடு & புகார் வரைவு\n\nஇன்று நான் உங்களுக்கு எவ்வாறு உதவட்டும்?",
   },
@@ -814,7 +814,7 @@ export const translations: TranslationDictionary = {
     ta: "உதவி மையத்தை அழைக்கவும் (1800-11-4000)",
   },
   "whatsapp.typing": {
-    en: "Mithra is typing...",
+    en: "Mithraa is typing...",
     hi: "मित्रा टाइप कर रहा है...",
     ta: "மித்ரா தட்டச்சு செய்கிறது...",
   },
