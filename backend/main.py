@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 BIS AI Assistant — Main FastAPI Application
 Serves all Tier-1 features via REST API
@@ -33,7 +34,7 @@ from circuit_breaker import (
 )
 
 from pydantic import BaseModel
-from typing import Optional
+from typing import Any, Optional, Dict, List, Union
 import base64
 
 logging.basicConfig(level=logging.INFO)
