@@ -104,7 +104,7 @@ class HallmarkVerifyRequest(BaseModel):
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
-@app.get("/api/health")
+@app.api_route("/api/health", methods=["GET", "HEAD"])
 async def health():
     return {"status": "ok", "service": "Mithra — BIS AI Assistant", "version": "1.0.0"}
 
