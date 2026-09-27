@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, Noto_Sans_Devanagari, Noto_Sans_Tamil } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ProjectProvider } from "@/context/ProjectContext";
@@ -22,6 +22,17 @@ const notoSansTamil = Noto_Sans_Tamil({
   variable: "--font-noto-tamil",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#181816" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "Mithraa — Bureau of Indian Standards Intelligence",

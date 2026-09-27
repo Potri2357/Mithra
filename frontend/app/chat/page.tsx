@@ -40,6 +40,9 @@ import {
   Share2,
   Upload,
   Hammer,
+  PanelLeft,
+  PanelLeftClose,
+  Menu,
   Calculator,
   Scale,
   MessageSquare,
@@ -678,6 +681,9 @@ function ChatContent() {
     if (targetProjectId !== undefined) {
       setActiveProject(targetProjectId);
     }
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   };
 
   const loadSession = (session: ChatSession) => {
@@ -704,6 +710,9 @@ function ChatContent() {
     setActiveProject(session.projectId || null);
     setInput("");
     setSpeechTranscript(null);
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   };
 
   const deleteSession = (sessionId: string, e: React.MouseEvent) => {
@@ -848,7 +857,7 @@ function ChatContent() {
             title="Collapse sidebar"
             aria-label="Toggle sidebar"
           >
-            <Hammer className="w-4 h-4" />
+            <PanelLeftClose className="w-4 h-4" />
           </button>
         </div>
 
@@ -1237,22 +1246,71 @@ function ChatContent() {
         </div>
       </aside>
 
-      {/* ── Main Chat Area (Clean canvas without header bar) ── */}
+      {/* ── Main Chat Area ── */}
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
-        {/* Floating Sidebar Toggle (when sidebar collapsed) */}
+        {/* ── Dedicated Mobile Top Header Bar (lg:hidden) ── */}
+        <div className="lg:hidden flex items-center justify-between px-3 h-14 border-b border-slate-200/80 dark:border-[#34332E] bg-white/95 dark:bg-[#181816]/95 backdrop-blur-md shrink-0 z-20">
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="w-10 h-10 rounded-xl border border-slate-200 dark:border-[#34332E] text-slate-700 dark:text-[#D4D2C9] hover:bg-slate-100 dark:hover:bg-[#2B2A26] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              aria-label="Open menu and history"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2 min-w-0">
+              <MithraLogo size={26} darkMode={isDark} className="shrink-0" />
+              <div className="min-w-0">
+                <span className="font-extrabold text-sm text-slate-900 dark:text-white block leading-tight truncate">
+                  {activeProject ? getWorkspaceName(activeProject, language) : "Mithraa"}
+                </span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold block leading-none truncate">
+                  {activeProject ? "Workspace Gem" : "BIS AI Intelligence"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={cycleLanguage}
+              className="px-2.5 h-8.5 rounded-lg border border-slate-200 dark:border-[#34332E] text-xs font-bold text-[#005EB8] dark:text-[#E6E4DD] hover:bg-slate-50 dark:hover:bg-[#2B2A26] flex items-center gap-1 cursor-pointer transition-colors"
+              title={t("nav.switchLang")}
+            >
+              <span>{langLabel}</span>
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="w-8.5 h-8.5 rounded-lg border border-slate-200 dark:border-[#34332E] text-slate-600 dark:text-[#9C9A91] hover:bg-slate-50 dark:hover:bg-[#2B2A26] flex items-center justify-center cursor-pointer transition-colors"
+              aria-label="Toggle theme"
+            >
+              {mounted && theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={() => clearChat(activeProjectId)}
+              className="w-8.5 h-8.5 rounded-lg bg-[#005EB8] hover:bg-[#004b94] text-white flex items-center justify-center cursor-pointer transition-colors shadow-2xs"
+              title={t("chat.newChat")}
+              aria-label="New chat"
+            >
+              <Plus className="w-4.5 h-4.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Desktop Floating Sidebar Toggle (when sidebar collapsed) ── */}
         {!sidebarOpen && (
           <button
-            className="absolute top-3.5 left-3.5 z-30 w-8 h-8 rounded-lg bg-white/80 dark:bg-[#21201C]/90 border border-slate-200 dark:border-[#34332E] text-slate-600 dark:text-[#9C9A91] hover:text-slate-900 dark:hover:text-[#F5F4ED] hover:bg-slate-100 dark:hover:bg-[#2B2A26] backdrop-blur-md transition-colors flex items-center justify-center cursor-pointer shadow-xs"
+            className="hidden lg:flex absolute top-3.5 left-3.5 z-30 w-8 h-8 rounded-lg bg-white/80 dark:bg-[#21201C]/90 border border-slate-200 dark:border-[#34332E] text-slate-600 dark:text-[#9C9A91] hover:text-slate-900 dark:hover:text-[#F5F4ED] hover:bg-slate-100 dark:hover:bg-[#2B2A26] backdrop-blur-md transition-colors items-center justify-center cursor-pointer shadow-xs"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open sidebar"
             title="Expand sidebar"
           >
-            <Hammer className="w-4 h-4" />
+            <PanelLeft className="w-4 h-4" />
           </button>
         )}
 
-        {/* Floating Top-Right Controls: Language & Theme */}
-        <div className="absolute top-3.5 right-4 z-20 flex items-center gap-2">
+        {/* ── Desktop Floating Top-Right Controls: Language & Theme ── */}
+        <div className="hidden lg:flex absolute top-3.5 right-4 z-20 items-center gap-2">
           {/* Language Switcher */}
           <button
             onClick={cycleLanguage}
