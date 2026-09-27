@@ -135,15 +135,6 @@ const TRENDING_PROMPT_CHIPS = [
   { code: "MSME", label: "50% Fee Discount", query: "How do micro and small enterprises claim 50% concession on BIS marking fees under Udyam?" },
 ];
 
-const PERSISTENT_QUICK_CHIPS = [
-  { badge: "IS 14543", label: "Packaged Drinking Water", query: "What are the mandatory BIS requirements and testing for IS 14543 packaged water?" },
-  { badge: "HUID", label: "Verify Gold Hallmark", query: "How do I verify a 6-digit HUID hallmark code to check purity?" },
-  { badge: "SCHEME", label: "ISI Mark vs CRS", query: "Explain the difference between ISI Mark Scheme I and CRS Scheme II." },
-  { badge: "MSME", label: "50% Fee Concession", query: "How do MSMEs claim a 50% concession on BIS application and marking fees?" },
-  { badge: "QCO", label: "Mandatory QCO List", query: "Which products have mandatory Quality Control Orders in India?" },
-  { badge: "LABS", label: "NABL / BIS Labs", query: "How do I find a BIS-recognized or accredited lab for product testing?" },
-];
-
 // ─── Chat Session Types ──────────────────────────────────────────────────────
 interface ChatSession {
   id: string;
@@ -1938,22 +1929,6 @@ function ChatContent() {
                 </div>
               </div>
             )}
-
-            {/* Quick Action Interactive Chip Tray */}
-            <div className="chip-tray mb-2.5 px-0.5" role="region" aria-label="Quick Action Prompts">
-              {PERSISTENT_QUICK_CHIPS.map((chip, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => sendMessage(chip.query)}
-                  className="chip group cursor-pointer"
-                  title={chip.query}
-                >
-                  <span className="chip-standard text-[10px] py-0.5 px-1.5">{chip.badge}</span>
-                  <span>{chip.label}</span>
-                </button>
-              ))}
-            </div>
 
             {/* Main input row */}
             <div className="composer">
