@@ -1378,8 +1378,11 @@ function ChatContent() {
           )}
         </div>
 
+        {/* Top Header Blur Scrim for Desktop (ensures scrolled messages fade cleanly under the icons) */}
+        <div className="hidden lg:block absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white/90 via-white/60 to-transparent dark:from-[#181816]/95 dark:via-[#181816]/70 dark:to-transparent backdrop-blur-xs pointer-events-none z-10" />
+
         {/* Main Chatbot Message Thread */}
-        <main ref={threadRef} className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <main ref={threadRef} className="message-thread flex-1 overflow-y-auto px-4 sm:px-6 py-6 lg:pt-20 lg:pb-8">
           {messages.length === 0 ? (
             /* ── Empty State ── */
             <div className="empty-state">

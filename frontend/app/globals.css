@@ -1270,6 +1270,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  scroll-padding-top: 84px;
   scroll-padding-bottom: 160px;
 }
 .empty-state {
