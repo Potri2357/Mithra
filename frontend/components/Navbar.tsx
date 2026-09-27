@@ -98,8 +98,8 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-200 bg-white/95 dark:bg-[#181816]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-[#34332E] ${
-        scrolled ? "shadow-sm shadow-black/10" : ""
+      className={`sticky top-0 z-50 w-full transition-all duration-200 bg-white/80 dark:bg-[#181816]/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/5 ${
+        scrolled ? "shadow-md shadow-black/5 dark:shadow-black/20" : ""
       }`}
       style={{ position: "sticky", top: 0, zIndex: 50 }}
     >
@@ -138,7 +138,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setToolsDropdownOpen(!toolsDropdownOpen)}
-              className="px-3 py-1.5 rounded-lg text-xs font-bold text-[#0052CC] bg-blue-50/80 hover:bg-blue-100 dark:bg-[#2B2A26] dark:text-[#F5F4ED] transition-colors flex items-center gap-1 cursor-pointer"
+              className="chip chip-prompt !py-1.5 !px-3 font-bold text-[#0052CC] dark:text-[#E6E4DD] cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>{t("nav.tools")}</span>
@@ -146,7 +146,7 @@ export default function Navbar() {
             </button>
 
             {toolsDropdownOpen && (
-              <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-[#21201C] rounded-xl shadow-xl border border-slate-200 dark:border-[#34332E] p-2 z-50 animate-fadeIn">
+              <div className="absolute top-full left-0 mt-1.5 w-64 glass-panel rounded-2xl p-2.5 z-50 animate-fadeIn shadow-2xl">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1">
                   Interactive Tools
                 </div>
@@ -155,9 +155,9 @@ export default function Navbar() {
                     key={tool.href}
                     href={tool.href}
                     onClick={() => setToolsDropdownOpen(false)}
-                    className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-[#2B2A26] transition-colors group"
+                    className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100/70 dark:hover:bg-white/10 transition-colors group"
                   >
-                    <div className="p-1.5 rounded-md bg-blue-50 dark:bg-[#2B2A26] text-[#0052CC] dark:text-blue-400 group-hover:scale-105 transition-transform shrink-0 mt-0.5">
+                    <div className="p-1.5 rounded-lg bg-blue-50/80 dark:bg-white/10 text-[#0052CC] dark:text-blue-300 group-hover:scale-105 transition-transform shrink-0 mt-0.5">
                       <tool.icon className="w-4 h-4" />
                     </div>
                     <div>
@@ -196,12 +196,12 @@ export default function Navbar() {
                   onChange={(e) => setNavSearchQuery(e.target.value)}
                   placeholder={t("nav.searchPlaceholder")}
                   autoFocus
-                  className="w-48 sm:w-64 h-9 px-3 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md outline-none focus:border-[#005EB8] focus:ring-1 focus:ring-[#005EB8] dark:focus:border-[#52525B] dark:focus:ring-[#52525B] text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                  className="w-48 sm:w-64 h-9 px-3.5 text-xs neu-well rounded-full outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                 />
                 <button
                   type="button"
                   onClick={() => setSearchOpen(false)}
-                  className="w-8 h-8 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center cursor-pointer"
+                  className="w-8 h-8 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center cursor-pointer"
                   title="Close search"
                 >
                   <X className="w-4 h-4" />
@@ -211,7 +211,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                className="w-9 h-9 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full neu-pill-btn text-slate-600 dark:text-slate-300 flex items-center justify-center cursor-pointer"
                 aria-label={t("common.search")}
                 title={t("common.search")}
               >
@@ -224,7 +224,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={cycleLanguage}
-            className="inline-flex items-center gap-1 px-2.5 h-9 rounded-md border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 px-3 h-9 rounded-full neu-pill-btn text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-[#005EB8] dark:hover:text-white cursor-pointer"
             title={t("nav.switchLang")}
             aria-label={`Current language: ${langLabel}. Click to cycle.`}
           >
@@ -236,26 +236,26 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="w-9 h-9 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+            className="w-9 h-9 rounded-full neu-pill-btn text-slate-600 dark:text-slate-300 flex items-center justify-center cursor-pointer"
             title={mounted && theme === "dark" ? t("nav.lightMode") : t("nav.darkMode")}
             aria-label="Toggle Theme"
             suppressHydrationWarning
           >
             {mounted && theme === "dark" ? (
-              <Sun className="w-4 h-4" />
+              <Sun className="w-4 h-4 text-amber-400" />
             ) : (
-              <Moon className="w-4 h-4" />
+              <Moon className="w-4 h-4 text-slate-600" />
             )}
           </button>
 
           {/* Clean Enterprise Chat Assistant Button */}
           <Link href="/chat">
-            <Button
-              size="sm"
-              className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-bold rounded-md px-3.5 shadow-xs flex items-center gap-1.5"
+            <button
+              type="button"
+              className="neu-pill-btn !bg-gradient-to-r !from-[#024DA1] !to-[#005EB8] !text-white text-xs font-bold px-4 h-9 shadow-md flex items-center gap-1.5 hover:scale-[1.02] cursor-pointer"
             >
               <span>{t("nav.chatAssistant")}</span>
-            </Button>
+            </button>
           </Link>
 
           {/* Mobile Menu Toggle */}

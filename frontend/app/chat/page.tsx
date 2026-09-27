@@ -126,6 +126,24 @@ const QUICK_START_CARDS = [
   },
 ];
 
+const TRENDING_PROMPT_CHIPS = [
+  { code: "IS 14543", label: "Packaged Water", query: "What are the BIS requirements, microbiological limits, and testing under IS 14543 for packaged drinking water?" },
+  { code: "IS 4984", label: "HDPE Pipes", query: "Explain pressure rating, raw material checks, and hydrostatic test under IS 4984 for HDPE pipes." },
+  { code: "IS 1293", label: "Plugs & Sockets", query: "What are the mandatory testing parameters for IS 1293 household plugs and socket-outlets?" },
+  { code: "CRS", label: "IT & Electronics", query: "Which electronic and IT equipment require Compulsory Registration Scheme (CRS) under MeitY orders?" },
+  { code: "HUID", label: "Gold Hallmarking", query: "How does the 6-digit alphanumeric HUID system ensure gold purity and traceability?" },
+  { code: "MSME", label: "50% Fee Discount", query: "How do micro and small enterprises claim 50% concession on BIS marking fees under Udyam?" },
+];
+
+const PERSISTENT_QUICK_CHIPS = [
+  { badge: "IS 14543", label: "Packaged Drinking Water", query: "What are the mandatory BIS requirements and testing for IS 14543 packaged water?" },
+  { badge: "HUID", label: "Verify Gold Hallmark", query: "How do I verify a 6-digit HUID hallmark code to check purity?" },
+  { badge: "SCHEME", label: "ISI Mark vs CRS", query: "Explain the difference between ISI Mark Scheme I and CRS Scheme II." },
+  { badge: "MSME", label: "50% Fee Concession", query: "How do MSMEs claim a 50% concession on BIS application and marking fees?" },
+  { badge: "QCO", label: "Mandatory QCO List", query: "Which products have mandatory Quality Control Orders in India?" },
+  { badge: "LABS", label: "NABL / BIS Labs", query: "How do I find a BIS-recognized or accredited lab for product testing?" },
+];
+
 // ─── Chat Session Types ──────────────────────────────────────────────────────
 interface ChatSession {
   id: string;
@@ -1248,6 +1266,13 @@ function ChatContent() {
 
       {/* ── Main Chat Area ── */}
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
+        {/* Background Ambient Glow Orbs for Glassmorphic & Neumorphic depth */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden z-0 select-none">
+          <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full ambient-glow-blue blur-3xl opacity-75 pointer-events-none" />
+          <div className="absolute top-1/2 -right-36 w-80 h-80 rounded-full ambient-glow-amber blur-3xl opacity-60 pointer-events-none" />
+          <div className="absolute -bottom-24 left-1/3 w-96 h-96 rounded-full ambient-glow-blue blur-3xl opacity-50 pointer-events-none" />
+        </div>
+
         {/* ── Dedicated Mobile Top Header Bar (lg:hidden) ── */}
         <div className="lg:hidden flex items-center justify-between px-3 h-14 border-b border-slate-200/80 dark:border-[#34332E] bg-white/95 dark:bg-[#181816]/95 backdrop-blur-md shrink-0 z-20">
           <div className="flex items-center gap-2 min-w-0">
@@ -1499,6 +1524,29 @@ function ChatContent() {
                         />
                       </button>
                     ))}
+                  </div>
+
+                  {/* Frequently Consulted Standards & Topics Chip Rack */}
+                  <div className="mt-8 text-center animate-fade-up" style={{ animationDelay: "0.22s" }}>
+                    <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+                      <Sparkles className="w-3.5 h-3.5 text-[#0052CC] dark:text-blue-400" />
+                      <span>{t("standards.popularStandards") || "POPULAR STANDARDS & REGULATIONS"}</span>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-2 max-w-2xl mx-auto">
+                      {TRENDING_PROMPT_CHIPS.map((chip, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => sendMessage(chip.query)}
+                          className="chip chip-prompt group cursor-pointer"
+                          title={chip.query}
+                        >
+                          <span className="chip-standard">{chip.code}</span>
+                          <span>{chip.label}</span>
+                          <ChevronRight className="w-3 h-3 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </>
               )}
@@ -1837,16 +1885,16 @@ function ChatContent() {
                               <Sparkles className="w-3 h-3 text-[#0052CC] dark:text-blue-400" />
                               <span>{t("chat.suggestedFollowups")}</span>
                             </div>
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className="flex flex-wrap gap-2">
                               {followUps.map((q, qIdx) => (
                                 <button
                                   key={qIdx}
                                   type="button"
                                   onClick={() => sendMessage(q)}
-                                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-50/80 hover:bg-blue-100/90 text-[#0052CC] dark:bg-[#2B2A26] dark:hover:bg-[#34332E] dark:text-[#F5F4ED] border border-blue-200/60 dark:border-[#3D3B35] transition-all text-left font-medium cursor-pointer shadow-2xs hover:scale-[1.01]"
+                                  className="chip chip-prompt group text-left cursor-pointer"
                                 >
                                   <span>{replaceEmojisWithIcons(q)}</span>
-                                  <ArrowRight className="w-3 h-3 shrink-0 opacity-70" />
+                                  <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-70 group-hover:translate-x-0.5 transition-transform" />
                                 </button>
                               ))}
                             </div>
@@ -1890,6 +1938,22 @@ function ChatContent() {
                 </div>
               </div>
             )}
+
+            {/* Quick Action Interactive Chip Tray */}
+            <div className="chip-tray mb-2.5 px-0.5" role="region" aria-label="Quick Action Prompts">
+              {PERSISTENT_QUICK_CHIPS.map((chip, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => sendMessage(chip.query)}
+                  className="chip group cursor-pointer"
+                  title={chip.query}
+                >
+                  <span className="chip-standard text-[10px] py-0.5 px-1.5">{chip.badge}</span>
+                  <span>{chip.label}</span>
+                </button>
+              ))}
+            </div>
 
             {/* Main input row */}
             <div className="composer">

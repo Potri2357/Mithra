@@ -346,10 +346,10 @@ export function EliteCitationPill({ ids, citations = [] }: EliteCitationPillProp
         type="button"
         onClick={handleClick}
         title={primaryBadge.fullTitle}
-        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold tracking-tight leading-none cursor-pointer select-none transition-all duration-150 align-baseline ${
+        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-tight leading-none cursor-pointer select-none transition-all duration-150 align-baseline backdrop-blur-md ${
           isOpen
-            ? "bg-[#2E2C27] dark:bg-[#34322C] border-[#555246] dark:border-[#5E5B4F] text-white shadow-xs"
-            : "bg-[#F1F3F5] hover:bg-[#E5E8EC] border border-[#D3D7DD] text-[#344054] hover:text-[#1D2939] dark:bg-[#23221E] dark:hover:bg-[#2A2924] dark:border-[#3C3A33] dark:hover:border-[#4E4C43] dark:text-[#D4D2C9] dark:hover:text-white"
+            ? "bg-[#005EB8] text-white border-transparent shadow-[0_2px_8px_rgba(2,77,161,0.35),inset_0_1px_0_rgba(255,255,255,0.4)]"
+            : "bg-white/90 dark:bg-[#262521]/90 border border-slate-200/90 dark:border-[#383630] text-slate-800 dark:text-[#E6E4DD] shadow-[0_1px_3px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.95)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-[#005EB8] dark:hover:border-[#4D8DF5] hover:text-[#005EB8] dark:hover:text-white hover:-translate-y-0.5 active:translate-y-0"
         }`}
         aria-expanded={isOpen}
       >
@@ -365,8 +365,8 @@ export function EliteCitationPill({ ids, citations = [] }: EliteCitationPillProp
       {/* Floating Grounding Context Popover */}
       {isOpen && (
         <span
-          className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50 w-72 sm:w-84 max-w-[calc(100vw-36px)] p-3 rounded-xl bg-white dark:bg-[#1E1D19] border border-slate-200/90 dark:border-[#3E3C35] text-slate-800 dark:text-[#EDECE6] shadow-xl text-left pointer-events-auto block"
-          style={{ filter: "drop-shadow(0 12px 28px rgba(0,0,0,0.22))" }}
+          className="glass-panel absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50 w-72 sm:w-84 max-w-[calc(100vw-36px)] p-3.5 rounded-2xl text-slate-800 dark:text-[#EDECE6] text-left pointer-events-auto block animate-in fade-in zoom-in-95 duration-150"
+          style={{ filter: "drop-shadow(0 16px 36px rgba(0,0,0,0.20))" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}

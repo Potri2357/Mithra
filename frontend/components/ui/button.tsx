@@ -21,6 +21,12 @@ const buttonVariants = cva(
           "text-[#005EB8] dark:text-blue-400 underline-offset-4 hover:underline p-0 h-auto",
         subtle:
           "bg-blue-50 dark:bg-blue-950/60 text-[#005EB8] dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-900/60",
+        glass:
+          "bg-white/80 dark:bg-[#21201C]/85 backdrop-blur-md border border-white/60 dark:border-white/10 text-slate-800 dark:text-[#E6E4DD] hover:bg-white/95 dark:hover:bg-[#2B2A26] shadow-xs active:scale-[0.98]",
+        neu:
+          "bg-white dark:bg-[#21201C] border border-slate-200 dark:border-[#34332E] text-slate-800 dark:text-[#E6E4DD] shadow-[0_2px_5px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.95)] dark:shadow-[0_2px_6px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)]",
+        chip:
+          "rounded-full px-3.5 py-1.5 text-xs font-semibold bg-white/90 dark:bg-[#262521] border border-slate-200/90 dark:border-[#383630] text-slate-800 dark:text-[#E6E4DD] shadow-2xs hover:border-[#005EB8] dark:hover:border-[#4D8DF5] hover:text-[#005EB8] dark:hover:text-white hover:scale-[1.02] active:scale-[0.98]",
       },
       size: {
         default: "h-9 px-4 py-2",
