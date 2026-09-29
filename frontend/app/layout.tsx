@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Noto_Sans_Devanagari, Noto_Sans_Tamil } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { ProjectProvider } from "@/context/ProjectContext";
 import "./globals.css";
 
@@ -78,7 +79,9 @@ export default function RootLayout({
       </head>
       <body className={`${dmSans.variable} ${notoSansDevanagari.variable} ${notoSansTamil.variable} font-sans antialiased min-h-screen`}>
         <LanguageProvider>
-          <ProjectProvider>{children}</ProjectProvider>
+          <AuthProvider>
+            <ProjectProvider>{children}</ProjectProvider>
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

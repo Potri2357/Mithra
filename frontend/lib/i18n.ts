@@ -838,6 +838,108 @@ export const translations: TranslationDictionary = {
     hi: "चैट प्रतिलिपि क्लिपबोर्ड पर कॉपी की गई!",
     ta: "உரையாடல் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது!",
   },
+
+  // ─── Auth ───
+  "auth.signIn": {
+    en: "Sign In",
+    hi: "साइन इन करें",
+    ta: "உள்நுழையவும்",
+  },
+  "auth.signUp": {
+    en: "Create Account",
+    hi: "खाता बनाएं",
+    ta: "கணக்கை உருவாக்கவும்",
+  },
+  "auth.signOut": {
+    en: "Sign Out",
+    hi: "साइन आउट",
+    ta: "வெளியேறு",
+  },
+  "auth.welcomeBack": {
+    en: "Welcome Back",
+    hi: "वापसी पर स्वागत है",
+    ta: "மீண்டும் வருக",
+  },
+  "auth.createAccount": {
+    en: "Create Account",
+    hi: "खाता बनाएं",
+    ta: "கணக்கை உருவாக்கவும்",
+  },
+  "auth.loginSubtitle": {
+    en: "Sign in to access compliance intelligence, projects & history",
+    hi: "अनुपालन जानकारी, कार्यक्षेत्र और इतिहास तक पहुँचने के लिए साइन इन करें",
+    ta: "இணக்க நுண்ணறிவு, திட்டங்கள் மற்றும் வரலாற்றை அணுக உள்நுழையவும்",
+  },
+  "auth.signupSubtitle": {
+    en: "Join Mithraa to query 22,000+ Indian Standards with AI advisory",
+    hi: "एआई सलाह के साथ 22,000+ भारतीय मानकों को खोजने के लिए मित्रा से जुड़ें",
+    ta: "AI வழிகாட்டுதலுடன் 22,000+ இந்திய தரநிலைகளை அணுக மித்ராவில் இணையுங்கள்",
+  },
+  "auth.continueWithGoogle": {
+    en: "Continue with Google",
+    hi: "गूगल के साथ जारी रखें",
+    ta: "Google மூலம் தொடரவும்",
+  },
+  "auth.signUpWithGoogle": {
+    en: "Sign up with Google",
+    hi: "गूगल के साथ साइन अप करें",
+    ta: "Google மூலம் பதிவு செய்யவும்",
+  },
+  "auth.orEmail": {
+    en: "Or continue with email",
+    hi: "या ईमेल के साथ जारी रखें",
+    ta: "அல்லது மின்னஞ்சல் மூலம் தொடரவும்",
+  },
+  "auth.email": {
+    en: "Email Address",
+    hi: "ईमेल पता",
+    ta: "மின்னஞ்சல் முகவரி",
+  },
+  "auth.fullName": {
+    en: "Full Name",
+    hi: "पूरा नाम",
+    ta: "முழு பெயர்",
+  },
+  "auth.password": {
+    en: "Password",
+    hi: "पासवर्ड",
+    ta: "கடவுச்சொல்",
+  },
+  "auth.confirmPassword": {
+    en: "Confirm Password",
+    hi: "पासवर्ड की पुष्टि करें",
+    ta: "கடவுச்சொல்லை உறுதிப்படுத்தவும்",
+  },
+  "auth.forgotPassword": {
+    en: "Forgot password?",
+    hi: "पासवर्ड भूल गए?",
+    ta: "கடவுச்சொல் மறந்துவிட்டதா?",
+  },
+  "auth.noAccount": {
+    en: "Don't have an account?",
+    hi: "खाता नहीं है?",
+    ta: "கணக்கு இல்லையா?",
+  },
+  "auth.haveAccount": {
+    en: "Already have an account?",
+    hi: "पहले से खाता है?",
+    ta: "ஏற்கனவே கணக்கு உள்ளதா?",
+  },
+  "auth.resetPassword": {
+    en: "Reset Password",
+    hi: "पासवर्ड रीसेट करें",
+    ta: "கடவுச்சொல்லை மீட்டமைக்கவும்",
+  },
+  "auth.sendResetLink": {
+    en: "Send Reset Link",
+    hi: "रीसेट लिंक भेजें",
+    ta: "மீட்டமைப்பு இணைப்பை அனுப்பவும்",
+  },
+  "auth.backToSignIn": {
+    en: "Back to sign in",
+    hi: "साइन इन पर वापस जाएं",
+    ta: "உள்நுழைவுக்குத் திரும்பு",
+  },
 };
 
 export function getTranslation(key: string, lang: SupportedLanguage): string {

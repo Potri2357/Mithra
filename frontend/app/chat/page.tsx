@@ -14,7 +14,6 @@ import {
   Send,
   Sparkles,
   ExternalLink,
-  ChevronRight,
   ChevronUp,
   ChevronDown,
   Moon,
@@ -48,6 +47,7 @@ import {
   MessageSquare,
   FolderKanban,
   User,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BisLoadingIndicator } from "@/components/BisLoadingIndicator";
@@ -57,6 +57,7 @@ import { unwrapCleanAnswer } from "@/lib/utils";
 import { replaceEmojisWithIcons } from "@/components/EmojiToIcon";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { useProjects, type Project } from "@/context/ProjectContext";
 import {
   getWorkspaceName,
@@ -124,15 +125,6 @@ const QUICK_START_CARDS = [
     color: "text-[#7C3AED] dark:text-[#E6E4DD]",
     bg: "bg-purple-50 dark:bg-[#2B2A26]",
   },
-];
-
-const TRENDING_PROMPT_CHIPS = [
-  { code: "IS 14543", label: "Packaged Water", query: "What are the BIS requirements, microbiological limits, and testing under IS 14543 for packaged drinking water?" },
-  { code: "IS 4984", label: "HDPE Pipes", query: "Explain pressure rating, raw material checks, and hydrostatic test under IS 4984 for HDPE pipes." },
-  { code: "IS 1293", label: "Plugs & Sockets", query: "What are the mandatory testing parameters for IS 1293 household plugs and socket-outlets?" },
-  { code: "CRS", label: "IT & Electronics", query: "Which electronic and IT equipment require Compulsory Registration Scheme (CRS) under MeitY orders?" },
-  { code: "HUID", label: "Gold Hallmarking", query: "How does the 6-digit alphanumeric HUID system ensure gold purity and traceability?" },
-  { code: "MSME", label: "50% Fee Discount", query: "How do micro and small enterprises claim 50% concession on BIS marking fees under Udyam?" },
 ];
 
 // ─── Chat Session Types ──────────────────────────────────────────────────────
@@ -234,6 +226,8 @@ function ChatContent() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [input, setInput] = useState(initialQuery);
   const { language, cycleLanguage, langLabel, t } = useLanguage();
+  const { user, signOut } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { projects, activeProject, activeProjectId, setActiveProject, createProject, deleteProject } = useProjects();
   const isDark = useDarkMode();
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
@@ -1253,6 +1247,51 @@ function ChatContent() {
             )}
           </div>
         </div>
+
+        {/* User Account Card at Bottom of Sidebar */}
+        <div className="p-3 border-t border-slate-200/80 dark:border-[#34332E] bg-white/50 dark:bg-[#181816]/50">
+          {user ? (
+            <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 dark:bg-[#2B2A26] border border-slate-200/60 dark:border-[#3D3B35]">
+              <div className="flex items-center gap-2 min-w-0">
+                {user.user_metadata?.avatar_url ? (
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt="Avatar"
+                    className="w-7 h-7 rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#005EB8] dark:text-blue-300 flex items-center justify-center text-xs font-bold shrink-0">
+                    {(user.user_metadata?.full_name || user.email || "U")[0].toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                    {user.user_metadata?.full_name || user.email?.split("@")[0]}
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+                title="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login?next=/chat"
+              className="flex items-center justify-center gap-2 w-full h-9 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-900/60 text-[#0052CC] dark:text-blue-300 text-xs font-bold transition-colors"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>{t("auth.signIn") || "Sign In"}</span>
+            </Link>
+          )}
+        </div>
       </aside>
 
       {/* ── Main Chat Area ── */}
@@ -1288,6 +1327,28 @@ function ChatContent() {
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            {user ? (
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="w-8.5 h-8.5 rounded-lg border border-slate-200 dark:border-[#34332E] text-slate-600 dark:text-[#9C9A91] hover:text-red-500 hover:bg-slate-50 dark:hover:bg-[#2B2A26] flex items-center justify-center cursor-pointer transition-colors"
+                title={`Signed in as ${user.email}. Click to sign out.`}
+              >
+                {user.user_metadata?.avatar_url ? (
+                  <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-5 h-5 rounded-full object-cover" />
+                ) : (
+                  <span className="text-xs font-bold text-[#005EB8] dark:text-blue-300">{(user.user_metadata?.full_name || user.email || "U")[0].toUpperCase()}</span>
+                )}
+              </button>
+            ) : (
+              <Link
+                href="/login?next=/chat"
+                className="px-2 h-8.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/40 text-xs font-bold text-[#0052CC] dark:text-blue-300 flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>{t("auth.signIn") || "Sign In"}</span>
+              </Link>
+            )}
             <button
               onClick={cycleLanguage}
               className="px-2.5 h-8.5 rounded-lg border border-slate-200 dark:border-[#34332E] text-xs font-bold text-[#005EB8] dark:text-[#E6E4DD] hover:bg-slate-50 dark:hover:bg-[#2B2A26] flex items-center gap-1 cursor-pointer transition-colors"
@@ -1348,6 +1409,71 @@ function ChatContent() {
           >
             {mounted && theme === "dark" ? <Sun className="w-3.5 h-3.5 text-[#9C9A91]" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
           </button>
+
+          {/* User Auth Control */}
+          {user ? (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="inline-flex items-center gap-1.5 px-2 h-7 rounded-lg bg-white/80 dark:bg-[#21201C]/90 border border-slate-200 dark:border-[#34332E] text-xs font-semibold text-slate-700 dark:text-[#E6E4DD] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#2B2A26] backdrop-blur-md transition-colors cursor-pointer shadow-xs"
+                title={user.email || "Account"}
+              >
+                {user.user_metadata?.avatar_url ? (
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt="Avatar"
+                    className="w-4 h-4 rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#005EB8] dark:text-blue-300 flex items-center justify-center text-[9px] font-bold shrink-0">
+                    {(user.user_metadata?.full_name || user.email || "U")[0].toUpperCase()}
+                  </div>
+                )}
+                <span className="max-w-[80px] truncate text-[11px] font-medium hidden sm:inline">
+                  {user.user_metadata?.full_name || user.email?.split("@")[0]}
+                </span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+
+              {userMenuOpen && (
+                <div
+                  className="absolute right-0 top-full mt-1.5 w-48 rounded-xl p-1.5 z-50 animate-fadeIn shadow-xl bg-white dark:bg-[#21201C] border border-slate-200 dark:border-[#34332E]"
+                  onMouseLeave={() => setUserMenuOpen(false)}
+                >
+                  <div className="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800">
+                    <div className="text-[11px] font-bold text-slate-900 dark:text-white truncate">
+                      {user.user_metadata?.full_name || "Mithraa User"}
+                    </div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                      {user.email}
+                    </div>
+                  </div>
+                  <div className="pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        signOut();
+                        setUserMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer text-left"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>{t("auth.signOut") || "Sign Out"}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login?next=/chat"
+              className="inline-flex items-center gap-1 px-2.5 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60 text-[11px] font-bold text-[#0052CC] dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors shadow-xs"
+            >
+              <User className="w-3 h-3" />
+              <span>{t("auth.signIn") || "Sign In"}</span>
+            </Link>
+          )}
 
           {messages.length > 0 && (
             <button
@@ -1518,29 +1644,6 @@ function ChatContent() {
                         />
                       </button>
                     ))}
-                  </div>
-
-                  {/* Frequently Consulted Standards & Topics Chip Rack */}
-                  <div className="mt-8 text-center animate-fade-up" style={{ animationDelay: "0.22s" }}>
-                    <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
-                      <Sparkles className="w-3.5 h-3.5 text-[#0052CC] dark:text-blue-400" />
-                      <span>{t("standards.popularStandards") || "POPULAR STANDARDS & REGULATIONS"}</span>
-                    </div>
-                    <div className="flex flex-wrap items-center justify-center gap-2 max-w-2xl mx-auto">
-                      {TRENDING_PROMPT_CHIPS.map((chip, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => sendMessage(chip.query)}
-                          className="chip chip-prompt group cursor-pointer"
-                          title={chip.query}
-                        >
-                          <span className="chip-standard">{chip.code}</span>
-                          <span>{chip.label}</span>
-                          <ChevronRight className="w-3 h-3 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </>
               )}
