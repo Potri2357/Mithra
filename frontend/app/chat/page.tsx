@@ -59,6 +59,14 @@ import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { useProjects, type Project } from "@/context/ProjectContext";
+import { createClient } from "@/utils/supabase/client";
+import {
+  type ChatSession,
+  getLocalSessions,
+  fetchUserSessions,
+  persistUserSession,
+  removeUserSession,
+} from "@/lib/chatStorage";
 import {
   getWorkspaceName,
   getWorkspaceDesc,
@@ -127,45 +135,6 @@ const QUICK_START_CARDS = [
   },
 ];
 
-// ─── Chat Session Types ──────────────────────────────────────────────────────
-interface ChatSession {
-  id: string;
-  title: string;       // first user message, truncated
-  createdAt: number;
-  messages: Message[];
-  projectId?: string | null;
-}
-
-const SESSIONS_KEY = "mithra-sessions";
-const MAX_SESSIONS = 20;
-
-function loadSessions(): ChatSession[] {
-  try {
-    const raw = localStorage.getItem(SESSIONS_KEY);
-    return raw ? (JSON.parse(raw) as ChatSession[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveSessions(sessions: ChatSession[]) {
-  try {
-    // Keep newest MAX_SESSIONS only
-    const trimmed = sessions.slice(0, MAX_SESSIONS);
-    localStorage.setItem(SESSIONS_KEY, JSON.stringify(trimmed));
-  } catch { /* storage full — ignore */ }
-}
-
-function upsertSession(sessions: ChatSession[], session: ChatSession): ChatSession[] {
-  const idx = sessions.findIndex((s) => s.id === session.id);
-  if (idx >= 0) {
-    const updated = [...sessions];
-    updated[idx] = session;
-    return updated;
-  }
-  return [session, ...sessions];
-}
-
 function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Medium" | "Unverified"; abstained?: boolean }) {
   if (abstained || confidence === "Unverified") {
     return (
@@ -228,6 +197,7 @@ function ChatContent() {
   const { language, cycleLanguage, langLabel, t } = useLanguage();
   const { user, signOut } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const supabase = createClient();
   const { projects, activeProject, activeProjectId, setActiveProject, createProject, deleteProject } = useProjects();
   const isDark = useDarkMode();
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
@@ -281,10 +251,9 @@ function ChatContent() {
     }));
   };
 
-  // Load sessions and saved theme from localStorage on mount
+  // Load theme and mark mounted on mount
   useEffect(() => {
     setMounted(true);
-    setSessions(loadSessions());
     const saved = (localStorage.getItem("mithra-theme") || localStorage.getItem("maanak-theme")) as "light" | "dark" | null;
     if (saved && (saved === "light" || saved === "dark")) {
       setTheme(saved);
@@ -293,6 +262,28 @@ function ChatContent() {
       else document.documentElement.classList.remove("dark");
     }
   }, []);
+
+  // Sync sessions scoped strictly to the authenticated user account (or guest)
+  useEffect(() => {
+    let active = true;
+
+    // 1. Immediately load local cache for the active user (or guest)
+    const cached = getLocalSessions(user?.id ?? null);
+    setSessions(cached);
+
+    // 2. If authenticated, fetch and sync remote sessions from Supabase
+    if (user?.id) {
+      fetchUserSessions(supabase, user.id).then((remote) => {
+        if (active && remote.length > 0) {
+          setSessions(remote);
+        }
+      });
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [user?.id, supabase]);
 
   // Set initial sidebar state based on screen width on mount
   useEffect(() => {
@@ -435,7 +426,7 @@ function ChatContent() {
                 }
               : m
           );
-          // Persist to localStorage
+          // Persist to user account
           const firstUserMsg = updated.find((m) => m.role === "user");
           if (firstUserMsg) {
             const session: ChatSession = {
@@ -445,10 +436,11 @@ function ChatContent() {
               messages: updated,
               projectId: activeProjectId || undefined,
             };
-            const existing = loadSessions();
-            const next = upsertSession(existing, session);
-            saveSessions(next);
-            setSessions(next);
+            persistUserSession(supabase, user?.id ?? null, session);
+            setSessions((prev) => {
+              const idx = prev.findIndex((s) => s.id === session.id);
+              return idx >= 0 ? prev.map((s) => (s.id === session.id ? session : s)) : [session, ...prev];
+            });
           }
           return updated;
         });
@@ -473,7 +465,7 @@ function ChatContent() {
         setIsLoading(false);
       }
     },
-    [input, language, isLoading, messages, activeProject, activeProjectId, currentSessionId]
+    [input, language, isLoading, messages, activeProject, activeProjectId, currentSessionId, supabase, user?.id]
   );
 
   // Auto-send initial query passed via URL
@@ -575,19 +567,35 @@ function ChatContent() {
         content = `### Hallmark HUID OCR Detected\n\n**HUID Code:** \`${data.huid}\`\n\n---\n\n${content}`;
       }
 
-      setMessages((prev) =>
-        prev.map((m) =>
+      setMessages((prev) => {
+        const updated = prev.map((m) =>
           m.id === aiMsg.id
             ? {
                 ...m,
                 content,
                 citations: data.citations,
-                confidence: data.abstained ? "Unverified" : "High",
+                confidence: (data.abstained ? "Unverified" : "High") as "Unverified" | "High",
                 isLoading: false,
               }
             : m
-        )
-      );
+        );
+        const firstUserMsg = updated.find((m) => m.role === "user");
+        if (firstUserMsg) {
+          const session: ChatSession = {
+            id: currentSessionId,
+            title: firstUserMsg.content.slice(0, 50),
+            createdAt: Date.now(),
+            messages: updated,
+            projectId: activeProjectId || undefined,
+          };
+          persistUserSession(supabase, user?.id ?? null, session);
+          setSessions((prevSess) => {
+            const idx = prevSess.findIndex((s) => s.id === session.id);
+            return idx >= 0 ? prevSess.map((s) => (s.id === session.id ? session : s)) : [session, ...prevSess];
+          });
+        }
+        return updated;
+      });
     } catch {
       setMessages((prev) =>
         prev.map((m) =>
@@ -670,10 +678,11 @@ function ChatContent() {
           messages,
           projectId: activeProjectId || undefined,
         };
-        const existing = loadSessions();
-        const next = upsertSession(existing, session);
-        saveSessions(next);
-        setSessions(next);
+        persistUserSession(supabase, user?.id ?? null, session);
+        setSessions((prev) => {
+          const idx = prev.findIndex((s) => s.id === session.id);
+          return idx >= 0 ? prev.map((s) => (s.id === session.id ? session : s)) : [session, ...prev];
+        });
       }
     }
     // Start fresh session
@@ -701,10 +710,11 @@ function ChatContent() {
           messages,
           projectId: activeProjectId || undefined,
         };
-        const existing = loadSessions();
-        const next = upsertSession(existing, current);
-        saveSessions(next);
-        setSessions(next);
+        persistUserSession(supabase, user?.id ?? null, current);
+        setSessions((prev) => {
+          const idx = prev.findIndex((s) => s.id === current.id);
+          return idx >= 0 ? prev.map((s) => (s.id === current.id ? current : s)) : [current, ...prev];
+        });
       }
     }
     // Load the selected session
@@ -720,10 +730,8 @@ function ChatContent() {
 
   const deleteSession = (sessionId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    const existing = loadSessions();
-    const next = existing.filter((s) => s.id !== sessionId);
-    saveSessions(next);
-    setSessions(next);
+    removeUserSession(supabase, user?.id ?? null, sessionId);
+    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
     // If deleting the active session, clear the chat
     if (sessionId === currentSessionId) {
       setMessages([]);
