@@ -89,12 +89,23 @@ export function AuthView({ initialMode = "login" }: AuthViewProps) {
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const initialError = errorParam
-    ? errorParam === "auth-code-error" || errorParam === "no_auth_code"
-      ? "Authentication session could not be established. Please try signing in again."
-      : decodeURIComponent(errorParam)
-    : null;
-  const [errorMsg, setErrorMsg] = useState<string | null>(initialError);
+  const getFriendlyError = (raw: string | null) => {
+    if (!raw) return null;
+    const decoded = decodeURIComponent(raw);
+    if (
+      decoded.toLowerCase().includes("provider is not enabled") ||
+      decoded.toLowerCase().includes("unsupported provider") ||
+      decoded.toLowerCase().includes("validation_failed")
+    ) {
+      return "Google Sign-In is not enabled in your Supabase project yet. Please enable Google under Authentication > Providers in the Supabase Dashboard.";
+    }
+    if (decoded === "auth-code-error" || decoded === "no_auth_code") {
+      return "Authentication session could not be established. Please try signing in again.";
+    }
+    return decoded;
+  };
+
+  const [errorMsg, setErrorMsg] = useState<string | null>(() => getFriendlyError(errorParam));
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const switchMode = (newMode: "login" | "signup" | "forgot") => {
@@ -114,12 +125,13 @@ export function AuthView({ initialMode = "login" }: AuthViewProps) {
       setErrorMsg(null);
       const { error } = await signInWithGoogle(nextUrl);
       if (error) {
-        setErrorMsg(error.message || "Failed to initiate Google sign in. Please verify Google OAuth configuration in Supabase.");
+        const friendly = getFriendlyError(error.message);
+        setErrorMsg(friendly || "Failed to initiate Google sign in. Please verify Google OAuth configuration in Supabase.");
         setGoogleLoading(false);
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "An unexpected error occurred during Google sign in";
-      setErrorMsg(message);
+      setErrorMsg(getFriendlyError(message) || message);
       setGoogleLoading(false);
     }
   };
