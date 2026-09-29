@@ -25,6 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMiniChat } from "@/context/MiniChatContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -58,6 +59,7 @@ interface HallmarkViewProps {
 
 export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
   const { t } = useLanguage();
+  const miniChat = useMiniChat();
   const [huid, setHuid] = useState("");
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,8 +70,8 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
   const handleAsk = (query: string) => {
     if (onAskMithra) {
       onAskMithra(query);
-    } else if (typeof window !== "undefined") {
-      window.open(`/chat?q=${encodeURIComponent(query)}`, "_blank");
+    } else {
+      miniChat.openChat(query);
     }
   };
 
@@ -279,7 +281,7 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
                 <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
-                    onClick={() => onAskMithra && onAskMithra(result.follow_up || "")}
+                    onClick={() => handleAsk(result.follow_up || "")}
                     className="text-xs font-bold text-[#024DA1] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer text-left"
                   >
                     <span>{result.follow_up}</span>

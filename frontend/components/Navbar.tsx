@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MithraLogo } from "@/components/MithraLogo";
 import { useDarkMode } from "@/hooks/useDarkMode";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useMiniChat } from "@/context/MiniChatContext";
 import {
   Search,
   X,
@@ -26,6 +27,8 @@ import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
+  const miniChat = useMiniChat();
   const { language, cycleLanguage, langLabel, t } = useLanguage();
   const { user, signOut } = useAuth();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -479,14 +482,20 @@ export default function Navbar() {
               <span>{t("nav.switchLang")}: <strong className="text-[#005EB8] dark:text-blue-400">{langLabel}</strong></span>
               <ChevronDown className="w-3.5 h-3.5" />
             </button>
-            <Link
-              href="/chat"
-              onClick={() => setMobileMenuOpen(false)}
+            <Button
+              size="sm"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (pathname !== "/chat" && pathname !== "/") {
+                  miniChat.openChat();
+                } else {
+                  router.push("/chat");
+                }
+              }}
+              className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-bold rounded-xl h-10 px-4 shadow-xs cursor-pointer"
             >
-              <Button size="sm" className="bg-[#005EB8] hover:bg-[#004b94] text-white text-xs font-bold rounded-xl h-10 px-4 shadow-xs">
-                {t("common.askMithra")}
-              </Button>
-            </Link>
+              {t("common.askMithra")}
+            </Button>
           </div>
         </div>
       )}

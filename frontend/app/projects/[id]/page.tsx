@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   FolderKanban,
   ArrowLeft,
+  ArrowRight,
   Star,
   BookOpen,
   FileText,
@@ -638,18 +639,23 @@ export default function ProjectWorkspacePage() {
 
                   {/* Follow-up suggestions */}
                   {msg.follow_ups && msg.follow_ups.length > 0 && (
-                    <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-[#34332E]">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#024DA1] dark:text-blue-400 block mb-1.5">
-                        Suggested Project Prompts:
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
+                    <div className="mt-3.5 pt-3 border-t border-slate-200/60 dark:border-[#34332E] space-y-2 w-full">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <Sparkles className="w-3 h-3 text-[#0052CC] dark:text-blue-400 shrink-0" />
+                        <span>Suggested Project Prompts</span>
+                      </div>
+                      <div className="flex flex-col gap-2 w-full">
                         {msg.follow_ups.map((fu, i) => (
                           <button
                             key={i}
+                            type="button"
                             onClick={() => handleSendMessage(fu)}
-                            className="text-[11px] text-left px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-[#2B2A26] hover:bg-blue-100 dark:hover:bg-[#34332E] text-[#024DA1] dark:text-blue-400 border border-blue-200/60 dark:border-[#3D3B35] transition-colors"
+                            className="followup-suggestion-card group"
                           >
-                            {fu}
+                            <span className="flex-1 min-w-0 break-words leading-relaxed text-left text-slate-800 dark:text-[#E6E4DD] group-hover:text-[#0052CC] dark:group-hover:text-blue-400 transition-colors">
+                              {fu}
+                            </span>
+                            <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all mt-0.5 text-slate-400 dark:text-slate-500 group-hover:text-[#0052CC] dark:group-hover:text-blue-400" />
                           </button>
                         ))}
                       </div>

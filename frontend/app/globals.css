@@ -1319,6 +1319,10 @@
   line-height: 1.75;
   color: var(--color-text-body);
   width: min(780px, 100%);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
   box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.03),
     0 12px 32px rgba(0, 0, 0, 0.04),
@@ -1343,7 +1347,10 @@
   color: #0F172A;
   margin-left: auto;
   width: fit-content;
+  min-width: 0;
   max-width: min(680px, 86%);
+  box-sizing: border-box;
+  overflow-wrap: break-word;
   box-shadow:
     0 2px 6px rgba(2, 77, 161, 0.06),
     0 8px 20px rgba(0, 0, 0, 0.03),
@@ -2283,6 +2290,66 @@
 .chip-prompt:active {
   transform: translateY(0.5px) scale(0.99);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Follow-up / Suggested Prompt Action Cards */
+.followup-suggestion-card {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.90);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  color: #1E293B;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  outline: none;
+}
+
+.followup-suggestion-card:focus-visible {
+  outline: 2px solid #0052CC;
+  outline-offset: 1px;
+}
+
+[data-theme="dark"] .followup-suggestion-card {
+  background: rgba(36, 35, 30, 0.75);
+  border-color: rgba(255, 255, 255, 0.09);
+  color: #E2E8F0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .followup-suggestion-card:focus-visible {
+  outline: 2px solid #4D8DF5;
+  outline-offset: 1px;
+}
+
+.followup-suggestion-card:hover {
+  background: rgba(239, 246, 255, 0.95);
+  border-color: rgba(0, 82, 204, 0.38);
+  color: #0052CC;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 82, 204, 0.08);
+}
+
+[data-theme="dark"] .followup-suggestion-card:hover {
+  background: rgba(30, 58, 138, 0.25);
+  border-color: rgba(77, 141, 245, 0.4);
+  color: #93C5FD;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.followup-suggestion-card:active {
+  transform: translateY(0.5px);
 }
 
 /* Standard identifier chip (for IS numbers) */

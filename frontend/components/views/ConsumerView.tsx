@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMiniChat } from "@/context/MiniChatContext";
 
 interface ConsumerViewProps {
   onAskMithra?: (query: string) => void;
@@ -32,14 +33,15 @@ interface ConsumerViewProps {
 
 export function ConsumerView({ onAskMithra }: ConsumerViewProps) {
   const { t } = useLanguage();
+  const miniChat = useMiniChat();
   const [activeTab, setActiveTab] = useState<"visual-guide" | "grievance-steps" | "penalties">("visual-guide");
 
   const handleAskComplaint = (customSubject?: string) => {
     const topic = customSubject || "How do I file an official consumer complaint with BIS against a fake ISI marked product?";
     if (onAskMithra) {
       onAskMithra(topic);
-    } else if (typeof window !== "undefined") {
-      window.open(`/chat?q=${encodeURIComponent(topic)}`, "_blank");
+    } else {
+      miniChat.openChat(topic);
     }
   };
 

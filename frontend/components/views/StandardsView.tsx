@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMiniChat } from "@/context/MiniChatContext";
 
 // Official Seeded Indian Standards Catalogue
 export interface StandardItem {
@@ -449,12 +450,13 @@ interface StandardCardProps {
 
 export function StandardCard({ item, onAskMithra }: StandardCardProps) {
   const { t } = useLanguage();
+  const miniChat = useMiniChat();
   const handleAsk = () => {
     const q = `Explain applicability, required testing parameters, and BIS certification pathway for ${item.is_number} (${item.title})`;
     if (onAskMithra) {
       onAskMithra(q);
-    } else if (typeof window !== "undefined") {
-      window.open(`/chat?q=${encodeURIComponent(q)}`, "_blank");
+    } else {
+      miniChat.openChat(q);
     }
   };
 

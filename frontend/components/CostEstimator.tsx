@@ -15,6 +15,7 @@ import {
   Percent,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMiniChat } from "@/context/MiniChatContext";
 
 export interface CostEstimatorProps {
   onAskMithra?: (prompt: string) => void;
@@ -22,6 +23,7 @@ export interface CostEstimatorProps {
 
 export function CostEstimator({ onAskMithra }: CostEstimatorProps) {
   const { t } = useLanguage();
+  const miniChat = useMiniChat();
   const router = useRouter();
 
   const [scheme, setScheme] = useState<"isi" | "crs" | "fmcs" | "hallmark">("isi");
@@ -109,7 +111,7 @@ export function CostEstimator({ onAskMithra }: CostEstimatorProps) {
     if (onAskMithra) {
       onAskMithra(prompt);
     } else {
-      router.push(`/chat?q=${encodeURIComponent(prompt)}`);
+      miniChat.openChat(prompt);
     }
   };
 

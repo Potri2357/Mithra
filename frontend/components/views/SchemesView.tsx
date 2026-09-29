@@ -24,6 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMiniChat } from "@/context/MiniChatContext";
 
 export const SCHEMES = [
   {
@@ -153,13 +154,14 @@ export function SchemesView({ onAskMithra }: SchemesViewProps) {
     };
   };
 
+  const miniChat = useMiniChat();
   const rec = getRecommendation();
 
   const handleAsk = (query: string) => {
     if (onAskMithra) {
       onAskMithra(query);
-    } else if (typeof window !== "undefined") {
-      window.open(`/chat?q=${encodeURIComponent(query)}`, "_blank");
+    } else {
+      miniChat.openChat(query);
     }
   };
 

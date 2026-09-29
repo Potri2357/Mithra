@@ -1982,21 +1982,23 @@ function ChatContent() {
                         const followUps = [...new Set(raw)].slice(0, 3);
                         if (followUps.length === 0) return null;
                         return (
-                          <div className="mt-3.5 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 space-y-2">
+                          <div className="mt-3.5 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 space-y-2 w-full">
                             <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              <Sparkles className="w-3 h-3 text-[#0052CC] dark:text-blue-400" />
+                              <Sparkles className="w-3 h-3 text-[#0052CC] dark:text-blue-400 shrink-0" />
                               <span>{t("chat.suggestedFollowups")}</span>
                             </div>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-col gap-2 w-full">
                               {followUps.map((q, qIdx) => (
                                 <button
                                   key={qIdx}
                                   type="button"
                                   onClick={() => sendMessage(q)}
-                                  className="chip chip-prompt group text-left cursor-pointer"
+                                  className="followup-suggestion-card group"
                                 >
-                                  <span>{replaceEmojisWithIcons(q)}</span>
-                                  <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-70 group-hover:translate-x-0.5 transition-transform" />
+                                  <span className="flex-1 min-w-0 break-words leading-relaxed text-left text-slate-800 dark:text-[#E6E4DD] group-hover:text-[#0052CC] dark:group-hover:text-blue-400 transition-colors">
+                                    {replaceEmojisWithIcons(q)}
+                                  </span>
+                                  <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all mt-0.5 text-slate-400 dark:text-slate-500 group-hover:text-[#0052CC] dark:group-hover:text-blue-400" />
                                 </button>
                               ))}
                             </div>

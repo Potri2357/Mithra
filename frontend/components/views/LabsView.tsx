@@ -24,6 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMiniChat } from "@/context/MiniChatContext";
 
 // Official Seeded BIS Recognized Laboratories
 export const BIS_LABORATORIES = [
@@ -151,6 +152,7 @@ interface LabsViewProps {
 
 export function LabsView({ onAskMithra }: LabsViewProps) {
   const { t } = useLanguage();
+  const miniChat = useMiniChat();
   const [labs] = useState(BIS_LABORATORIES);
   const [selectedState, setSelectedState] = useState("All States");
   const [category, setCategory] = useState("All Categories");
@@ -161,8 +163,8 @@ export function LabsView({ onAskMithra }: LabsViewProps) {
   const handleAsk = (query: string) => {
     if (onAskMithra) {
       onAskMithra(query);
-    } else if (typeof window !== "undefined") {
-      window.open(`/chat?q=${encodeURIComponent(query)}`, "_blank");
+    } else {
+      miniChat.openChat(query);
     }
   };
 

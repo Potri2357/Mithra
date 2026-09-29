@@ -3,6 +3,8 @@ import { DM_Sans, Noto_Sans_Devanagari, Noto_Sans_Tamil } from "next/font/google
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProjectProvider } from "@/context/ProjectContext";
+import { MiniChatProvider } from "@/context/MiniChatContext";
+import { MiniChatbot } from "@/components/MiniChatbot";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -80,7 +82,12 @@ export default function RootLayout({
       <body className={`${dmSans.variable} ${notoSansDevanagari.variable} ${notoSansTamil.variable} font-sans antialiased min-h-screen`}>
         <LanguageProvider>
           <AuthProvider>
-            <ProjectProvider>{children}</ProjectProvider>
+            <ProjectProvider>
+              <MiniChatProvider>
+                {children}
+                <MiniChatbot />
+              </MiniChatProvider>
+            </ProjectProvider>
           </AuthProvider>
         </LanguageProvider>
       </body>
