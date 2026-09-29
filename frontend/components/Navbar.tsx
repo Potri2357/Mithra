@@ -259,24 +259,21 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="neu-pill-btn text-xs font-semibold px-2.5 h-9 flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:text-[#005EB8] dark:hover:text-white cursor-pointer"
-                title={user.email || "Account"}
+                className="w-9 h-9 rounded-full neu-pill-btn flex items-center justify-center cursor-pointer transition-transform hover:scale-105"
+                title={user.user_metadata?.full_name || user.email || "Account"}
+                aria-label="Account menu"
               >
                 {user.user_metadata?.avatar_url ? (
                   <img
                     src={user.user_metadata.avatar_url}
                     alt="Avatar"
-                    className="w-5.5 h-5.5 rounded-full object-cover shrink-0"
+                    className="w-7.5 h-7.5 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-5.5 h-5.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#005EB8] dark:text-blue-300 flex items-center justify-center text-[10px] font-bold shrink-0">
+                  <div className="w-7.5 h-7.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#005EB8] dark:text-blue-300 flex items-center justify-center text-xs font-bold">
                     {(user.user_metadata?.full_name || user.email || "U")[0].toUpperCase()}
                   </div>
                 )}
-                <span className="hidden xl:inline max-w-[100px] truncate text-xs font-bold">
-                  {user.user_metadata?.full_name || user.email?.split("@")[0]}
-                </span>
-                <ChevronDown className="w-3 h-3 opacity-60" />
               </button>
 
               {userDropdownOpen && (

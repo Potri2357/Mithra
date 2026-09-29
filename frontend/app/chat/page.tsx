@@ -1416,24 +1416,21 @@ function ChatContent() {
               <button
                 type="button"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="inline-flex items-center gap-1.5 px-2 h-7 rounded-lg bg-white/80 dark:bg-[#21201C]/90 border border-slate-200 dark:border-[#34332E] text-xs font-semibold text-slate-700 dark:text-[#E6E4DD] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#2B2A26] backdrop-blur-md transition-colors cursor-pointer shadow-xs"
-                title={user.email || "Account"}
+                className="w-7 h-7 rounded-lg bg-white/80 dark:bg-[#21201C]/90 border border-slate-200 dark:border-[#34332E] hover:bg-slate-100 dark:hover:bg-[#2B2A26] backdrop-blur-md transition-colors flex items-center justify-center cursor-pointer shadow-xs"
+                title={user.user_metadata?.full_name || user.email || "Account"}
+                aria-label="Account menu"
               >
                 {user.user_metadata?.avatar_url ? (
                   <img
                     src={user.user_metadata.avatar_url}
                     alt="Avatar"
-                    className="w-4 h-4 rounded-full object-cover shrink-0"
+                    className="w-5.5 h-5.5 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#005EB8] dark:text-blue-300 flex items-center justify-center text-[9px] font-bold shrink-0">
+                  <div className="w-5.5 h-5.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-[#005EB8] dark:text-blue-300 flex items-center justify-center text-[10px] font-bold">
                     {(user.user_metadata?.full_name || user.email || "U")[0].toUpperCase()}
                   </div>
                 )}
-                <span className="max-w-[80px] truncate text-[11px] font-medium hidden sm:inline">
-                  {user.user_metadata?.full_name || user.email?.split("@")[0]}
-                </span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
 
               {userMenuOpen && (
