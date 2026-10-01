@@ -55,9 +55,9 @@ interface VerificationResult {
 }
 
 const SAMPLE_HUIDS = [
-  { huid: "AA123456", label: "22K Gold (Valid Demo)" },
-  { huid: "BB789012", label: "18K Jewellery (Valid Demo)" },
-  { huid: "DD901234", label: "Unregistered (Negative Test)" },
+  { huid: "AA123456", label: "22K Gold Jewellery" },
+  { huid: "BB789012", label: "18K Gold Article" },
+  { huid: "DD901234", label: "Sample Unregistered Check" },
 ];
 
 export const PURITY_STANDARDS = [
@@ -341,9 +341,9 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
             </div>
           </div>
 
-          {/* Quick Test Codes Chips */}
+          {/* Suggested Verification Samples */}
           <div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1.5 font-medium">Quick Test Codes:</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1.5 font-medium">Suggested Verification Samples:</span>
             <div className="flex flex-wrap gap-1.5">
               {SAMPLE_HUIDS.map((s) => (
                 <button
@@ -416,15 +416,9 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
                           <ShieldCheck className="w-5 h-5" />
                         </div>
                         <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                              BIS Certified Authentic Hallmark
-                            </h3>
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                              Verified
-                            </span>
-                          </div>
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                            BIS Certified Authentic Hallmark
+                          </h3>
                           <span className="text-xs text-slate-500 dark:text-slate-400">
                             Central Assaying &amp; Hallmarking Registry (AHC)
                           </span>
@@ -505,14 +499,9 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
                           <ShieldAlert className="w-5 h-5 animate-pulse" />
                         </div>
                         <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                              HUID Not Registered — Potential Fraud
-                            </h3>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20 text-[10px] font-bold uppercase tracking-wider">
-                              Unverified
-                            </span>
-                          </div>
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                            HUID Not Registered — Potential Fraud
+                          </h3>
                           <span className="text-xs text-slate-500 dark:text-slate-400">
                             Record not found in the national BIS database
                           </span>

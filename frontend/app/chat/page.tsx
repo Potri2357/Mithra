@@ -136,14 +136,6 @@ const QUICK_START_CARDS = [
 ];
 
 function ConfidenceBadge({ confidence, abstained }: { confidence?: "High" | "Medium" | "Unverified"; abstained?: boolean }) {
-  if (abstained || confidence === "Unverified") {
-    return (
-      <span className="confidence-badge confidence-badge-abstained">
-        <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
-        <span>Unverified — Abstained from guessing</span>
-      </span>
-    );
-  }
   return null;
 }
 
@@ -1686,7 +1678,11 @@ function ChatContent() {
                     </div>
                   )}
 
-                  {msg.isLoading ? (
+                  {msg.role === "user" ? (
+                    <div className="text-slate-900 dark:text-white text-sm sm:text-base leading-relaxed whitespace-pre-wrap select-text">
+                      {msg.content}
+                    </div>
+                  ) : msg.isLoading ? (
                     <div className="flex items-center justify-center py-6">
                       <BisLoadingIndicator size="lg" />
                     </div>

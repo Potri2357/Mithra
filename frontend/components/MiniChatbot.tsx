@@ -293,23 +293,14 @@ export function MiniChatbot() {
                     <span className="font-bold text-[11px] text-[#0052CC] dark:text-blue-400">
                       Mithraa
                     </span>
-                    {m.confidence && (
-                      <span
-                        className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${
-                          m.confidence === "High"
-                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
-                            : m.confidence === "Medium"
-                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
-                            : "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30"
-                        }`}
-                      >
-                        {m.confidence} Confidence
-                      </span>
-                    )}
                   </div>
                 )}
 
-                {m.isLoading ? (
+                {m.role === "user" ? (
+                  <div className="text-white text-xs sm:text-[13px] font-normal leading-relaxed whitespace-pre-wrap select-text">
+                    {m.content}
+                  </div>
+                ) : m.isLoading ? (
                   <div className="py-2 flex items-center justify-center">
                     <BisLoadingIndicator size="sm" />
                   </div>
@@ -363,7 +354,7 @@ export function MiniChatbot() {
                     {m.citations && m.citations.length > 0 && (
                       <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-white/10 space-y-1">
                         <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                          Verified Sources ({m.citations.length}):
+                          Official Sources ({m.citations.length}):
                         </span>
                         <div className="flex flex-wrap gap-1">
                           {m.citations.map((c, cIdx) => (
