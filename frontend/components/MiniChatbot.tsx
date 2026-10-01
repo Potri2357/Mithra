@@ -285,22 +285,22 @@ export function MiniChatbot() {
                 className={
                   m.role === "user"
                     ? "max-w-[85%] rounded-2xl rounded-br-xs px-3.5 py-2.5 bg-gradient-to-br from-[#005EB8] to-[#003B73] text-white text-xs sm:text-[13px] font-medium shadow-xs leading-relaxed break-words"
-                    : "max-w-[90%] rounded-2xl rounded-bl-xs px-3.5 py-2.5 bg-[#1a2744] dark:bg-[#0f1829] border border-[#2a3d6e]/60 dark:border-white/10 text-white text-xs sm:text-[13px] leading-relaxed shadow-xs space-y-2 min-w-0"
+                    : "max-w-[90%] rounded-2xl rounded-bl-xs px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800/90 border border-slate-200/90 dark:border-white/10 text-slate-800 dark:text-slate-100 text-xs sm:text-[13px] leading-relaxed shadow-xs space-y-2 min-w-0"
                 }
               >
                 {m.role === "assistant" && (
-                  <div className="flex items-center justify-between gap-2 pb-1 border-b border-white/10">
-                    <span className="font-bold text-[11px] text-blue-300">
+                  <div className="flex items-center justify-between gap-2 pb-1 border-b border-slate-200 dark:border-white/10">
+                    <span className="font-bold text-[11px] text-[#0052CC] dark:text-blue-400">
                       Mithraa
                     </span>
                     {m.confidence && (
                       <span
                         className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${
                           m.confidence === "High"
-                            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
                             : m.confidence === "Medium"
-                            ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
-                            : "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+                            : "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30"
                         }`}
                       >
                         {m.confidence} Confidence
@@ -319,38 +319,38 @@ export function MiniChatbot() {
                       remarkPlugins={[remarkGfm]}
                       components={{
                         p: ({ children }) => (
-                          <p className="mb-1.5 last:mb-0 leading-relaxed text-white">
+                          <p className="mb-1.5 last:mb-0 leading-relaxed text-slate-800 dark:text-slate-100">
                             {children}
                           </p>
                         ),
                         strong: ({ children }) => (
-                          <strong className="font-bold text-white">
+                          <strong className="font-bold text-slate-900 dark:text-white">
                             {children}
                           </strong>
                         ),
                         ul: ({ children }) => (
-                          <ul className="list-disc pl-4 mb-1.5 space-y-0.5 text-white/90">
+                          <ul className="list-disc pl-4 mb-1.5 space-y-0.5 text-slate-700 dark:text-slate-200">
                             {children}
                           </ul>
                         ),
                         ol: ({ children }) => (
-                          <ol className="list-decimal pl-4 mb-1.5 space-y-0.5 text-white/90">
+                          <ol className="list-decimal pl-4 mb-1.5 space-y-0.5 text-slate-700 dark:text-slate-200">
                             {children}
                           </ol>
                         ),
-                        li: ({ children }) => <li className="leading-relaxed text-white/90">{children}</li>,
+                        li: ({ children }) => <li className="leading-relaxed text-slate-700 dark:text-slate-200">{children}</li>,
                         a: ({ href, children }) => (
                           <a
                             href={href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-300 font-medium underline underline-offset-2 hover:opacity-80"
+                            className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-2 hover:opacity-80"
                           >
                             {children}
                           </a>
                         ),
                         code: ({ children }) => (
-                          <code className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-200 font-mono text-[11px]">
+                          <code className="px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-700/80 text-slate-800 dark:text-blue-200 font-mono text-[11px]">
                             {children}
                           </code>
                         ),
@@ -361,15 +361,15 @@ export function MiniChatbot() {
 
                     {/* Citations list if present */}
                     {m.citations && m.citations.length > 0 && (
-                      <div className="mt-2.5 pt-2 border-t border-white/10 space-y-1">
-                        <span className="text-[10px] font-bold text-white/50 uppercase tracking-wider block">
+                      <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-white/10 space-y-1">
+                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                           Verified Sources ({m.citations.length}):
                         </span>
                         <div className="flex flex-wrap gap-1">
                           {m.citations.map((c, cIdx) => (
                             <span
                               key={cIdx}
-                              className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/10 border border-white/10 text-white/80"
+                              className="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-200/70 dark:bg-white/10 border border-slate-300/60 dark:border-white/10 text-slate-700 dark:text-slate-300"
                             >
                               {c.source}
                             </span>
