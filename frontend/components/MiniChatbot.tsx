@@ -189,10 +189,6 @@ export function MiniChatbot() {
                 BIS
               </span>
             </div>
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
-              <span>Official Standards Intelligence</span>
-            </div>
           </div>
         </div>
 
