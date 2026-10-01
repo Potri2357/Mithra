@@ -357,11 +357,22 @@ class SarvamTranslator:
         if any(re.search(pat, clean, re.IGNORECASE) for pat in tanglish_words):
             return "ta"
 
-        # 4. Statistical detector (langdetect) for Latin / international scripts
+        # 4. For Latin text: Mithraa is an Indian standards portal.
+        # Only classify as non-English if there's very strong evidence.
+        # If the text is standard ASCII letters, numbers, and punctuation, it is English ("en").
+        # Statistical detectors (like langdetect) frequently misidentify short English sentences as German, Somali, Dutch, etc.
+        # Never let short Latin queries fall back to European languages.
+        is_pure_ascii = all(ord(char) < 128 for char in clean)
+        if is_pure_ascii:
+            return "en"
+
+        # 5. Fallback statistical detector only for non-ASCII Latin or international scripts
         try:
             from langdetect import detect
             ld = detect(clean)
-            if ld and ld != "en" and ld in LANGUAGE_NAMES:
+            # Only accept supported Indian languages from langdetect
+            supported_indic = {"hi", "ta", "te", "kn", "ml", "bn", "gu", "pa", "or", "ur", "mr", "as"}
+            if ld in supported_indic:
                 return ld
         except Exception:
             pass

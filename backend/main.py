@@ -101,6 +101,7 @@ class ChatRequest(BaseModel):
     session_id: Optional[str] = None
     context: Optional[list] = []
     project_context: Optional[dict] = None
+    mini: bool = False            # True = mini chatbot widget, keep answers very short
 
 class ChatResponse(BaseModel):
     answer: str
@@ -160,10 +161,13 @@ async def chat(req: ChatRequest):
         detected_lang = await translator.detect_language(req.message)
 
         # Target language priority:
-        # 1. If message itself is written in a non-English language (e.g. Hindi, Tamil, Telugu, etc.), target is that language!
-        # 2. Otherwise if the user requested a specific non-English language in req.language, target is req.language.
-        # 3. Otherwise "en".
-        if detected_lang and detected_lang != "en":
+        # 1. If mini chatbot widget → always English (user is on English portal, avoid language misdetection)
+        # 2. If message itself is written in a non-English language (e.g. Hindi, Tamil), target is that language.
+        # 3. Otherwise if the user requested a specific non-English language in req.language, target is req.language.
+        # 4. Otherwise "en".
+        if req.mini:
+            target_language = "en"  # Mini widget always returns English
+        elif detected_lang and detected_lang != "en":
             target_language = detected_lang
         elif req.language and req.language != "en":
             target_language = req.language
@@ -189,6 +193,7 @@ async def chat(req: ChatRequest):
             session_id=req.session_id,
             context=req.context,
             project_context=req.project_context,
+            mini=req.mini,
         )
 
         # Step 4: Translate answer and follow-ups back to target language

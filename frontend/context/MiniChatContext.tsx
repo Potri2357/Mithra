@@ -118,6 +118,7 @@ export function MiniChatProvider({ children }: { children: ReactNode }) {
             message: cleanQuery,
             language: language || "en",
             context: contextPayload,
+            mini: true,
           }),
         });
 

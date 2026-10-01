@@ -256,25 +256,26 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
         </Card>
 
         {/* Right: Verification Output */}
-        <Card className="p-5 sm:p-6 min-h-[340px] flex flex-col justify-between">
+        <Card className="p-5 sm:p-6 min-h-[340px] flex flex-col justify-between overflow-hidden">
           {result ? (
             <div className="space-y-3.5">
-              <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${result.verified ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/70 dark:text-emerald-400" : "bg-rose-50 text-rose-600 dark:bg-rose-950/70 dark:text-rose-400"}`}>
-                  {result.verified ? (
-                    <ShieldCheck className="w-5 h-5" />
-                  ) : (
-                    <ShieldAlert className="w-5 h-5" />
-                  )}
+              <div className={`rounded-xl p-4 ${result.verified ? "bg-emerald-950/80" : result.verified === false ? "bg-rose-950/80" : "bg-[#0d1b35]"}`}>
+                <div className="flex items-center gap-3 pb-3 border-b border-white/10">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${result.verified ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
+                    {result.verified ? (
+                      <ShieldCheck className="w-5 h-5" />
+                    ) : (
+                      <ShieldAlert className="w-5 h-5" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Registry Result: {huid}</h3>
+                    <span className="text-xs text-white/50">Central Assaying Register</span>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Registry Result: {huid}</h3>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">Central Assaying Register</span>
+                <div className="text-xs sm:text-sm text-white/90 leading-relaxed mt-3 whitespace-pre-line">
+                  {result.answer}
                 </div>
-              </div>
-
-              <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                {result.answer}
               </div>
 
               {result.follow_up && (

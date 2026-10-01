@@ -14,6 +14,7 @@ import {
   Sparkles,
   PhoneCall,
   Scale,
+  Mail,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -89,6 +90,16 @@ Email: [Your Email]`;
     navigator.clipboard.writeText(generatedComplaintLetter);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+  };
+
+  const sendViaGmail = () => {
+    const subject = encodeURIComponent(
+      `Formal Grievance: ${violationType.replace(/_/g, " ").toUpperCase()} — BIS Act 2016`
+    );
+    const body = encodeURIComponent(generatedComplaintLetter);
+    const to = encodeURIComponent(selectedOffice.email);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+    window.open(gmailUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -397,12 +408,30 @@ Email: [Your Email]`;
           </div>
 
           {/* Action portals */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            {/* Gmail Send */}
+            <button
+              type="button"
+              onClick={sendViaGmail}
+              className="p-3.5 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50/60 dark:bg-red-950/30 hover:bg-red-100/80 dark:hover:bg-red-950/50 flex items-center justify-between text-xs font-bold text-red-700 dark:text-red-300 group transition-all cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-white dark:bg-red-900/40 flex items-center justify-center shadow-xs">
+                  <Mail className="w-4 h-4 text-red-500" />
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-xs">Send via Gmail</div>
+                  <div className="text-[10px] text-red-500/70 dark:text-red-400/60 font-normal">{selectedOffice.email}</div>
+                </div>
+              </div>
+              <ExternalLink className="w-3.5 h-3.5 text-red-400 group-hover:text-red-600 transition-colors shrink-0" />
+            </button>
+
             <a
               href="https://www.bis.gov.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 flex items-center justify-between text-xs font-bold text-slate-800 dark:text-white group"
+              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 flex items-center justify-between text-xs font-bold text-slate-800 dark:text-white group transition-all"
             >
               <span>File on BIS Care Portal</span>
               <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
@@ -412,7 +441,7 @@ Email: [Your Email]`;
               href="https://consumerhelpline.gov.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 flex items-center justify-between text-xs font-bold text-slate-800 dark:text-white group"
+              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 flex items-center justify-between text-xs font-bold text-slate-800 dark:text-white group transition-all"
             >
               <span>National Consumer Helpline (1915)</span>
               <PhoneCall className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />

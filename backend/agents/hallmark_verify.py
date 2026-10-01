@@ -103,7 +103,7 @@ class HallmarkVerifyAgent(BaseAgent):
                 }
 
         # General hallmarking question — use Gemini with context
-        result = await super().run(query, session_id, context)
+        result = await super().run(query, session_id, context, mini=kwargs.get("mini", False))
         result["verified"] = None
         return result
 

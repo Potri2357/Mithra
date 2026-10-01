@@ -52,6 +52,28 @@ Output Format (strict JSON):
 }
 """
 
+# Compact system prompt for the mini floating chatbot widget — keeps answers brief
+MINI_CHATBOT_SYSTEM = """You are Mithraa, BIS India's AI compliance assistant.
+
+RULES FOR MINI CHATBOT (CRITICAL — strictly enforce):
+1. **Be extremely concise**: Answer in 2-3 sentences MAX, or a bullet list of max 4 items. No lengthy paragraphs.
+2. **Direct answers only**: Skip preamble. Get straight to the point.
+3. **Citations**: Add [S1] inline when using retrieved context.
+4. **No abstention if context exists**: Give the short direct answer.
+5. **One follow-up only**: Suggest exactly 1 concise follow-up question.
+6. **No emojis** except ✅ or ❌ for status.
+7. Scope: BIS standards, ISI mark, QCOs, hallmarking, HUID, certification schemes, consumer rights (BIS Act 2016).
+
+Output Format (strict JSON):
+{
+  "answer": "short markdown answer (2-3 sentences or ≤4 bullets) with [S1] citation",
+  "citations": [{"id": "S1", "text": "...", "source": "..."}],
+  "abstain": false,
+  "follow_up": "One concise follow-up question?",
+  "follow_ups": ["One follow-up question?"]
+}
+"""
+
 
 class BaseAgent:
     def __init__(self, name: str):
@@ -69,7 +91,7 @@ class BaseAgent:
         """Override in subclass to implement RAG retrieval."""
         return []
 
-    async def _generate_with_groq(self, prompt: str) -> Optional[dict]:
+    async def _generate_with_groq(self, prompt: str, system: Optional[str] = None, max_tokens: int = 1500) -> Optional[dict]:
         """Fast primary generation with Groq guarded by Circuit Breaker."""
         if not self.groq_client:
             return None
@@ -79,6 +101,7 @@ class BaseAgent:
             logger.info(f"⚡ Circuit breaker 'groq' is OPEN. Fast-failing to Gemini (0ms).")
             return None
 
+        system_prompt = system or GENERATION_SYSTEM
         models_to_try = ["qwen/qwen3.8-27b"]
         for model in models_to_try:
             try:
@@ -87,12 +110,12 @@ class BaseAgent:
                     self.groq_client.chat.completions.create(
                         model=model,
                         messages=[
-                            {"role": "system", "content": GENERATION_SYSTEM},
+                            {"role": "system", "content": system_prompt},
                             {"role": "user", "content": prompt},
                         ],
                         response_format={"type": "json_object"},
                         temperature=0.1,
-                        max_tokens=1500,
+                        max_tokens=max_tokens,
                     ),
                     timeout=3.8,
                 )
@@ -106,7 +129,7 @@ class BaseAgent:
                 await groq_breaker.record_failure(e)
         return None
 
-    async def _generate_with_gemini(self, prompt: str) -> Optional[dict]:
+    async def _generate_with_gemini(self, prompt: str, system: Optional[str] = None, max_tokens: int = 1500) -> Optional[dict]:
         """Secondary fallback generation with Gemini guarded by Circuit Breaker."""
         if not self.gemini_client:
             return None
@@ -116,14 +139,15 @@ class BaseAgent:
             logger.info(f"⚡ Circuit breaker 'gemini' is OPEN. Fast-failing to rule-based fallback (0ms).")
             return None
 
+        system_prompt = system or GENERATION_SYSTEM
         models_to_try = [self.gemini_model, "gemini-3.5-flash", "gemini-2.0-flash"]
         for model_name in models_to_try:
             try:
                 config = genai_types.GenerateContentConfig(
                     response_mime_type="application/json",
                     temperature=0.1,
-                    max_output_tokens=1500,
-                    system_instruction=GENERATION_SYSTEM,
+                    max_output_tokens=max_tokens,
+                    system_instruction=system_prompt,
                 )
                 response = await self.gemini_client.aio.models.generate_content(
                     model=model_name,
@@ -186,6 +210,7 @@ class BaseAgent:
         session_id: Optional[str] = None,
         context: Optional[list] = None,
         project_context: Optional[dict] = None,
+        mini: bool = False,
     ) -> dict:
         """Main agent pipeline: fast-retrieval cache → multi-LLM circuit breaker generation → validate citations."""
         try:
@@ -221,7 +246,18 @@ Custom Project System Instructions:
 ==================================================
 """
 
-            prompt = f"""{project_section}User Query: {query}
+            if mini:
+                # Compact prompt for the mini floating chatbot — keep it short!
+                system_prompt = MINI_CHATBOT_SYSTEM
+                prompt = f"""User Query: {query}
+Retrieved Context (Cite as [S1] if used):
+{context_text}
+
+Answer in 2-3 sentences max or a bullet list of ≤4 items. Be direct and concise."""
+                max_tokens = 400
+            else:
+                system_prompt = GENERATION_SYSTEM
+                prompt = f"""{project_section}User Query: {query}
 {history_text}
 Retrieved Context (Cite as [S1], [S2] etc.):
 {context_text}
@@ -229,11 +265,12 @@ Retrieved Context (Cite as [S1], [S2] etc.):
 Generate a clear, authoritative, cited compliance response.
 Include 2-3 logical follow-up questions in "follow_ups".
 Only set abstain=true if the query cannot be answered from the context or BIS domain knowledge."""
+                max_tokens = 1500
 
             # Step 3: Multi-LLM generation (Groq fast primary → Gemini fallback)
-            result = await self._generate_with_groq(prompt)
+            result = await self._generate_with_groq(prompt, system=system_prompt, max_tokens=max_tokens)
             if not result:
-                result = await self._generate_with_gemini(prompt)
+                result = await self._generate_with_gemini(prompt, system=system_prompt, max_tokens=max_tokens)
             if not result:
                 result = self._generate_fallback_from_passages(query, passages)
 
