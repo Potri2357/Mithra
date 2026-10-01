@@ -408,89 +408,72 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
               {/* State A: Verified Genuine */}
               {result.verified === true && (
                 <div className="space-y-3.5">
-                  <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-emerald-950 via-[#064e3b] to-[#042f2e] border border-emerald-500/40 text-white shadow-xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none" />
-                    
-                    <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-emerald-400/20">
+                  <div className="rounded-2xl p-5 bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/80 space-y-4">
+                    {/* Header with Title and HUID Chip */}
+                    <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-emerald-200/80 dark:border-emerald-800/80">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/25 border border-emerald-400/40 flex items-center justify-center text-emerald-300 shadow-sm shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center text-emerald-700 dark:text-emerald-300 shadow-2xs shrink-0">
                           <ShieldCheck className="w-6 h-6" />
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <h3 className="text-sm font-extrabold text-white tracking-wide">
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                               BIS Certified Authentic Hallmark
                             </h3>
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                           </div>
-                          <span className="text-[11px] text-emerald-200/80 font-medium">
+                          <span className="text-xs text-slate-600 dark:text-slate-400">
                             Central Assaying &amp; Hallmarking Registry (AHC)
                           </span>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-lg bg-emerald-400/20 border border-emerald-400/30 text-emerald-200 text-xs font-mono font-bold shrink-0">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 text-xs font-mono font-bold tracking-wide shrink-0">
                         {result.huid || huid}
                       </span>
                     </div>
 
-                    {/* 4 Structured Spec Tiles */}
+                    {/* Specification Chips */}
                     {parsedDetails && (
-                      <div className="grid grid-cols-2 gap-2.5 my-3.5">
-                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
-                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
-                            <Gem className="w-3 h-3 text-amber-300" />
-                            Precious Metal
-                          </div>
-                          <div className="text-xs sm:text-sm font-bold text-white">
-                            {parsedDetails.metal}
-                          </div>
+                      <div className="flex flex-wrap gap-2 pt-0.5">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-xs shadow-2xs">
+                          <Gem className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                          <span className="text-slate-500 dark:text-slate-400 font-medium">Metal:</span>
+                          <strong className="text-slate-900 dark:text-white font-bold">{parsedDetails.metal}</strong>
                         </div>
 
-                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
-                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
-                            <Award className="w-3 h-3 text-emerald-300" />
-                            Purity &amp; Fineness
-                          </div>
-                          <div className="text-xs sm:text-sm font-bold text-white font-mono">
-                            {parsedDetails.purity}
-                          </div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs shadow-2xs">
+                          <Award className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                          <span className="text-slate-500 dark:text-slate-400 font-medium">Purity:</span>
+                          <strong className="text-slate-900 dark:text-white font-mono font-bold">{parsedDetails.purity}</strong>
                         </div>
 
-                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
-                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
-                            <Building2 className="w-3 h-3 text-sky-300" />
-                            Assaying Centre (AHC)
-                          </div>
-                          <div className="text-xs font-bold text-white truncate" title={parsedDetails.ahc}>
-                            {parsedDetails.ahc}
-                          </div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 text-xs shadow-2xs">
+                          <Building2 className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                          <span className="text-slate-500 dark:text-slate-400 font-medium">AHC:</span>
+                          <strong className="text-slate-900 dark:text-white font-bold">{parsedDetails.ahc}</strong>
                         </div>
 
-                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
-                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
-                            <MapPin className="w-3 h-3 text-rose-300" />
-                            Jurisdiction
-                          </div>
-                          <div className="text-xs font-bold text-white">
-                            {parsedDetails.city}
-                          </div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-xs shadow-2xs">
+                          <MapPin className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                          <span className="text-slate-500 dark:text-slate-400 font-medium">City:</span>
+                          <strong className="text-slate-900 dark:text-white font-bold">{parsedDetails.city}</strong>
                         </div>
                       </div>
                     )}
 
-                    {/* 3-Mark Checklist */}
-                    <div className="pt-2.5 border-t border-emerald-400/20 flex items-center justify-between text-[10px] text-emerald-200/90 font-medium">
-                      <span className="flex items-center gap-1 text-emerald-300">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                    {/* 3-Mark Checklist Chips */}
+                    <div className="pt-2.5 border-t border-emerald-200/80 dark:border-emerald-800/80 flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-700 text-[11px] font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                         BIS Standard Triangle
                       </span>
-                      <span className="flex items-center gap-1 text-emerald-300">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-700 text-[11px] font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                         Purity Stamp
                       </span>
-                      <span className="flex items-center gap-1 text-emerald-300">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                        6-Char HUID
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-700 text-[11px] font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        6-Digit HUID
                       </span>
                     </div>
                   </div>
@@ -511,47 +494,56 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
               {/* State B: Not Verified / Potential Fraud */}
               {result.verified === false && (
                 <div className="space-y-3.5">
-                  <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-rose-950 via-[#4c0519] to-[#3b0714] border border-rose-500/40 text-white shadow-xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
-
-                    <div className="flex items-start justify-between gap-3 pb-3 border-b border-rose-400/20">
+                  <div className="rounded-2xl p-5 bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/80 space-y-4">
+                    {/* Header with Title and HUID Chip */}
+                    <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-rose-200/80 dark:border-rose-800/80">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-rose-500/25 border border-rose-400/40 flex items-center justify-center text-rose-300 shadow-sm shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-900/60 border border-rose-300 dark:border-rose-700 flex items-center justify-center text-rose-700 dark:text-rose-300 shadow-2xs shrink-0">
                           <ShieldAlert className="w-6 h-6 animate-pulse" />
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <h3 className="text-sm font-extrabold text-white tracking-wide">
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                               HUID Not Registered — Potential Fraud
                             </h3>
                           </div>
-                          <span className="text-[11px] text-rose-200/80 font-medium">
+                          <span className="text-xs text-slate-600 dark:text-slate-400">
                             Record not found in the national BIS database
                           </span>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-lg bg-rose-400/20 border border-rose-400/30 text-rose-200 text-xs font-mono font-bold shrink-0">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-900/80 dark:text-rose-300 border border-rose-300 dark:border-rose-700 text-xs font-mono font-bold tracking-wide shrink-0">
                         {result.huid || huid}
                       </span>
                     </div>
 
-                    <div className="mt-3.5 space-y-2 text-xs text-rose-100 leading-relaxed">
-                      <p className="font-semibold text-rose-200">
-                        ⚠️ This code was not found in the central BIS Hallmarking database.
-                      </p>
-                      <p className="text-rose-200/80">
+                    {/* Status & Warning Chips */}
+                    <div className="flex flex-wrap gap-2 pt-0.5">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300 border border-rose-300 dark:border-rose-800 text-xs font-semibold">
+                        ❌ Not in Central Registry
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 border border-amber-300 dark:border-amber-800 text-xs font-semibold">
+                        ⚠️ Suspect Counterfeit
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-xs font-mono font-semibold">
+                        📞 Helpline: 1800-11-4000
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                      <p>
                         Under the BIS Act 2016, selling unhallmarked or counterfeit gold jewellery is a punishable statutory offence.
                       </p>
                     </div>
 
                     {/* Quick Link to Complaint Drafter */}
-                    <div className="mt-4 pt-3 border-t border-rose-400/20">
+                    <div className="pt-2 border-t border-rose-200/80 dark:border-rose-800/80">
                       <Link
                         href="/tools/complaint-drafter"
-                        className="w-full flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition-all group cursor-pointer"
+                        className="w-full flex items-center justify-between p-3 rounded-xl bg-white dark:bg-slate-800 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold transition-all group cursor-pointer shadow-xs"
                       >
                         <div className="flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-amber-300" />
+                          <FileText className="w-4 h-4 text-amber-500" />
                           <span>Draft Official BIS Grievance via Complaint Drafter</span>
                         </div>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -573,17 +565,17 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
               {/* State C: General Registry Guidance (verified === null) */}
               {result.verified === null && (
                 <div className="space-y-3.5">
-                  <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-[#0c1a30] via-[#0f2347] to-[#0a1526] border border-blue-500/30 text-white shadow-xl">
-                    <div className="flex items-center gap-3 pb-3 border-b border-blue-400/20 mb-3">
-                      <div className="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-400/30 flex items-center justify-center shrink-0">
+                  <div className="rounded-2xl p-5 bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/80 space-y-3">
+                    <div className="flex items-center gap-3 pb-2.5 border-b border-blue-200/80 dark:border-blue-800/80">
+                      <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700 flex items-center justify-center shrink-0">
                         <Award className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="text-sm font-bold text-white">BIS Registry Guidance</h3>
-                        <span className="text-[11px] text-blue-200/70">Central Hallmarking Advisory</span>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">BIS Registry Guidance</h3>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">Central Hallmarking Advisory</span>
                       </div>
                     </div>
-                    <div className="text-xs sm:text-sm text-slate-100 leading-relaxed">
+                    <div className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={markdownComponents}
