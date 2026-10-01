@@ -68,6 +68,7 @@ class HallmarkVerifyAgent(BaseAgent):
                         "abstained": False,
                         "verified": True,
                         "huid": huid,
+                        "details": registry_entry,
                         "follow_up": None,
                     }
                 else:
@@ -78,6 +79,7 @@ class HallmarkVerifyAgent(BaseAgent):
                         "abstained": False,
                         "verified": False,
                         "huid": huid,
+                        "details": registry_entry,
                         "follow_up": "Would you like help filing a fraud complaint with BIS?",
                     }
             else:

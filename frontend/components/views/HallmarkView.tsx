@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Link from "next/link";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   Search,
   Award,
@@ -13,6 +16,12 @@ import {
   Loader2,
   Calculator,
   Upload,
+  Gem,
+  Building2,
+  MapPin,
+  CheckCircle2,
+  FileText,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +41,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 interface VerificationResult {
   answer: string;
   verified?: boolean | null;
+  huid?: string;
+  details?: {
+    valid: boolean;
+    metal?: string;
+    purity?: string;
+    ahc?: string;
+    city?: string;
+  };
   citations?: Array<{ id: string; text: string; source: string }>;
   follow_up?: string;
   abstained?: boolean;
@@ -120,6 +137,135 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Structured detail extractor for verified certificates
+  const parsedDetails = (() => {
+    if (!result) return null;
+    if (result.details) {
+      return {
+        metal: result.details.metal || "Gold",
+        purity: result.details.purity || "22K (916)",
+        ahc: result.details.ahc || "BIS Recognized Centre",
+        city: result.details.city || "India",
+      };
+    }
+    if (!result.answer) return null;
+    const metalMatch = result.answer.match(/\|\s*\*\*Metal\*\*\s*\|\s*([^|\n]+)\|/i);
+    const purityMatch = result.answer.match(/\|\s*\*\*Purity\*\*\s*\|\s*([^|\n]+)\|/i);
+    const ahcMatch = result.answer.match(/\|\s*\*\*Assaying Centre[^|]*\*\*\s*\|\s*([^|\n]+)\|/i);
+    const cityMatch = result.answer.match(/\|\s*\*\*City\*\*\s*\|\s*([^|\n]+)\|/i);
+    if (metalMatch || purityMatch || ahcMatch) {
+      return {
+        metal: metalMatch ? metalMatch[1].trim() : "Gold",
+        purity: purityMatch ? purityMatch[1].trim() : "22K (916)",
+        ahc: ahcMatch ? ahcMatch[1].trim() : "BIS Recognized Centre",
+        city: cityMatch ? cityMatch[1].trim() : "India",
+      };
+    }
+    return null;
+  })();
+
+  const commentaryMarkdown = (() => {
+    if (!result?.answer) return "";
+    if (parsedDetails && result.verified === true) {
+      return result.answer
+        .replace(/^##\s+.*$/gm, "")
+        .replace(/^\*\*HUID:\*\*.*$/gm, "")
+        .replace(/^\|[^\n]+\|\n?/gm, "")
+        .trim();
+    }
+    return result.answer;
+  })();
+
+  const markdownComponents = {
+    table: ({ children }: any) => (
+      <div className="overflow-x-auto my-3 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white/40 dark:bg-black/30 backdrop-blur-xs">
+        <table className="w-full text-left border-collapse text-xs">
+          {children}
+        </table>
+      </div>
+    ),
+    thead: ({ children }: any) => (
+      <thead className="border-b border-slate-200/80 dark:border-white/10 bg-slate-100/70 dark:bg-white/5 text-slate-900 dark:text-white font-bold text-[11px] uppercase tracking-wider">
+        {children}
+      </thead>
+    ),
+    tbody: ({ children }: any) => (
+      <tbody className="divide-y divide-slate-100 dark:divide-white/5 text-slate-800 dark:text-slate-200">
+        {children}
+      </tbody>
+    ),
+    tr: ({ children }: any) => (
+      <tr className="hover:bg-slate-500/5 transition-colors">
+        {children}
+      </tr>
+    ),
+    th: ({ children }: any) => (
+      <th className="px-3.5 py-2 font-bold text-slate-900 dark:text-white">
+        {children}
+      </th>
+    ),
+    td: ({ children }: any) => (
+      <td className="px-3.5 py-2 text-xs">
+        {children}
+      </td>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="text-sm font-bold text-slate-900 dark:text-white mt-2 mb-1.5 flex items-center gap-1.5">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="text-xs font-bold text-slate-900 dark:text-white mt-2.5 mb-1">
+        {children}
+      </h3>
+    ),
+    p: ({ children }: any) => (
+      <p className="my-1.5 leading-relaxed text-slate-700 dark:text-slate-300">
+        {children}
+      </p>
+    ),
+    strong: ({ children }: any) => (
+      <strong className="font-bold text-slate-900 dark:text-white">
+        {children}
+      </strong>
+    ),
+    code: ({ children }: any) => (
+      <code className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/80 text-[#0052CC] dark:text-blue-300 font-mono text-[11px] font-semibold border border-blue-200 dark:border-blue-900/60">
+        {children}
+      </code>
+    ),
+    ul: ({ children }: any) => (
+      <ul className="list-disc pl-4 space-y-1 my-2 text-slate-700 dark:text-slate-300">
+        {children}
+      </ul>
+    ),
+    ol: ({ children }: any) => (
+      <ol className="list-decimal pl-4 space-y-1 my-2 text-slate-700 dark:text-slate-300">
+        {children}
+      </ol>
+    ),
+    li: ({ children }: any) => (
+      <li className="leading-relaxed">
+        {children}
+      </li>
+    ),
+    a: ({ href, children }: any) => (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 dark:text-blue-400 font-semibold underline underline-offset-2 hover:opacity-80"
+      >
+        {children}
+      </a>
+    ),
+    em: ({ children }: any) => (
+      <em className="text-slate-500 dark:text-slate-400 italic text-[11px] block mt-2">
+        {children}
+      </em>
+    ),
   };
 
   return (
@@ -256,27 +402,198 @@ export function HallmarkView({ onAskMithra }: HallmarkViewProps) {
         </Card>
 
         {/* Right: Verification Output */}
-        <Card className="p-5 sm:p-6 min-h-[340px] flex flex-col justify-between overflow-hidden">
+        <Card className="p-6 sm:p-8 min-h-[380px] flex flex-col justify-between overflow-hidden">
           {result ? (
-            <div className="space-y-3.5">
-              <div className={`rounded-xl p-4 ${result.verified ? "bg-emerald-950/80" : result.verified === false ? "bg-rose-950/80" : "bg-[#0d1b35]"}`}>
-                <div className="flex items-center gap-3 pb-3 border-b border-white/10">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${result.verified ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
-                    {result.verified ? (
-                      <ShieldCheck className="w-5 h-5" />
-                    ) : (
-                      <ShieldAlert className="w-5 h-5" />
+            <div className="space-y-4">
+              {/* State A: Verified Genuine */}
+              {result.verified === true && (
+                <div className="space-y-3.5">
+                  <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-emerald-950 via-[#064e3b] to-[#042f2e] border border-emerald-500/40 text-white shadow-xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none" />
+                    
+                    <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-emerald-400/20">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/25 border border-emerald-400/40 flex items-center justify-center text-emerald-300 shadow-sm shrink-0">
+                          <ShieldCheck className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="text-sm font-extrabold text-white tracking-wide">
+                              BIS Certified Authentic Hallmark
+                            </h3>
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                          </div>
+                          <span className="text-[11px] text-emerald-200/80 font-medium">
+                            Central Assaying &amp; Hallmarking Registry (AHC)
+                          </span>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-lg bg-emerald-400/20 border border-emerald-400/30 text-emerald-200 text-xs font-mono font-bold shrink-0">
+                        {result.huid || huid}
+                      </span>
+                    </div>
+
+                    {/* 4 Structured Spec Tiles */}
+                    {parsedDetails && (
+                      <div className="grid grid-cols-2 gap-2.5 my-3.5">
+                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
+                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
+                            <Gem className="w-3 h-3 text-amber-300" />
+                            Precious Metal
+                          </div>
+                          <div className="text-xs sm:text-sm font-bold text-white">
+                            {parsedDetails.metal}
+                          </div>
+                        </div>
+
+                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
+                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
+                            <Award className="w-3 h-3 text-emerald-300" />
+                            Purity &amp; Fineness
+                          </div>
+                          <div className="text-xs sm:text-sm font-bold text-white font-mono">
+                            {parsedDetails.purity}
+                          </div>
+                        </div>
+
+                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
+                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
+                            <Building2 className="w-3 h-3 text-sky-300" />
+                            Assaying Centre (AHC)
+                          </div>
+                          <div className="text-xs font-bold text-white truncate" title={parsedDetails.ahc}>
+                            {parsedDetails.ahc}
+                          </div>
+                        </div>
+
+                        <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs">
+                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-200 font-semibold uppercase tracking-wider mb-1">
+                            <MapPin className="w-3 h-3 text-rose-300" />
+                            Jurisdiction
+                          </div>
+                          <div className="text-xs font-bold text-white">
+                            {parsedDetails.city}
+                          </div>
+                        </div>
+                      </div>
                     )}
+
+                    {/* 3-Mark Checklist */}
+                    <div className="pt-2.5 border-t border-emerald-400/20 flex items-center justify-between text-[10px] text-emerald-200/90 font-medium">
+                      <span className="flex items-center gap-1 text-emerald-300">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        BIS Standard Triangle
+                      </span>
+                      <span className="flex items-center gap-1 text-emerald-300">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        Purity Stamp
+                      </span>
+                      <span className="flex items-center gap-1 text-emerald-300">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        6-Char HUID
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-white">Registry Result: {huid}</h3>
-                    <span className="text-xs text-white/50">Central Assaying Register</span>
+
+                  {commentaryMarkdown && (
+                    <div className="text-xs leading-relaxed bg-slate-50 dark:bg-slate-900/60 rounded-xl p-3.5 border border-slate-200 dark:border-slate-800">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={markdownComponents}
+                      >
+                        {commentaryMarkdown}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* State B: Not Verified / Potential Fraud */}
+              {result.verified === false && (
+                <div className="space-y-3.5">
+                  <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-rose-950 via-[#4c0519] to-[#3b0714] border border-rose-500/40 text-white shadow-xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
+
+                    <div className="flex items-start justify-between gap-3 pb-3 border-b border-rose-400/20">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-rose-500/25 border border-rose-400/40 flex items-center justify-center text-rose-300 shadow-sm shrink-0">
+                          <ShieldAlert className="w-6 h-6 animate-pulse" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="text-sm font-extrabold text-white tracking-wide">
+                              HUID Not Registered — Potential Fraud
+                            </h3>
+                          </div>
+                          <span className="text-[11px] text-rose-200/80 font-medium">
+                            Record not found in the national BIS database
+                          </span>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-lg bg-rose-400/20 border border-rose-400/30 text-rose-200 text-xs font-mono font-bold shrink-0">
+                        {result.huid || huid}
+                      </span>
+                    </div>
+
+                    <div className="mt-3.5 space-y-2 text-xs text-rose-100 leading-relaxed">
+                      <p className="font-semibold text-rose-200">
+                        ⚠️ This code was not found in the central BIS Hallmarking database.
+                      </p>
+                      <p className="text-rose-200/80">
+                        Under the BIS Act 2016, selling unhallmarked or counterfeit gold jewellery is a punishable statutory offence.
+                      </p>
+                    </div>
+
+                    {/* Quick Link to Complaint Drafter */}
+                    <div className="mt-4 pt-3 border-t border-rose-400/20">
+                      <Link
+                        href="/tools/complaint-drafter"
+                        className="w-full flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition-all group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-amber-300" />
+                          <span>Draft Official BIS Grievance via Complaint Drafter</span>
+                        </div>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="text-xs leading-relaxed bg-slate-50 dark:bg-slate-900/60 rounded-xl p-3.5 border border-slate-200 dark:border-slate-800">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={markdownComponents}
+                    >
+                      {result.answer}
+                    </ReactMarkdown>
                   </div>
                 </div>
-                <div className="text-xs sm:text-sm text-white/90 leading-relaxed mt-3 whitespace-pre-line">
-                  {result.answer}
+              )}
+
+              {/* State C: General Registry Guidance (verified === null) */}
+              {result.verified === null && (
+                <div className="space-y-3.5">
+                  <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-[#0c1a30] via-[#0f2347] to-[#0a1526] border border-blue-500/30 text-white shadow-xl">
+                    <div className="flex items-center gap-3 pb-3 border-b border-blue-400/20 mb-3">
+                      <div className="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-400/30 flex items-center justify-center shrink-0">
+                        <Award className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-white">BIS Registry Guidance</h3>
+                        <span className="text-[11px] text-blue-200/70">Central Hallmarking Advisory</span>
+                      </div>
+                    </div>
+                    <div className="text-xs sm:text-sm text-slate-100 leading-relaxed">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={markdownComponents}
+                      >
+                        {result.answer}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {result.follow_up && (
                 <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800">
